@@ -1,0 +1,4 @@
+# 統一換行為 LF，避免不同機器的 git 設定造成 build.py --check 誤報不一致
+* text=auto eol=lf
+
+*.pdf binary
