@@ -1,56 +1,85 @@
-
 /* ══════════════════════════════════════════════════════════════
-   新竹市青年 AI 工具補助 ｜ 全流程資安宣導
-   單檔原型 · 不連線 · 不上傳
+   設計權杖
+
+   配色沿用「資安石鍋」那一組——紙、墨、橄欖、緋紅、木。
+   不另外發明一套，因為石鍋是這份作品自己的創作，用它才有身分。
+
+   整套視覺建立在作品的論點上：
+     有憑有據的東西 → 紙。有框線、有編號、有落款。
+     沒人負責的東西 → 黑箱。終端機的綠字，撕開紙面露出來。
+   所以危險內容不是「紅色的卡片」，是另一個世界。
    ══════════════════════════════════════════════════════════════ */
 
-/* ── 設計權杖：淺色為基準 ── */
 :root{
   color-scheme: light;
-  --ground:#F2F0E9; --surface:#FCFBF7; --surface-2:#EAE6DC; --sunken:#E7E3D8;
-  --ink:#1A1714; --ink-2:#4E4841; --ink-3:#7F786E;
-  --rule:#D2CCC0; --rule-2:#E3DED4;
-  --accent:#1A4894; --accent-ink:#FFFFFF; --accent-soft:#E4EAF4; --accent-line:#1A4894;
-  --ok:#3F6134; --ok-soft:#E6EADC; --ok-line:#3F6134;
-  --warn:#8A5712; --warn-soft:#F6EBD6; --warn-line:#AE6F1C;
-  --alert:#9A2B28; --alert-soft:#F6E4E1; --alert-line:#9A2B28;
-  --term-bg:#05070A; --term:#57E08E; --term-dim:#2C6F4B; --term-hit:#FFCE5C; --term-bad:#FF6B58;
-  --shadow:0 1px 0 rgba(26,23,20,.04);
-  --shadow-lg:0 24px 60px rgba(26,23,20,.26);
+
+  /* 紙 */
+  --ground:#EFEBE0;        /* 桌面，比紙再深一階 */
+  --surface:#F7F4EA;       /* 紙 */
+  --surface-2:#E8E2D2;     /* 紙的陰影面 */
+  --sunken:#E3DCC8;        /* 壓凹處、表頭 */
+
+  /* 墨 */
+  --ink:#231F1A;
+  --ink-2:#544C40;
+  --ink-3:#867C6C;
+
+  /* 框線 */
+  --rule:#C6BCA4;
+  --rule-2:#D9D1BC;
+
+  /* 橄欖：可以、通過、官方 */
+  --accent:#5C6B2E; --accent-ink:#F7F4EA; --accent-soft:#E2E5CE; --accent-line:#5C6B2E;
+  --ok:#4A5B26; --ok-soft:#E2E5CE; --ok-line:#5C6B2E;
+
+  /* 木：結構、標頭 */
+  --wood:#6B4527; --wood-soft:#EBE0D0;
+
+  /* 緋紅：不可以、外洩 */
+  --alert:#9A2B28; --alert-soft:#F0DFD8; --alert-line:#9A2B28;
+  --warn:#8A5A12; --warn-soft:#F2E6CE; --warn-line:#A86F1B;
+
+  /* 黑箱：終端機 */
+  --void:#0B0D0A; --void-2:#141813;
+  --term:#8FD96A; --term-dim:#4A7A3C; --term-hit:#E8C35C; --term-bad:#E8705E;
+
+  --shadow:0 1px 0 rgba(35,31,26,.05);
+  --shadow-lg:0 30px 70px rgba(35,31,26,.4);
 
   --serif:"Noto Serif TC",Georgia,"PingFang TC","Microsoft JhengHei",serif;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
 
-  --col:672px;
-  --r:2px;
+  --col:680px;
+  --r:0px;                 /* 公文沒有圓角 */
 }
 
-/* ── 深色：僅覆寫權杖 ── */
+/* 深色：紙變成夜裡的紙，黑箱仍然是黑箱 */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
-    --ground:#13110D; --surface:#1C1915; --surface-2:#26221B; --sunken:#100E0A;
-    --ink:#EFEAE0; --ink-2:#B2AA9E; --ink-3:#847C70;
-    --rule:#373027; --rule-2:#2A251E;
-    --accent:#8FB0EE; --accent-ink:#13110D; --accent-soft:#1B2231; --accent-line:#8FB0EE;
-    --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
-    --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
-    --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
+    --ground:#14120E; --surface:#1D1A14; --surface-2:#282318; --sunken:#100E0A;
+    --ink:#EFE9DB; --ink-2:#B5AB97; --ink-3:#88806F;
+    --rule:#3B352A; --rule-2:#2B2620;
+    --accent:#A8C46E; --accent-ink:#14120E; --accent-soft:#1F2414; --accent-line:#A8C46E;
+    --ok:#A8C46E; --ok-soft:#1F2414; --ok-line:#A8C46E;
+    --wood:#C08B5C; --wood-soft:#241A12;
+    --alert:#E08276; --alert-soft:#2B1512; --alert-line:#E08276;
+    --warn:#DCA75E; --warn-soft:#251B0E; --warn-line:#DCA75E;
     --shadow:0 1px 0 rgba(0,0,0,.3);
-    --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+    --shadow-lg:0 30px 70px rgba(0,0,0,.65);
   }
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --ground:#13110D; --surface:#1C1915; --surface-2:#26221B; --sunken:#100E0A;
-  --ink:#EFEAE0; --ink-2:#B2AA9E; --ink-3:#847C70;
-  --rule:#373027; --rule-2:#2A251E;
-  --accent:#8FB0EE; --accent-ink:#13110D; --accent-soft:#1B2231; --accent-line:#8FB0EE;
-  --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
-  --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
-  --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
+  --ground:#14120E; --surface:#1D1A14; --surface-2:#282318; --sunken:#100E0A;
+  --ink:#EFE9DB; --ink-2:#B5AB97; --ink-3:#88806F;
+  --rule:#3B352A; --rule-2:#2B2620;
+  --accent:#A8C46E; --accent-ink:#14120E; --accent-soft:#1F2414; --accent-line:#A8C46E;
+  --ok:#A8C46E; --ok-soft:#1F2414; --ok-line:#A8C46E;
+  --wood:#C08B5C; --wood-soft:#241A12;
+  --alert:#E08276; --alert-soft:#2B1512; --alert-line:#E08276;
+  --warn:#DCA75E; --warn-soft:#251B0E; --warn-line:#DCA75E;
   --shadow:0 1px 0 rgba(0,0,0,.3);
-  --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+  --shadow-lg:0 30px 70px rgba(0,0,0,.65);
 }
-

@@ -1,0 +1,129 @@
+/* ══════════════════════════════════════════════════════════════
+   兩個世界
+
+   這份作品的論點是：有憑有據的東西找得到人負責，黑箱找不到。
+   所以不把「危險」畫成紅色的卡片——紅卡片還是紙，還是同一個世界。
+   真實外洩事件直接換成終端機的樣子，像紙被撕開、露出底下的機房。
+
+   使用時機要克制：只有「實際發生過的外洩」用得上。
+   如果每個提醒都變黑的，這個對比就不存在了。
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 紙的質地：極淡的橫紋，像再生紙 ── */
+body{
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 3px,
+      rgba(35,31,26,.014) 3px 4px
+    );
+}
+:root[data-theme="dark"] body,
+:root:not([data-theme="light"]) body{ background-image:none }
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) body{
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0 3px, rgba(35,31,26,.014) 3px 4px);
+  }
+}
+
+/* ── 標題：重量拉滿，這是這一版最明顯的改變 ── */
+h1{font-weight:900;letter-spacing:.02em}
+h2{font-weight:900;letter-spacing:.03em}
+
+/* 眉標在寬螢幕掛到左側留白，像公文的邊註 */
+@media (min-width:1080px){
+  .col:not(.wide) .eyebrow{
+    position:relative;
+    margin-left:-132px;
+    width:132px;
+    padding-right:20px;
+    justify-content:flex-end;
+    text-align:right;
+  }
+  .col:not(.wide) .eyebrow::before{ display:none }
+  .col:not(.wide) .eyebrow::after{
+    content:"";position:absolute;right:0;top:50%;width:12px;height:1px;background:var(--rule);
+  }
+}
+
+/* ── 黑箱 ──
+   .incident  微課程附的真實事件
+   .evt       懶人包的四起事件
+   .void      要手動指定的區塊 */
+.incident,
+.evt,
+.void{
+  background:var(--void);
+  border:0;
+  border-left:3px solid var(--term-dim);
+  border-radius:0;
+  color:#CFE8C2;
+  font-family:var(--mono);
+  font-size:12.5px;
+  line-height:1.95;
+  padding:16px 18px 17px;
+  position:relative;
+  overflow:hidden;
+}
+.incident::before,
+.evt::before,
+.void::before{
+  content:"◤ 已經發生過的事";
+  display:block;
+  font-size:10px;
+  letter-spacing:.16em;
+  color:var(--term-dim);
+  margin-bottom:9px;
+}
+.void::before{ content:"◤ 黑箱" }
+
+.incident b,.evt b,.void b{ color:var(--term); font-weight:400 }
+.incident .dt,.evt .dt{
+  display:block;color:var(--term-hit);font-size:11px;letter-spacing:.1em;
+  font-weight:400;margin-bottom:4px;
+}
+.evt .t{
+  color:var(--term);font-family:var(--mono);font-size:13.5px;font-weight:700;
+  margin:0 0 6px;line-height:1.55;
+}
+.evt .d{ color:#CFE8C2;font-size:12px;line-height:1.9;opacity:1 }
+.evt .l{
+  display:block;margin-top:9px;padding-top:9px;border-top:1px solid rgba(143,217,106,.22);
+  color:var(--term-hit);font-size:11.5px;font-weight:400;line-height:1.8;
+}
+.evt .l::before{ content:"→ " }
+
+/* 掃描線，很淡，只是讓它看起來是螢幕不是紙 */
+.incident::after,
+.evt::after,
+.void::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,
+    rgba(143,217,106,.035) 0 1px, transparent 1px 3px);
+}
+@media (prefers-reduced-motion:reduce){
+  .incident::after,.evt::after,.void::after{ display:none }
+}
+
+/* ── 階段卡：改成索引卡，編號用大字壓在角落 ── */
+.stagecard{ position:relative; padding-left:22px }
+.stagecard .n{
+  width:auto;height:auto;background:none;border-radius:0;
+  font-family:var(--serif);font-size:34px;font-weight:900;line-height:1;
+  color:var(--rule);align-self:flex-start;min-width:38px;
+}
+.stagecard.done .n{ background:none;color:var(--ok) }
+.stagecard:hover{ border-color:var(--ink);transform:none;background:var(--surface-2) }
+.stagecard .t{ font-size:17.5px;letter-spacing:.02em }
+
+/* ── 表單分段的編號：「一、」放大成襯線大字 ── */
+legend{ position:relative }
+
+/* ── 頁首：字距與木色底線，像機關信箋 ── */
+.appbar .brand .nm b{ letter-spacing:.04em }
+.appbar{ box-shadow:0 2px 0 0 var(--wood) }
+
+/* ── 引文式的主張段落 ── */
+.lede{ font-size:17px;line-height:1.85 }
+.lede b{ box-shadow:inset 0 -.42em 0 var(--accent-soft) }
