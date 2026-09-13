@@ -18,16 +18,16 @@
 /* ── 設計權杖：淺色為基準 ── */
 :root{
   color-scheme: light;
-  --ground:#F1F2F5; --surface:#FFFFFF; --surface-2:#E9EBF0; --sunken:#E4E7ED;
-  --ink:#111620; --ink-2:#454D5C; --ink-3:#767E8D;
-  --rule:#C7CBD5; --rule-2:#DCDFE6;
-  --accent:#1B4FA8; --accent-ink:#FFFFFF; --accent-soft:#E5ECF8; --accent-line:#1B4FA8;
-  --ok:#136B56; --ok-soft:#E0EFEB; --ok-line:#136B56;
-  --warn:#8F5A0E; --warn-soft:#FAEFDB; --warn-line:#B4741A;
-  --alert:#AB3325; --alert-soft:#FAE8E5; --alert-line:#AB3325;
+  --ground:#F2F0E9; --surface:#FCFBF7; --surface-2:#EAE6DC; --sunken:#E7E3D8;
+  --ink:#1A1714; --ink-2:#4E4841; --ink-3:#7F786E;
+  --rule:#D2CCC0; --rule-2:#E3DED4;
+  --accent:#1A4894; --accent-ink:#FFFFFF; --accent-soft:#E4EAF4; --accent-line:#1A4894;
+  --ok:#3F6134; --ok-soft:#E6EADC; --ok-line:#3F6134;
+  --warn:#8A5712; --warn-soft:#F6EBD6; --warn-line:#AE6F1C;
+  --alert:#9A2B28; --alert-soft:#F6E4E1; --alert-line:#9A2B28;
   --term-bg:#05070A; --term:#57E08E; --term-dim:#2C6F4B; --term-hit:#FFCE5C; --term-bad:#FF6B58;
-  --shadow:0 1px 2px rgba(17,22,32,.05), 0 8px 24px rgba(17,22,32,.06);
-  --shadow-lg:0 24px 60px rgba(17,22,32,.28);
+  --shadow:0 1px 2px rgba(26,23,20,.05), 0 8px 24px rgba(26,23,20,.07);
+  --shadow-lg:0 24px 60px rgba(26,23,20,.26);
 
   --serif:"Noto Serif TC",Georgia,"PingFang TC","Microsoft JhengHei",serif;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
@@ -41,26 +41,26 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
-    --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
-    --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
-    --rule:#2B323D; --rule-2:#222834;
-    --accent:#7AA4EC; --accent-ink:#0B0E13; --accent-soft:#182233; --accent-line:#7AA4EC;
-    --ok:#4FC2A1; --ok-soft:#10241F; --ok-line:#4FC2A1;
-    --warn:#DCA75C; --warn-soft:#241B0F; --warn-line:#DCA75C;
-    --alert:#E8806F; --alert-soft:#2A1513; --alert-line:#E8806F;
+    --ground:#13110D; --surface:#1C1915; --surface-2:#26221B; --sunken:#100E0A;
+    --ink:#EFEAE0; --ink-2:#B2AA9E; --ink-3:#847C70;
+    --rule:#373027; --rule-2:#2A251E;
+    --accent:#8FB0EE; --accent-ink:#13110D; --accent-soft:#1B2231; --accent-line:#8FB0EE;
+    --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
+    --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
+    --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
     --shadow-lg:0 24px 60px rgba(0,0,0,.6);
   }
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
-  --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
-  --rule:#2B323D; --rule-2:#222834;
-  --accent:#7AA4EC; --accent-ink:#0B0E13; --accent-soft:#182233; --accent-line:#7AA4EC;
-  --ok:#4FC2A1; --ok-soft:#10241F; --ok-line:#4FC2A1;
-  --warn:#DCA75C; --warn-soft:#241B0F; --warn-line:#DCA75C;
-  --alert:#E8806F; --alert-soft:#2A1513; --alert-line:#E8806F;
+  --ground:#13110D; --surface:#1C1915; --surface-2:#26221B; --sunken:#100E0A;
+  --ink:#EFEAE0; --ink-2:#B2AA9E; --ink-3:#847C70;
+  --rule:#373027; --rule-2:#2A251E;
+  --accent:#8FB0EE; --accent-ink:#13110D; --accent-soft:#1B2231; --accent-line:#8FB0EE;
+  --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
+  --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
+  --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   --shadow-lg:0 24px 60px rgba(0,0,0,.6);
 }
@@ -84,8 +84,10 @@ p{margin:0}
 a{color:var(--accent)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 
+/* 眉標前加一小段橫線，像公文的段落記號 */
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink-3)}
+  color:var(--ink-3);display:flex;align-items:center;gap:9px}
+.eyebrow::before{content:"";width:20px;height:1px;background:var(--rule);flex:none}
 .lede{font-size:16.5px;color:var(--ink-2);line-height:1.8}
 .small{font-size:13.5px;color:var(--ink-3);line-height:1.75}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -96,8 +98,10 @@ b,strong{font-weight:700;color:var(--ink)}
 .stack.s{gap:10px} .stack.m{gap:18px} .stack.l{gap:28px} .stack.xl{gap:40px}
 
 /* ══ 頁首 ══ */
+/* 頁首用細＋粗的雙線收邊，取公文信箋的樣子 */
 .appbar{position:sticky;top:0;z-index:30;background:var(--surface);
-  border-bottom:1px solid var(--rule);}
+  border-bottom:1px solid var(--rule);
+  box-shadow:0 2px 0 0 var(--accent-line);}
 .appbar .in{max-width:940px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;
   gap:12px;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:9px;min-width:0;text-decoration:none;color:inherit}
@@ -614,9 +618,9 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
       <span class="eyebrow">115 年梅竹黑客松 ｜ 資安無慮</span>
       <h1>把資安宣導拆開，<br>塞進補助流程的每一關</h1>
       <p class="lede">
-        傳統做法是在申請頁掛一份「使用須知」，然後所有人直接捲到底按同意。<br>
-        這裡把宣導拆成五段，分別放進<b>申請、綁定、等待、核銷、撥款</b>。申請人的動線沒有變長，
-        但每一關都會帶走一件事——因為那件事出現在他<b>真的會遇到它的那一刻</b>。
+        大部分的「使用須知」，我們都是直接捲到底按同意的。<br>
+        所以這份補助沒有須知要讀。該注意的事被拆成五段，放進<b>申請、綁定、等待、核銷、撥款</b>裡——
+        每一段都剛好出現在<b>您真的會遇到它的那一刻</b>。
       </p>
     </div>
 
@@ -661,16 +665,16 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
     </div>
 
     <div class="callout">
-      <span class="t">填寫前，先讓您知道</span>
-      <p>本申請表導入互動式填寫體驗。系統會即時回應您填寫的內容，並在過程中出現<b>一次畫面變化與提醒視窗</b>——那是設計的一部分，不是系統異常，您已填的資料不會遺失。</p>
-      <p>所有即時回應都在您的裝置上完成，不會額外傳送。您填寫的資料僅用於本次申請的審查與撥款，依個人資料保護法保管。</p>
+      <span class="t">填之前，有兩件事先說</span>
+      <p>這份表單會邊填邊回應您。中途<b>畫面會整個暗下來一次，還會跳出一個提醒視窗</b>——那是我們故意安排的，不是當機。您填到一半的東西不會不見。</p>
+      <p>那些回應都在您自己的手機或電腦上跑，沒有傳出去。您填的資料只會用在這次補助的審查和撥款。</p>
     </div>
 
     <div class="assist"><div class="av">AI</div>
-      <div class="tx" id="assistTx"><b>申辦小幫手</b>　這次的表單由我陪您填寫。每填完一欄我會即時確認，有問題我會馬上告訴您。</div></div>
+      <div class="tx" id="assistTx"><b>申辦小幫手</b>　這次換我陪您填。每填完一欄我看一下，有問題馬上跟您說。</div></div>
 
     <div class="callout warn" id="banner" style="display:none">
-      <p>提醒：您在本表單填寫的資料受個人資料保護法規範，市府負有蒐集告知與保管責任。<b>在一般 AI 對話工具中則沒有這層保障。</b></p>
+      <p>這張表單要是出事，您找得到人負責——市府依法要告訴您蒐集了什麼、留多久，您也隨時可以要求查詢或刪除。<b>2023 年 ChatGPT 因為一個程式錯誤，讓部分使用者看見別人的對話標題和信用卡末四碼；那件事沒有任何人需要對您負責。</b></p>
     </div>
 
     <form id="form" autocomplete="on" novalidate class="stack l">
@@ -934,9 +938,9 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
 
     <div class="stack m">
       <div class="callout">
-        <span class="t">為什麼是石鍋</span>
-        <p>資安宣導最難的一件事是「講完就忘」。規則寫成條列，看的時候都懂，真的要用的時候想不起來。</p>
-        <p>但「什麼能丟進鍋裡」是個身體記得住的判斷——<b>湯裡撈得起豆腐，撈不起說出去的話。</b>下鍋之前會猶豫一下，那一下就是我們要的。</p>
+        <span class="t">為什麼要用鍋子講</span>
+        <p>規則寫成一條一條的，看的時候都懂，真的要用的時候想不起來。這是資安宣導最沒辦法的地方。</p>
+        <p>但「這個能不能丟進鍋裡」不一樣——<b>湯裡撈得起豆腐，撈不起說出去的話。</b>下鍋之前您會猶豫那麼一下。我們要的就是那一下。</p>
       </div>
     </div>
 
@@ -983,7 +987,7 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
 
       <div class="stack s">
         <h2>授權範圍確認</h2>
-        <p class="lede">加好友之後，這個帳號要求存取以下項目。請確認——這一步多數人會直接按同意。</p>
+        <p class="lede">加了好友之後，它會跟您要這些權限。先看一眼再按——這一步幾乎所有人都是直接按過去的。</p>
       </div>
 
       <div class="card stack m">
@@ -1039,8 +1043,9 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
       </div>
 
       <div class="callout">
-        <span class="t">為什麼補助案要走 LINE</span>
-        <p>青年族群不會為了查一個補助進度去記一組系統帳密。把進度通知放在他們本來就在用的介面上，回訪率才有意義——<b>而資安宣導也就跟著進了同一個介面</b>：每次推播進度，順帶推一則 30 秒能讀完的 AI 安全提醒，比辦一次講座觸及得久。</p>
+        <span class="t">為什麼不是寄信給您</span>
+        <p>您不會為了查一個補助進度，特地去記一組新的帳號密碼，也不會每天開信箱找市府的信。所以進度直接送到您本來就在看的地方。</p>
+        <p>之後每隔幾天，通知裡會夾帶一則<b>三十秒讀得完的 AI 安全提醒</b>。不用點進任何網站，滑過去就看完了。</p>
       </div>
 
       <div class="btnrow"><button class="btn pri" data-go="#/review" type="button">前往 ③ 查看審核進度</button></div>
@@ -1062,7 +1067,7 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
     <div class="card"><ol class="tl" id="reviewTl"></ol></div>
 
     <div class="callout">
-      <span class="t">為什麼進度可以標到這麼細</span>
+      <span class="t">為什麼進度看得到這麼細</span>
       <p>因為前三關不是人工看的。設籍、年齡、重複申請由系統自動勾稽，承辦人員只處理系統標紅的案子——
         <button class="btn sec sm" id="adminJump" type="button" style="margin-left:2px">看承辦端的做法</button></p>
     </div>

@@ -52,7 +52,7 @@ body{
 
 .stage-row{position:absolute;left:44px;display:flex;align-items:flex-start;gap:22px}
 .stage-tag{
-  width:96px;flex:none;margin-top:26px;
+  width:96px;flex:none;margin-top:22px;
   background:#C9D6AE;color:#35401C;
   font-size:17px;font-weight:500;text-align:center;
   padding:7px 0;border-radius:4px 22px 22px 4px;
@@ -61,7 +61,7 @@ body{
 .stage-egg{width:112px;flex:none;display:flex;justify-content:center;align-items:center;margin-top:10px}
 .stage-egg img{max-width:100%;max-height:86px;object-fit:contain}
 .rules{padding-top:6px}
-.rule{font-size:25px;line-height:1.62;font-family:"Noto Serif TC",serif;font-weight:600;white-space:nowrap}
+.rule{font-size:24px;line-height:1.56;font-family:"Noto Serif TC",serif;font-weight:600;white-space:nowrap}
 .rule b{font-weight:900;color:var(--olive);margin-right:10px;letter-spacing:.06em}
 .rule.no b{color:var(--crimson)}
 .rule span{font-size:20px;color:var(--ink)}
@@ -175,16 +175,17 @@ body{
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
 
-/* ── 嵌入申請流程時的補強 ── */
-/* ── 直向：換成直式畫布，而不是把橫式縮小 ──
+/* ══ 以下為嵌入申請流程所需，其餘版面沿用你調好的座標 ══ */
+
+/* 直向：換成直式畫布，而不是把橫式縮小。
    橫式 1280×720 在手機直向只能縮到 0.3 倍，字會小到看不見。
-   改成 680×1200 的直式舞台由上而下堆疊，同一支手機直放約 0.57 倍，
-   橫放時自動切回橫式。兩種持法都能玩，直的只是版面小一點。 */
+   改成 680×1200 由上而下堆疊，同一支手機直放約 0.57 倍，
+   橫放自動切回橫式，兩種持法都能玩。 */
 @media (orientation:portrait){
   :root{ --stage-w:680px; --stage-h:1200px; }
 
   /* 海報 */
-  #scene-poster{ padding:26px 24px 0; display:flex; flex-direction:column; gap:14px; }
+  #scene-poster{ padding:26px 24px 0; display:flex; flex-direction:column; gap:14px }
   .title{ position:static; text-align:left }
   .title .zh{ font-size:44px }
   .title .sub{ font-size:17px; margin-top:6px }
@@ -248,10 +249,10 @@ body{
       <div class="sub">— AI 資安懶人包</div>
     </div>
 
-    <div class="dots poster-el" style="top:132px;height:112px"></div>
-    <div class="dots poster-el" style="top:300px;height:112px"></div>
+    <div class="dots poster-el" style="top:98px;height:100px"></div>
+    <div class="dots poster-el" style="top:254px;height:100px"></div>
 
-    <div class="stage-row poster-el" style="top:44px">
+    <div class="stage-row poster-el" style="top:26px">
       <div class="stage-tag">使用前</div>
       <div class="stage-egg"><img data-img="carton" alt=""></div>
       <div class="rules">
@@ -261,7 +262,7 @@ body{
       </div>
     </div>
 
-    <div class="stage-row poster-el" style="top:212px">
+    <div class="stage-row poster-el" style="top:182px">
       <div class="stage-tag warn">使用時</div>
       <div class="stage-egg"><img data-img="egg" alt=""></div>
       <div class="rules">
@@ -271,7 +272,7 @@ body{
       </div>
     </div>
 
-    <div class="stage-row poster-el" style="top:380px">
+    <div class="stage-row poster-el" style="top:338px">
       <div class="stage-tag">使用後</div>
       <div class="stage-egg"><img data-img="shell" alt=""></div>
       <div class="rules">
@@ -354,7 +355,7 @@ const finalEl = document.getElementById("final");
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* 舞台尺寸由 CSS 變數決定（直向會換成直式畫布），
-   這裡一律讀實際值，才不會兩邊寫死的數字對不上。 */
+   一律讀實際值，才不會兩邊寫死的數字對不上。 */
 function stageDims(){
   const cs = getComputedStyle(document.documentElement);
   return { w: parseFloat(cs.getPropertyValue("--stage-w")) || 1280,
@@ -369,7 +370,7 @@ window.addEventListener("resize", function(){ fit(); placePot(); });
 fit();
 
 const POT = {
-  land:{ poster:{left:10,  top:430, w:560}, game:{left:44,  top:296, w:610} },
+  land:{ poster:{left:-8,  top:462, w:530}, game:{left:44,  top:296, w:610} },
   port:{ poster:{left:170, top:880, w:360}, game:{left:140, top:236, w:400} }
 };
 function isPortrait(){ return window.matchMedia("(orientation:portrait)").matches; }
