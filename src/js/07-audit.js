@@ -20,19 +20,23 @@ var RULES = [
            : r === false ? NO("檢查碼不符，號碼可能打錯")
            : OK("檢查碼正確"); } },
 
-  { id:"reside", scope:"local", label:"設籍新竹市",
-    run:function(d){ if(!d.pid) return W("待填身分證字號");
-      var r = checkPid(d.pid);
-      if(!r) return W("待身分證字號有效");
-      return r.hsinchu ? OK("身分證字號首碼 O，設籍新竹市")
-                       : NO("首碼顯示設籍「"+r.city+"」，本計畫限設籍新竹市"); } },
+  { id:"reside", scope:"local", label:"設籍新竹市（以戶籍地址認定）",
+    run:function(d){ if(!d.hrCity) return W("待填戶籍地址");
+      return d.hrCity === "新竹市"
+        ? OK("戶籍地址為新竹市，符合。實際設籍狀態以戶政介接為準")
+        : NO("戶籍地址為「"+d.hrCity+"」，本計畫限設籍新竹市"); } },
 
-  { id:"crosscheck", scope:"local", label:"身分證字號與戶籍地址勾稽",
+  /* 參考項，永不擋件。
+     身分證首碼是「初次設籍地」，遷籍後不會變更，與現戶籍不同屬正常情形。
+     若把不一致視為不符，會誤殺所有遷入新竹市的合格申請人。 */
+  { id:"crosscheck", scope:"local", label:"初次設籍地比對（參考，不影響資格）",
     run:function(d){ if(!d.pid || !d.hrCity) return W("待兩項皆填寫");
       var r = checkPid(d.pid);
       if(!r) return W("待身分證字號有效");
-      return r.city === d.hrCity ? OK("首碼「"+d.pid[0]+"」與戶籍縣市一致")
-        : NO("首碼推得「"+r.city+"」，但戶籍填「"+d.hrCity+"」，兩者不符"); } },
+      return r.firstCity === d.hrCity
+        ? OK("初次設籍地與現戶籍同為「"+d.hrCity+"」")
+        : W("初次設籍於「"+r.firstCity+"」，現戶籍為「"+d.hrCity
+            +"」。遷籍者屬正常情形，資格以戶政核驗為準"); } },
 
   { id:"age", scope:"local", label:"年齡 18 至 40 歲",
     run:function(d){ if(!d.bdayRaw) return W("尚未填寫");

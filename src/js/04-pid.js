@@ -13,7 +13,14 @@ function checkPid(v){
   for(var i=1;i<=8;i++) sum += (+v[i]) * (9-i);
   sum += (+v[9]);
   if(sum % 10 !== 0) return false;
-  return { city: CITY[v[0]], sex: v[1] === "1" ? "男性" : "女性", hsinchu: v[0] === "O" };
+  /* 首碼代表「初次設籍地」——出生後首次申報戶口的縣市。
+     它不是出生地：在臺北出生、父母在臺中縣報戶口者，首碼為 L。
+     它也不是現在的戶籍地：遷籍之後首碼永遠不會變更。
+     所以絕不可用來判定補助資格，只能當參考資訊。
+     設籍資格一律以「戶籍地址」欄位認定，並由戶政介接做權威核驗。
+     欄位刻意命名為 firstCity / firstRegHsinchu，讓誤用一眼可見。 */
+  return { firstCity: CITY[v[0]], sex: v[1] === "1" ? "男性" : "女性",
+           firstRegHsinchu: v[0] === "O" };
 }
 function ageOf(d){
   var b=new Date(d), t=new Date(), a=t.getFullYear()-b.getFullYear(), m=t.getMonth()-b.getMonth();

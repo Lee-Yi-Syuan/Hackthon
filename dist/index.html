@@ -674,7 +674,7 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
         </div>
 
         <div class="field">
-          <label for="f-pid">身分證字號 <span class="sub">核驗設籍資格用，本計畫限設籍新竹市</span></label>
+          <label for="f-pid">身分證字號 <span class="sub">用於身分核驗與撥款；設籍資格以下方戶籍地址認定</span></label>
           <input type="text" id="f-pid" name="pid" maxlength="10" autocomplete="off" spellcheck="false"
                  placeholder="O123456789" style="font-family:var(--mono);text-transform:uppercase">
           <div class="err" id="e-pid-err"></div>
@@ -699,7 +699,7 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
       <!-- 二、地址 -->
       <fieldset>
         <legend>二、戶籍與通訊地址</legend>
-        <p class="small" style="margin-top:-8px">戶籍地址須為新竹市，並與身分證字號首碼相符。<span class="chip a">自動審核</span></p>
+        <p class="small" style="margin-top:-8px">本計畫限設籍新竹市，以戶籍地址認定。<span class="chip a">自動審核</span></p>
 
         <div class="field">
           <label for="f-hrCity">戶籍地址 — 縣市</label>
@@ -1714,7 +1714,14 @@ function checkPid(v){
   for(var i=1;i<=8;i++) sum += (+v[i]) * (9-i);
   sum += (+v[9]);
   if(sum % 10 !== 0) return false;
-  return { city: CITY[v[0]], sex: v[1] === "1" ? "男性" : "女性", hsinchu: v[0] === "O" };
+  /* 首碼代表「初次設籍地」——出生後首次申報戶口的縣市。
+     它不是出生地：在臺北出生、父母在臺中縣報戶口者，首碼為 L。
+     它也不是現在的戶籍地：遷籍之後首碼永遠不會變更。
+     所以絕不可用來判定補助資格，只能當參考資訊。
+     設籍資格一律以「戶籍地址」欄位認定，並由戶政介接做權威核驗。
+     欄位刻意命名為 firstCity / firstRegHsinchu，讓誤用一眼可見。 */
+  return { firstCity: CITY[v[0]], sex: v[1] === "1" ? "男性" : "女性",
+           firstRegHsinchu: v[0] === "O" };
 }
 function ageOf(d){
   var b=new Date(d), t=new Date(), a=t.getFullYear()-b.getFullYear(), m=t.getMonth()-b.getMonth();
@@ -1852,13 +1859,19 @@ var API = {
   },
 
   /* 戶政資料介接 — 內政部戶政司，限機關以 T-Road 申請，不對外開放。
-     原型改以身分證字號首碼與檢查碼本機推算替代。 */
-  verifyHousehold: function(pid){
-    this.log.household = { live:false, note:"限機關介接，改以檢查碼本機推算" };
+     這是唯一能權威認定「現在是否設籍新竹市」的來源。
+     身分證字號首碼只代表初次設籍地，遷籍後不會變更，不可用於資格判定；
+     未介接前暫以申請人填寫的戶籍地址替代，並由承辦人員核對戶籍謄本。 */
+  verifyHousehold: function(pid, hrCity){
+    this.log.household = { live:false, note:"限機關介接，暫以填寫的戶籍地址替代" };
     var r = checkPid(pid);
     return delay(480).then(function(){
-      return { ok:true, src:"mock", valid: !!(r && r.hsinchu), city: r ? r.city : "",
-               reason: !r ? "身分證字號無效" : (r.hsinchu ? "" : "戶籍地非新竹市") };
+      return { ok:true, src:"mock",
+               valid: hrCity === "新竹市",
+               city: hrCity || "",
+               firstCity: r ? r.firstCity : "",
+               reason: !r ? "身分證字號無效"
+                     : (hrCity === "新竹市" ? "" : "戶籍地址非新竹市") };
     });
   },
 
@@ -1913,19 +1926,23 @@ var RULES = [
            : r === false ? NO("檢查碼不符，號碼可能打錯")
            : OK("檢查碼正確"); } },
 
-  { id:"reside", scope:"local", label:"設籍新竹市",
-    run:function(d){ if(!d.pid) return W("待填身分證字號");
-      var r = checkPid(d.pid);
-      if(!r) return W("待身分證字號有效");
-      return r.hsinchu ? OK("身分證字號首碼 O，設籍新竹市")
-                       : NO("首碼顯示設籍「"+r.city+"」，本計畫限設籍新竹市"); } },
+  { id:"reside", scope:"local", label:"設籍新竹市（以戶籍地址認定）",
+    run:function(d){ if(!d.hrCity) return W("待填戶籍地址");
+      return d.hrCity === "新竹市"
+        ? OK("戶籍地址為新竹市，符合。實際設籍狀態以戶政介接為準")
+        : NO("戶籍地址為「"+d.hrCity+"」，本計畫限設籍新竹市"); } },
 
-  { id:"crosscheck", scope:"local", label:"身分證字號與戶籍地址勾稽",
+  /* 參考項，永不擋件。
+     身分證首碼是「初次設籍地」，遷籍後不會變更，與現戶籍不同屬正常情形。
+     若把不一致視為不符，會誤殺所有遷入新竹市的合格申請人。 */
+  { id:"crosscheck", scope:"local", label:"初次設籍地比對（參考，不影響資格）",
     run:function(d){ if(!d.pid || !d.hrCity) return W("待兩項皆填寫");
       var r = checkPid(d.pid);
       if(!r) return W("待身分證字號有效");
-      return r.city === d.hrCity ? OK("首碼「"+d.pid[0]+"」與戶籍縣市一致")
-        : NO("首碼推得「"+r.city+"」，但戶籍填「"+d.hrCity+"」，兩者不符"); } },
+      return r.firstCity === d.hrCity
+        ? OK("初次設籍地與現戶籍同為「"+d.hrCity+"」")
+        : W("初次設籍於「"+r.firstCity+"」，現戶籍為「"+d.hrCity
+            +"」。遷籍者屬正常情形，資格以戶政核驗為準"); } },
 
   { id:"age", scope:"local", label:"年齡 18 至 40 歲",
     run:function(d){ if(!d.bdayRaw) return W("尚未填寫");
@@ -2125,10 +2142,11 @@ function renderApply(){
       echo("pid","格式看起來不太對，請確認一次。",true); return; }
     if(r === false){ fieldErr("pid","檢查碼不符，請再核對一次號碼。");
       echo("pid","這組號碼的檢查碼不符，您是不是打錯了？",true); return; }
-    fieldErr("pid", r.hsinchu ? "" : "本計畫限設籍新竹市（身分證字號 O 開頭）。展示模式仍可繼續填寫。");
-    done.pid = v; done.city = r.city; done.sex = r.sex;
-    if (!$("f-hrCity").value) { $("f-hrCity").value = r.city; onCity("hr"); }
-    echo("pid","身分核驗完成。您設籍在"+r.city+"、"+r.sex+"，我一併記下了。");
+    /* 不以首碼判定資格，也不據以自動填入戶籍縣市——
+       首碼是初次設籍地，遷籍後不會變更，自動帶入會誤導遷入者。 */
+    fieldErr("pid", "");
+    done.pid = v; done.firstCity = r.firstCity; done.sex = r.sex;
+    echo("pid","身分核驗完成。這組號碼是在"+r.firstCity+"初次設籍的，"+r.sex+"，我一併記下了。");
   });
 
   $("f-bday").addEventListener("change", function(e){
@@ -2300,10 +2318,10 @@ function buildRecap(){
     return "<div><span>"+esc(r[0])+"</span>"+esc(r[1])+"</div>"; }).join("");
 
   var lines = [];
-  if (d.pid && done.city) {
-    lines.push("而最後那句「您設籍在"+esc(done.city)+"、"+esc(done.sex)
-      +"」，不是我猜的。那組號碼的第一個字母就是戶籍地，第二碼就是性別。"
-      +"您以為只填了一個欄位，它讀到的是一整組資訊。");
+  if (d.pid && done.firstCity) {
+    lines.push("而最後那句「這組號碼是在"+esc(done.firstCity)+"初次設籍的、"+esc(done.sex)
+      +"」，不是我猜的。那組號碼的第一個字母就是您出生後首次申報戶口的縣市，"
+      +"第二碼就是性別。您以為只填了一個欄位，它讀到的是一整組連您自己都沒想過會洩漏的資訊。");
   }
   if (f("a-id") && f("a-bank")) {
     lines.push("<b>而您剛剛還上傳了身分證正反面和存摺封面。</b>"
@@ -2396,7 +2414,7 @@ function submitCase(d){
     name:d.name, age:d.bdayRaw ? ageOf(d.bdayRaw) : null, bday:d.bdayRaw,
     phone:d.phone, mail:d.mail,
     pidMask: d.pid ? d.pid.slice(0,4)+"******" : "",
-    city: done.city || "", hsinchu: !!(d.pid && d.pid[0] === "O"),
+    firstCity: done.firstCity || "", hsinchu: d.hrCity === "新竹市",
     addr: d.hrCity ? d.hrCity + d.hrDist + d.hrAddr : "",
     mailAddr: d.same ? "同戶籍地址" : (d.mlCity + d.mlDist + d.mlAddr),
     idType:d.idType, scheme:d.scheme, func:d.func,
@@ -2410,7 +2428,7 @@ function submitCase(d){
   /* 送出後由系統呼叫外部介接，結果回填自動審核面板 */
   Promise.all([
     API.verifyInvoice({sw:d.sw, amt:d.amt, pdate:d.pdate}),
-    API.verifyHousehold(d.pid),
+    API.verifyHousehold(d.pid, d.hrCity),
     API.checkDuplicate(d.pid),
     d.idType === "general" ? Promise.resolve(null) : API.verifyLowIncome(d.pid, d.idType)
   ]).then(function(r){
@@ -3066,7 +3084,7 @@ var APIDOCS = [
    d:"查驗購買憑證真偽。appID 須向財政部申請且屬機密，<b>絕不可寫進前端</b>。承辦端後台標紅的退件案例就是這條回傳不符。"},
   {n:"內政部戶政資料介接", tag:"限機關", need:"務必後端",
    e:["經 T-Road／政府資料介接平台申請，不對外開放", "→ 代理路徑 /api/household/verify"],
-   d:"核驗設籍新竹市與出生日期。原型改以身分證字號首碼與檢查碼本機推算替代，準確度足以擋掉絕大多數誤填。"},
+   d:"這是唯一能權威認定<b>現在是否設籍新竹市</b>的來源。身分證字號首碼只代表初次設籍地，遷籍後永不變更，不可用於資格判定；未介接前暫以申請人填寫的戶籍地址替代，由承辦人員核對戶籍謄本。"},
   {n:"衛福部社會救助資料", tag:"限機關", need:"務必後端",
    e:["由新竹市社會處內部介接", "→ 代理路徑 /api/social/low-income"],
    d:"查驗低收入戶／中低收入戶資格，決定補助比率是 50% 還是 90%。未介接前以檢附證明文件為準。"},
@@ -3096,7 +3114,7 @@ function renderApiDocs(){
   var how = {local:["本機即時","g"], api:["API 介接","a"], manual:["人工審查","w"]};
   var basis = {
     name:"字數檢查", phone:"格式正規表示式", pid:"內政部身分證字號檢查碼演算法",
-    reside:"身分證字號首碼對照戶籍縣市", crosscheck:"首碼推得縣市 vs 填寫戶籍縣市",
+    reside:"戶籍地址縣市是否為新竹市", crosscheck:"初次設籍地 vs 現戶籍（參考，不影響資格）",
     age:"出生日期與今日差值", mail:"格式正規表示式", dist:"縣市／行政區對照表",
     pdate:"補助期間區間比對", fx:"臺銀牌告匯率，容許 ±5% 誤差",
     voucher:"五項全勾方為通過", attach:"副檔名與 10MB 大小限制，依身分類別決定必附項目",

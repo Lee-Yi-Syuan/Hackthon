@@ -118,10 +118,11 @@ function renderApply(){
       echo("pid","格式看起來不太對，請確認一次。",true); return; }
     if(r === false){ fieldErr("pid","檢查碼不符，請再核對一次號碼。");
       echo("pid","這組號碼的檢查碼不符，您是不是打錯了？",true); return; }
-    fieldErr("pid", r.hsinchu ? "" : "本計畫限設籍新竹市（身分證字號 O 開頭）。展示模式仍可繼續填寫。");
-    done.pid = v; done.city = r.city; done.sex = r.sex;
-    if (!$("f-hrCity").value) { $("f-hrCity").value = r.city; onCity("hr"); }
-    echo("pid","身分核驗完成。您設籍在"+r.city+"、"+r.sex+"，我一併記下了。");
+    /* 不以首碼判定資格，也不據以自動填入戶籍縣市——
+       首碼是初次設籍地，遷籍後不會變更，自動帶入會誤導遷入者。 */
+    fieldErr("pid", "");
+    done.pid = v; done.firstCity = r.firstCity; done.sex = r.sex;
+    echo("pid","身分核驗完成。這組號碼是在"+r.firstCity+"初次設籍的，"+r.sex+"，我一併記下了。");
   });
 
   $("f-bday").addEventListener("change", function(e){
@@ -293,10 +294,10 @@ function buildRecap(){
     return "<div><span>"+esc(r[0])+"</span>"+esc(r[1])+"</div>"; }).join("");
 
   var lines = [];
-  if (d.pid && done.city) {
-    lines.push("而最後那句「您設籍在"+esc(done.city)+"、"+esc(done.sex)
-      +"」，不是我猜的。那組號碼的第一個字母就是戶籍地，第二碼就是性別。"
-      +"您以為只填了一個欄位，它讀到的是一整組資訊。");
+  if (d.pid && done.firstCity) {
+    lines.push("而最後那句「這組號碼是在"+esc(done.firstCity)+"初次設籍的、"+esc(done.sex)
+      +"」，不是我猜的。那組號碼的第一個字母就是您出生後首次申報戶口的縣市，"
+      +"第二碼就是性別。您以為只填了一個欄位，它讀到的是一整組連您自己都沒想過會洩漏的資訊。");
   }
   if (f("a-id") && f("a-bank")) {
     lines.push("<b>而您剛剛還上傳了身分證正反面和存摺封面。</b>"
@@ -389,7 +390,7 @@ function submitCase(d){
     name:d.name, age:d.bdayRaw ? ageOf(d.bdayRaw) : null, bday:d.bdayRaw,
     phone:d.phone, mail:d.mail,
     pidMask: d.pid ? d.pid.slice(0,4)+"******" : "",
-    city: done.city || "", hsinchu: !!(d.pid && d.pid[0] === "O"),
+    firstCity: done.firstCity || "", hsinchu: d.hrCity === "新竹市",
     addr: d.hrCity ? d.hrCity + d.hrDist + d.hrAddr : "",
     mailAddr: d.same ? "同戶籍地址" : (d.mlCity + d.mlDist + d.mlAddr),
     idType:d.idType, scheme:d.scheme, func:d.func,
@@ -403,7 +404,7 @@ function submitCase(d){
   /* 送出後由系統呼叫外部介接，結果回填自動審核面板 */
   Promise.all([
     API.verifyInvoice({sw:d.sw, amt:d.amt, pdate:d.pdate}),
-    API.verifyHousehold(d.pid),
+    API.verifyHousehold(d.pid, d.hrCity),
     API.checkDuplicate(d.pid),
     d.idType === "general" ? Promise.resolve(null) : API.verifyLowIncome(d.pid, d.idType)
   ]).then(function(r){

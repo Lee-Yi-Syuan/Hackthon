@@ -76,13 +76,19 @@ var API = {
   },
 
   /* 戶政資料介接 — 內政部戶政司，限機關以 T-Road 申請，不對外開放。
-     原型改以身分證字號首碼與檢查碼本機推算替代。 */
-  verifyHousehold: function(pid){
-    this.log.household = { live:false, note:"限機關介接，改以檢查碼本機推算" };
+     這是唯一能權威認定「現在是否設籍新竹市」的來源。
+     身分證字號首碼只代表初次設籍地，遷籍後不會變更，不可用於資格判定；
+     未介接前暫以申請人填寫的戶籍地址替代，並由承辦人員核對戶籍謄本。 */
+  verifyHousehold: function(pid, hrCity){
+    this.log.household = { live:false, note:"限機關介接，暫以填寫的戶籍地址替代" };
     var r = checkPid(pid);
     return delay(480).then(function(){
-      return { ok:true, src:"mock", valid: !!(r && r.hsinchu), city: r ? r.city : "",
-               reason: !r ? "身分證字號無效" : (r.hsinchu ? "" : "戶籍地非新竹市") };
+      return { ok:true, src:"mock",
+               valid: hrCity === "新竹市",
+               city: hrCity || "",
+               firstCity: r ? r.firstCity : "",
+               reason: !r ? "身分證字號無效"
+                     : (hrCity === "新竹市" ? "" : "戶籍地址非新竹市") };
     });
   },
 
