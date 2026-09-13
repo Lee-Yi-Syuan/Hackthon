@@ -1,0 +1,33 @@
+# 確認 index.html 與 src/ 一致。
+#
+# index.html 是 build.py 的產物，但它有被提交進版本控制（部署要用）。
+# 如果有人改了 src/ 卻忘記重新 build，部署出去的就是舊版——這個
+# workflow 會在推送時擋下來。
+
+name: 檢查 index.html 是否為最新
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 比對 index.html 與 src/
+        run: python build.py --check
+
+      - name: 若不一致，說明怎麼修
+        if: failure()
+        run: |
+          echo "::error::index.html 與 src/ 不一致。"
+          echo "你可能改了 src/ 但忘記重新組合。請在本機執行："
+          echo "    python build.py"
+          echo "然後把變更後的 index.html 一起提交。"

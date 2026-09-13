@@ -1,0 +1,20 @@
+# Cloudflare Pages 回應標頭設定
+# 參考 https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+
+# 內容安全政策（預設不啟用）
+#
+# 本頁把 CSS 與 JS 都內嵌在單一 HTML 檔裡，所以 style-src 與 script-src
+# 需要 'unsafe-inline'；JS 也會直接寫 element.style（進度條寬度等），
+# 那受 style-src-attr 管轄。
+#
+# 要啟用就把下面那行前面的 # 拿掉，部署後務必實際點過一輪，
+# 特別是 ⚙ API 頁的「實際試連」與各階段的進度條。
+# 若 DevTools 主控台出現 CSP 違規訊息，把被擋的來源補進對應指示詞。
+#
+#  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src 'self' https://open.er-api.com; img-src 'self' data:; base-uri 'none'; form-action 'none'
