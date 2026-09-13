@@ -1,0 +1,74 @@
+<!-- ══════════ ④ 核銷 ══════════ -->
+<section class="view" id="v-checklist" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ④ ／ 五</span>
+      <h1>新竹市青年 AI 工具資安檢核清單</h1>
+      <p class="lede">核銷必填。12 項，全數達標才能送出請款。</p>
+    </div>
+
+    <div class="callout">
+      <span class="t">這份清單為什麼不是打勾就好</span>
+      <p>打勾的清單，所有人都會全部打勾。所以這裡的每一項都要求<b>可勾稽的佐證</b>——答出設定的實際位置、填入您查到的數值，或附上設定畫面截圖。答錯不會退件，會告訴您正確答案，改完再送。</p>
+      <p><b>目的是把人教會，不是把人刷掉。</b></p>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label for="toolPick">您以本次補助款購買的 AI 工具
+          <span class="sub">依核銷發票品項選擇，清單會依工具給出實際設定路徑</span></label>
+        <select id="toolPick">
+          <option value="">請選擇</option>
+          <option value="chatgpt">ChatGPT（OpenAI）</option>
+          <option value="gemini">Gemini（Google）</option>
+          <option value="claude">Claude（Anthropic）</option>
+          <option value="copilot">Microsoft Copilot</option>
+          <option value="midjourney">Midjourney</option>
+          <option value="other">其他 AI 工具</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="meter" id="chkMeter" style="display:none">
+      <div class="top"><span class="lbl">檢核完成度</span><span class="n" id="chkN">0 / 12</span></div>
+      <div class="track"><i class="fill" id="chkBar"></i></div>
+      <span class="hint" id="chkHint">尚未開始。</span>
+    </div>
+
+    <div class="stack m" id="chkList"></div>
+
+    <div class="card stack m" id="chkGate" style="display:none">
+      <div class="stack s">
+        <h3 id="gateT">尚未達標，無法送出核銷</h3>
+        <p class="small" id="gateP">請完成上方所有項目。每一項都可以重答，答錯會附上正確做法。</p>
+      </div>
+      <div class="btnrow">
+        <button class="btn pri" id="chkSubmit" type="button" disabled>送出核銷申請</button>
+        <button class="btn sec" id="printDecl" type="button" style="display:none">列印檢核聲明書</button>
+      </div>
+    </div>
+
+    <div class="decl" id="decl">
+      <div class="dh">
+        <h3>新竹市青年 AI 工具資安檢核聲明書</h3>
+        <div class="m">AI 領航青年數位工具補助計畫 ｜ 核銷附件 ｜ <span id="dCase"></span></div>
+      </div>
+      <dl>
+        <dt>申請人</dt><dd id="dName"></dd>
+        <dt>補助工具</dt><dd id="dTool"></dd>
+        <dt>檢核結果</dt><dd id="dScore"></dd>
+        <dt>資安素養徽章</dt><dd id="dBadge"></dd>
+      </dl>
+      <div id="dItems"></div>
+      <div class="sig">
+        本人確認以上 12 項檢核內容均屬實，並已就所使用之 AI 工具完成前述設定。<br>
+        如因不實聲明致生資料外洩或第三人權益受損，本人願負相關責任。<br><br>
+        申請人簽章：______________　　日期：<span id="dDate"></span><br>
+        承辦人員核章：______________　　複核：______________
+      </div>
+    </div>
+  </div>
+</section>
+
+

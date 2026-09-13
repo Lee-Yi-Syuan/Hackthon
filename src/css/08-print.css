@@ -1,0 +1,22 @@
+/* ══ 列印 ══ */
+@media print{
+  @page{size:A4 portrait;margin:9mm}
+  :root{--surface:#fff;--ground:#fff;--ink:#000;--ink-2:#333;--ink-3:#555;
+    --rule:#999;--rule-2:#bbb;--sunken:#f4f4f4;--accent:#000;--accent-soft:#eee}
+  body{background:#fff;color:#000;font-size:10.5px}
+  .appbar,.rail,.btnrow,.toast,.skip,#veil,#term,#modal,.noprint{display:none!important}
+  .view{padding:0} .col{max-width:none;padding:0}
+  .sheetdoc,.decl{border:0;padding:0;box-shadow:none}
+  .grid2{gap:12px}
+  .sheetdoc h1{font-size:23px} .sheetdoc .dochd{padding-bottom:8px;margin-bottom:12px}
+  .block > .bh{font-size:12px;margin-bottom:7px}
+  .rule-i .t{font-size:11px} .rule-i .d{font-size:9.6px;line-height:1.5}
+  .rule-i .n{width:16px;height:16px;font-size:9px}
+  .xlist li{font-size:10.2px;padding:4px 0 4px 18px} .xlist .sm{font-size:9.2px}
+  table{font-size:9.5px} th,td{padding:4px 6px}
+  .evt{padding:7px 9px} .evt .t{font-size:10.5px} .evt .d{font-size:9.4px;line-height:1.55}
+  .sos ol{font-size:9.8px;line-height:1.65}
+  .docfoot{margin-top:8px;padding-top:8px} .docfoot .l{font-size:9.4px} .docfoot .r{font-size:8.6px}
+  .stack.l{gap:14px} .stack.xl{gap:18px} .stack.m{gap:10px}
+  a{color:#000;text-decoration:none}
+}

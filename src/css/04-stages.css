@@ -1,0 +1,81 @@
+/* ── 帳號卡（LINE） ── */
+.acct{display:flex;gap:12px;align-items:flex-start;background:var(--surface);
+  border:1px solid var(--rule);border-radius:var(--r);padding:14px 15px;cursor:pointer;
+  width:100%;text-align:left;font:inherit;color:inherit;transition:border-color .15s,background .15s}
+.acct:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.acct .ph{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:#06C755;color:#04250F;
+  display:grid;place-items:center;font-size:13px;font-weight:700}
+.acct .ph.grey{background:var(--ink-3);color:var(--surface)}
+.acct .in{flex:1;min-width:0}
+.acct .nm{font-weight:700;font-size:15px;line-height:1.45;display:flex;gap:6px;align-items:center;
+  flex-wrap:wrap}
+.acct .id{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:2px}
+.acct .fr{font-size:12.5px;color:var(--ink-3);margin-top:4px;line-height:1.6}
+
+.scope{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border:1px solid var(--rule);
+  border-left:3px solid var(--rule);border-radius:0 var(--r) var(--r) 0;font-size:14px;
+  background:var(--surface);line-height:1.6}
+.scope .mk{flex-shrink:0;font-family:var(--mono);font-weight:700;font-size:13px;margin-top:2px}
+.scope.y{border-left-color:var(--ok-line)} .scope.y .mk{color:var(--ok)}
+.scope.n{border-left-color:var(--alert-line);background:var(--alert-soft)} .scope.n .mk{color:var(--alert)}
+.scope .sd{display:block;font-size:12.5px;color:var(--ink-3);margin-top:3px;line-height:1.65}
+
+/* ── 手機推播預覽 ── */
+.phone{max-width:320px;margin:0 auto;border:1px solid var(--rule);border-radius:16px;
+  background:#0B0E13;padding:13px 11px 17px;box-shadow:var(--shadow-lg)}
+.phone .bar{font-family:var(--mono);font-size:10px;color:#7A8393;display:flex;
+  justify-content:space-between;padding:0 5px 9px}
+.push{background:#F4F5F8;color:#111620;border-radius:11px;padding:10px 12px;margin-bottom:7px;
+  font-size:12.5px;line-height:1.65;opacity:0;transform:translateY(-6px);
+  transition:opacity .35s,transform .35s}
+.push.on{opacity:1;transform:none}
+.push .hd{display:flex;align-items:center;gap:6px;font-size:10px;color:#767E8D;
+  font-family:var(--mono);margin-bottom:4px}
+.push .dot{width:12px;height:12px;border-radius:3px;background:#06C755;flex-shrink:0}
+.push b{display:block;margin-bottom:2px;color:#111620}
+
+/* ── 徽章 ── */
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:480px){ .badges{grid-template-columns:1fr} }
+.badge{border:1px solid var(--rule);background:var(--surface);border-radius:var(--r);
+  padding:15px 13px;text-align:center;opacity:.4;filter:grayscale(1);transition:opacity .35s,filter .35s}
+.badge.earned{opacity:1;filter:none}
+.badge .ic{font-size:27px;line-height:1;margin-bottom:7px}
+.badge .nm{font-weight:700;font-size:14.5px;font-family:var(--serif)}
+.badge .rq{font-size:11.5px;color:var(--ink-3);margin-top:4px;line-height:1.6}
+.badge.earned.b3{border-color:var(--warn-line);border-top:3px solid var(--warn-line)}
+.badge.earned.b2{border-color:var(--ink-3);border-top:3px solid var(--ink-3)}
+.badge.earned.b1{border-color:#A9703F;border-top:3px solid #A9703F}
+
+/* ── 階段卡（首頁） ── */
+.stagecard{display:flex;gap:14px;align-items:flex-start;background:var(--surface);
+  border:1px solid var(--rule);border-radius:var(--r);padding:17px 18px;cursor:pointer;
+  width:100%;text-align:left;font:inherit;color:inherit;transition:border-color .15s,transform .15s}
+.stagecard:hover{border-color:var(--accent);transform:translateX(2px)}
+.stagecard .n{flex-shrink:0;width:33px;height:33px;border-radius:50%;background:var(--accent);
+  color:var(--accent-ink);display:grid;place-items:center;font-family:var(--mono);font-size:14px;
+  font-weight:700}
+.stagecard.done .n{background:var(--ok);color:var(--surface)}
+.stagecard .x{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.stagecard .t{font-family:var(--serif);font-weight:700;font-size:16.5px;line-height:1.4}
+.stagecard .d{font-size:13.5px;color:var(--ink-2);line-height:1.75}
+
+/* ── 微課程 ── */
+.mc{border:1px solid var(--rule);border-left:3px solid var(--rule);background:var(--surface);
+  border-radius:0 var(--r) var(--r) 0;overflow:hidden}
+.mc.read{border-left-color:var(--ok-line)}
+.mc > .hd{display:flex;gap:11px;align-items:center;padding:14px 16px;width:100%;background:none;
+  border:0;font:inherit;text-align:left;cursor:pointer;color:inherit}
+.mc > .hd:hover{background:var(--surface-2)}
+.mc .ix{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);border:1px solid var(--rule);
+  border-radius:2px;padding:2px 6px;flex-shrink:0}
+.mc.read .ix{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-line)}
+.mc .ti{flex:1;font-weight:700;font-size:14.5px;line-height:1.5}
+.mc .sec{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);flex-shrink:0}
+.mc .bd{display:none;padding:0 16px 17px;flex-direction:column;gap:11px}
+.mc.open .bd{display:flex}
+.mc .bd p{font-size:14px;color:var(--ink-2);line-height:1.8}
+.incident{border-left:3px solid var(--warn-line);background:var(--warn-soft);color:var(--warn);
+  padding:11px 13px;font-size:13px;line-height:1.8;border-radius:0 var(--r) var(--r) 0}
+.incident b{color:var(--warn)}
+

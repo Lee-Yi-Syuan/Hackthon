@@ -1,0 +1,35 @@
+/* ── 黑幕 + 終端機 ── */
+#veil{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:60;
+  transition:opacity .5s ease-in}
+#veil.on{opacity:1;pointer-events:auto}
+#term{position:fixed;inset:0;z-index:65;display:none;padding:9vh 7vw;overflow:hidden;
+  font-family:var(--mono);font-size:13.5px;line-height:2;color:var(--term);
+  text-shadow:0 0 12px rgba(87,224,142,.32)}
+#term.on{display:block}
+#term .ln{opacity:0;animation:tin .18s forwards}
+@keyframes tin{to{opacity:1}}
+#term .dim{color:var(--term-dim)} #term .hit{color:var(--term-hit)}
+#term.bad{color:var(--term-bad);text-shadow:0 0 14px rgba(255,107,88,.4);animation:shk .34s 2}
+@keyframes shk{0%,100%{transform:none}25%{transform:translate(-5px,2px)}
+  50%{transform:translate(4px,-3px)}75%{transform:translate(-3px,-1px)}}
+@media (max-width:430px){ #term{font-size:11px;padding:7vh 5vw;line-height:1.95} }
+
+#modal{position:fixed;inset:0;z-index:70;display:none;overflow-y:auto;padding:22px 16px 50px}
+#modal.on{display:block}
+.sheet{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--alert-line);
+  border-radius:var(--r);max-width:540px;margin:0 auto;padding:26px 25px;box-shadow:var(--shadow-lg);
+  opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s;
+  display:flex;flex-direction:column;gap:13px}
+@media (min-height:780px){ .sheet{margin-top:5vh} }
+@media (max-width:480px){ .sheet{padding:21px 17px} }
+.sheet.on{opacity:1;transform:none}
+.sheet h2{color:var(--alert);font-size:21px}
+.sheet p{font-size:14.5px;line-height:1.8;color:var(--ink-2)}
+.recap{background:var(--sunken);border:1px solid var(--rule-2);border-radius:var(--r);
+  padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.95}
+.recap div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recap span{color:var(--ink-3);display:inline-block;min-width:6.5em}
+.divide{border-top:1px solid var(--rule);padding-top:14px;display:flex;flex-direction:column;gap:5px}
+.divide .t{font-weight:700;font-size:14.5px}
+.divide p{font-size:14px;margin-bottom:8px}
+

@@ -1,0 +1,83 @@
+<!-- ══════════ ③ 審核 ══════════ -->
+<section class="view" id="v-review" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ③ ／ 五</span>
+      <h1>審核進度</h1>
+      <p class="lede">案件審查中。這段等待時間，我們拿來做一件事。</p>
+    </div>
+
+    <div class="card"><ol class="tl" id="reviewTl"></ol></div>
+
+    <div class="callout">
+      <span class="t">為什麼進度可以標到這麼細</span>
+      <p>因為前三關不是人工看的。設籍、年齡、重複申請由系統自動勾稽，承辦人員只處理系統標紅的案子——
+        <button class="btn sec sm" id="adminJump" type="button" style="margin-left:2px">看承辦端的做法</button></p>
+    </div>
+
+    <div class="stack m">
+      <div class="stack s">
+        <h2>等待期 AI 安全微課程</h2>
+        <p class="lede">五則，每則約 30 秒。全部讀完可取得<b>銅牌資安素養徽章</b>，核銷時的檢核清單會輕鬆很多。</p>
+      </div>
+
+      <div class="meter">
+        <div class="top"><span class="lbl">微課程進度</span><span class="n" id="mcN">0 / 5</span></div>
+        <div class="track"><i class="fill" id="mcBar"></i></div>
+        <span class="hint" id="mcHint">點開任一則即視為讀畢。</span>
+      </div>
+
+      <div class="stack s" id="mcList"></div>
+
+      <div class="callout ok" id="mcDone" style="display:none">
+        <span class="t">五則都讀完了 — 銅牌徽章已入帳</span>
+        <p>這五件事就是核銷檢核清單的主幹。</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="t">一頁式圖卡：AI 安全使用懶人包</span>
+      <p>上面五則的濃縮版，加上四起真實事件摘要，設計成可列印的 A4 一頁——給不會點進系統的人、給工作坊當講義、給里辦公處貼公布欄。</p>
+      <div class="btnrow" style="margin-top:4px">
+        <button class="btn sec" data-go="#/guide" type="button">開啟懶人包圖卡</button>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="stack m" id="adminSec">
+      <div class="stack s">
+        <h2>承辦人員檢視</h2>
+        <p class="lede">同一筆案件在市府端長什麼樣。這一段回應的是「如何有效率辦理審核、核銷與撥款追蹤」。</p>
+      </div>
+      <div class="btnrow"><button class="btn sec" id="adminBtn" type="button">展開承辦端後台（示意）</button></div>
+
+      <div class="stack m" id="adminBox" style="display:none">
+        <div class="callout">
+          <span class="t">自動勾稽，人工只看例外</span>
+          <p>四項自動比對：<b>設籍</b>（串接戶政資料介接服務）、<b>年齡</b>（由出生年月日計算 18–40）、<b>重複申請</b>（同一身分證字號跨年度比對）、<b>發票真偽</b>（串接財政部電子發票整合服務平台查驗）。四項全綠自動進入文件審查；任一項紅燈才派給承辦人員。</p>
+        </div>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>案號</th><th>申請人</th><th>設籍</th><th>年齡</th><th>重複</th><th>發票</th><th>檢核</th><th>狀態</th></tr></thead>
+            <tbody id="adminRows"></tbody>
+          </table>
+        </div>
+        <div class="callout bad">
+          <span class="t">紅燈案件的處理</span>
+          <p><b>YC-2026-3317</b>：發票查驗不符——上傳的是訂閱制工具的「續訂預繳」憑證，跨越補助期間。系統自動退回並附可補件說明，不佔用承辦人員時間。</p>
+          <p><b>YC-2026-5520</b>：檢核清單未通過——購買的是境外 AI 服務，但第 4 項「已關閉資料訓練授權」未提供佐證。系統自動發 LINE 推播請其補做設定，而不是直接退件。<b>這是關鍵設計：檢核清單的目的是把人教會，不是把人刷掉。</b></p>
+        </div>
+        <div class="callout ok">
+          <span class="t">撥款進度也是同一套</span>
+          <p>核銷通過後自動排入主計作業批次，每次狀態變動同步推播 LINE。申請人不必打電話問「我的錢什麼時候下來」——這類詢問正是青年補助案最大宗的行政負擔。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnrow"><button class="btn pri" data-go="#/checklist" type="button">前往 ④ 核銷資安檢核</button></div>
+  </div>
+</section>
+
+

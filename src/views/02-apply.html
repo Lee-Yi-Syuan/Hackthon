@@ -1,0 +1,257 @@
+<!-- ══════════ ① 申請 ══════════ -->
+<section class="view" id="v-apply" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ① ／ 五</span>
+      <h1>補助申請</h1>
+      <p class="lede">請依序填寫，系統會即時協助您確認資料。</p>
+    </div>
+
+    <div class="callout">
+      <span class="t">填寫前，先讓您知道</span>
+      <p>本申請表導入互動式填寫體驗。系統會即時回應您填寫的內容，並在過程中出現<b>一次畫面變化與提醒視窗</b>——那是設計的一部分，不是系統異常，您已填的資料不會遺失。</p>
+      <p>所有即時回應都在您的裝置上完成，不會額外傳送。您填寫的資料僅用於本次申請的審查與撥款，依個人資料保護法保管。</p>
+    </div>
+
+    <div class="assist"><div class="av">AI</div>
+      <div class="tx" id="assistTx"><b>申辦小幫手</b>　這次的表單由我陪您填寫。每填完一欄我會即時確認，有問題我會馬上告訴您。</div></div>
+
+    <div class="callout warn" id="banner" style="display:none">
+      <p>提醒：您在本表單填寫的資料受個人資料保護法規範，市府負有蒐集告知與保管責任。<b>在一般 AI 對話工具中則沒有這層保障。</b></p>
+    </div>
+
+    <form id="form" autocomplete="on" novalidate class="stack l">
+
+      <!-- 一、申請人基本資料 -->
+      <fieldset>
+        <legend>一、申請人基本資料</legend>
+        <p class="small" style="margin-top:-8px">本段資料用於身分核驗與補助撥款。<span class="chip a">自動審核</span></p>
+
+        <div class="field">
+          <label for="f-name">申請人姓名</label>
+          <input type="text" id="f-name" name="name" autocomplete="name" placeholder="請填寫身分證上的姓名">
+          <div class="err" id="e-name-err"></div>
+          <div class="echo" id="e-name"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-phone">聯絡電話</label>
+          <input type="tel" id="f-phone" name="tel" autocomplete="tel" inputmode="numeric"
+                 placeholder="0912345678 或 03-5216121" maxlength="15">
+          <div class="err" id="e-phone-err"></div>
+          <div class="echo" id="e-phone"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-pid">身分證字號 <span class="sub">核驗設籍資格用，本計畫限設籍新竹市</span></label>
+          <input type="text" id="f-pid" name="pid" maxlength="10" autocomplete="off" spellcheck="false"
+                 placeholder="O123456789" style="font-family:var(--mono);text-transform:uppercase">
+          <div class="err" id="e-pid-err"></div>
+          <div class="echo" id="e-pid"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-bday">出生日期 <span class="sub">本計畫限 18 至 40 歲</span></label>
+          <input type="date" id="f-bday" name="bday">
+          <div class="err" id="e-bday-err"></div>
+          <div class="echo" id="e-bday"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-mail">電子郵件 <span class="sub">用於寄送審查通知</span></label>
+          <input type="email" id="f-mail" name="email" autocomplete="email" placeholder="you@example.com">
+          <div class="err" id="e-mail-err"></div>
+          <div class="echo" id="e-mail"></div>
+        </div>
+      </fieldset>
+
+      <!-- 二、地址 -->
+      <fieldset>
+        <legend>二、戶籍與通訊地址</legend>
+        <p class="small" style="margin-top:-8px">戶籍地址須為新竹市，並與身分證字號首碼相符。<span class="chip a">自動審核</span></p>
+
+        <div class="field">
+          <label for="f-hrCity">戶籍地址 — 縣市</label>
+          <select id="f-hrCity"><option value="">請選擇</option></select>
+          <div class="err" id="e-hrCity-err"></div>
+        </div>
+        <div class="field">
+          <label for="f-hrDist">戶籍地址 — 行政區</label>
+          <input type="text" id="f-hrDist" list="dl-hrDist" placeholder="例：東區" autocomplete="off">
+          <datalist id="dl-hrDist"></datalist>
+          <div class="err" id="e-hrDist-err"></div>
+        </div>
+        <div class="field">
+          <label for="f-hrAddr">戶籍地址 — 詳細地址</label>
+          <input type="text" id="f-hrAddr" placeholder="例：中央路 100 號 5 樓" autocomplete="street-address">
+          <div class="err" id="e-hrAddr-err"></div>
+          <div class="echo" id="e-hrAddr"></div>
+        </div>
+
+        <label class="opt" for="f-same" style="margin-top:2px">
+          <input type="checkbox" id="f-same" checked>
+          <span>通訊地址同戶籍地址</span>
+        </label>
+
+        <div class="stack m" id="mailAddrBox" style="display:none">
+          <div class="field">
+            <label for="f-mlCity">通訊地址 — 縣市</label>
+            <select id="f-mlCity"><option value="">請選擇</option></select>
+            <div class="err" id="e-mlCity-err"></div>
+          </div>
+          <div class="field">
+            <label for="f-mlDist">通訊地址 — 行政區</label>
+            <input type="text" id="f-mlDist" list="dl-mlDist" placeholder="例：竹北市" autocomplete="off">
+            <datalist id="dl-mlDist"></datalist>
+            <div class="err" id="e-mlDist-err"></div>
+          </div>
+          <div class="field">
+            <label for="f-mlAddr">通訊地址 — 詳細地址</label>
+            <input type="text" id="f-mlAddr" placeholder="例：光明六路 20 號">
+            <div class="err" id="e-mlAddr-err"></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 三、申請身分類別 -->
+      <fieldset>
+        <legend>三、申請身分類別</legend>
+        <p class="small" style="margin-top:-8px">影響補助比率與上限，選擇特定對象須檢附證明。</p>
+        <div class="field">
+          <label for="f-idType">申請身分類別</label>
+          <select id="f-idType">
+            <option value="general">一般青年 — 補助 50%，每人上限 3,000 元</option>
+            <option value="low">低收入戶 — 補助 90%，每人上限 6,000 元</option>
+            <option value="midlow">中低收入戶 — 補助 90%，每人上限 6,000 元</option>
+          </select>
+          <div class="echo" id="e-idType"></div>
+        </div>
+      </fieldset>
+
+      <!-- 四、購買工具 -->
+      <fieldset>
+        <legend>四、購買工具資訊</legend>
+        <p class="small" style="margin-top:-8px">依購買憑證填寫，金額換算將自動試算。<span class="chip a">自動審核</span></p>
+
+        <div class="field">
+          <label for="f-scheme">繳費制度</label>
+          <select id="f-scheme">
+            <option value="">請選擇</option>
+            <option value="sub">訂閱制（按月／按年續訂）</option>
+            <option value="once">買斷制（一次付清永久授權）</option>
+            <option value="credit">點數／額度制（儲值後扣抵）</option>
+          </select>
+          <div class="err" id="e-scheme-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-func">功能類別</label>
+          <select id="f-func">
+            <option value="">請選擇</option>
+            <option>影像創作</option><option>影音編輯</option>
+            <option>文字與生產力</option><option>程式開發輔助</option>
+            <option>語音與音訊</option><option>簡報與設計</option><option>其他數位生產力工具</option>
+          </select>
+          <div class="err" id="e-func-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-sw">軟體名稱</label>
+          <input type="text" id="f-sw" list="dl-sw" placeholder="例：ChatGPT Plus" autocomplete="off">
+          <datalist id="dl-sw">
+            <option value="ChatGPT Plus"></option><option value="ChatGPT Team"></option>
+            <option value="Google Gemini Advanced"></option><option value="Claude Pro"></option>
+            <option value="Microsoft 365 Copilot"></option><option value="Midjourney"></option>
+            <option value="Adobe Firefly"></option><option value="CapCut Pro"></option>
+            <option value="Canva Pro"></option><option value="Notion AI"></option>
+          </datalist>
+          <div class="err" id="e-sw-err"></div>
+          <div class="echo" id="e-sw"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-vendor">軟體公司名稱</label>
+          <input type="text" id="f-vendor" placeholder="例：OpenAI, L.L.C.">
+          <div class="err" id="e-vendor-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-pdate">購買日期 <span class="sub">須落在補助期間內</span></label>
+          <input type="date" id="f-pdate">
+          <div class="err" id="e-pdate-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-pmethod">付款方式</label>
+          <select id="f-pmethod">
+            <option value="">請選擇</option>
+            <option>信用卡</option><option>金融卡（Debit）</option>
+            <option>轉帳匯款</option><option>電子支付</option><option>現金</option>
+          </select>
+          <div class="err" id="e-pmethod-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-cur">原始幣別</label>
+          <select id="f-cur">
+            <option value="TWD">TWD 新臺幣</option><option value="USD">USD 美元</option>
+            <option value="EUR">EUR 歐元</option><option value="JPY">JPY 日圓</option>
+            <option value="CNY">CNY 人民幣</option><option value="GBP">GBP 英鎊</option>
+            <option value="HKD">HKD 港幣</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-amt">原始費用</label>
+          <input type="number" id="f-amt" min="0" step="0.01" inputmode="decimal" placeholder="例：20">
+          <div class="err" id="e-amt-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-twd">換算新臺幣金額
+            <span class="sub">依購買日臺灣銀行牌告匯率自動換算，可手動修正</span></label>
+          <input type="number" id="f-twd" min="0" step="1" inputmode="numeric" placeholder="自動帶入">
+          <div class="err" id="e-twd-err"></div>
+          <div class="echo" id="e-twd"></div>
+        </div>
+      </fieldset>
+
+      <!-- 五、憑證檢核 -->
+      <fieldset>
+        <legend>五、憑證檢核項目確認</legend>
+        <p class="small" style="margin-top:-8px">請逐項對照您的購買憑證。五項皆須符合才能受理。</p>
+        <div class="stack s" id="voucherList"></div>
+        <div class="err" id="e-voucher-err"></div>
+      </fieldset>
+
+      <!-- 六、附件 -->
+      <fieldset>
+        <legend>六、附件上傳</legend>
+        <p class="small" style="margin-top:-8px">
+          接受 JPG／PNG／PDF，單檔 10MB 以內。<b>本原型不會上傳任何檔案</b>，僅在您的瀏覽器讀取檔名與大小做格式檢查。</p>
+        <div class="stack s" id="attachList"></div>
+        <div class="err" id="e-attach-err"></div>
+      </fieldset>
+
+      <!-- 自動審核結果 -->
+      <div class="card stack m" id="auditCard">
+        <div class="stack s">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+            <h3 style="margin:0">自動審核結果</h3>
+            <span class="mono" style="font-size:12px;color:var(--ink-3)" id="auditCount">—</span>
+          </div>
+          <p class="small">這些項目在您按送出之前就判定完成，承辦人員只會看到系統標紅的案子。
+            <button class="btn sec sm" type="button" data-go="#/apidocs" style="margin-left:4px">看 API 介接說明</button></p>
+        </div>
+        <div class="stack s" id="auditList"></div>
+      </div>
+
+      <div class="btnrow">
+        <button type="button" class="btn pri" id="submitBtn">送出申請</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+

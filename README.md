@@ -82,10 +82,56 @@
 - 承辦端後台為硬編示意資料，尚未接上實際的自動審核結果
 - 附件上傳、匯率換算等互動尚未完整實測
 
+## 開發
+
+原始碼拆在 `src/` 底下，發佈前用 `build.py` 組回單一的 `app.html`。
+
+```bash
+python build.py           # 組合 src/ → app.html
+python build.py --check   # 只比對，確認 app.html 與 src/ 一致
+```
+
+> **改東西請改 `src/` 底下的檔案，不要直接改 `app.html`** — 它是產物，下次 build 會被整個覆蓋。
+
+### 為什麼要拆
+
+線上展示需要單一 HTML 檔（無建置流程、無相依套件、雙擊就能開），但一個三千行的檔案沒辦法多人同時改，每次合併都會衝突。拆開之後各自改各自的檔案，發佈時再組回去。
+
+CSS 與 JS 都會併進單一標籤，維持原本的全域作用域與函式提升行為，所以組出來的結果與手寫單檔完全等價。
+
+### 多人協作
+
+- 各自開 branch，改完發 PR
+- **`app.html` 衝突時不要手動解**，直接 `python build.py` 覆蓋即可（它是產物，不是原始碼）
+- 組合順序由檔名的數字前綴決定，新增區塊照編號插進去
+
 ## 檔案
 
 ```
-app.html                      全部功能（單檔）
+app.html                      產物：組合後的單檔（勿直接編輯）
+build.py                      組合腳本
+src/
+  head.html                   標題與字型載入
+  css/    01-tokens           設計權杖與深色模式
+          02-base             基礎排版、頁首、階段軌
+          03-components       按鈕、卡片、表單、時間軸、量表
+          04-stages           帳號卡、推播預覽、徽章、微課程
+          05-overlays         黑幕、終端機、彈窗
+          06-doc              懶人包與聲明書
+          07-audit-attach     自動審核列、附件
+          08-print            列印樣式
+  views/  00-shell            頁首與階段軌
+          01-home ~ 08-apidocs  八個畫面
+          09-overlays         覆蓋層
+  js/     01-state            localStorage、helpers、主題
+          02-router           路由與階段軌
+          03-stage-home       總覽與重置
+          04-pid              身分證字號檢查碼、年齡
+          05-data-districts   22 縣市 368 鄉鎮市區
+          06-api              API 介接層
+          07-audit            17 條自動審核規則
+          08~13-stage-*       各階段畫面邏輯
+          14-boot             啟動
 115年梅竹黑客松競賽題目.pdf    題目原始檔
 ```
 

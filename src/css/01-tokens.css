@@ -1,0 +1,53 @@
+
+/* ══════════════════════════════════════════════════════════════
+   新竹市青年 AI 工具補助 ｜ 全流程資安宣導
+   單檔原型 · 不連線 · 不上傳
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 設計權杖：淺色為基準 ── */
+:root{
+  --ground:#F1F2F5; --surface:#FFFFFF; --surface-2:#E9EBF0; --sunken:#E4E7ED;
+  --ink:#111620; --ink-2:#454D5C; --ink-3:#767E8D;
+  --rule:#C7CBD5; --rule-2:#DCDFE6;
+  --accent:#1B4FA8; --accent-ink:#FFFFFF; --accent-soft:#E5ECF8; --accent-line:#1B4FA8;
+  --ok:#136B56; --ok-soft:#E0EFEB; --ok-line:#136B56;
+  --warn:#8F5A0E; --warn-soft:#FAEFDB; --warn-line:#B4741A;
+  --alert:#AB3325; --alert-soft:#FAE8E5; --alert-line:#AB3325;
+  --term-bg:#05070A; --term:#57E08E; --term-dim:#2C6F4B; --term-hit:#FFCE5C; --term-bad:#FF6B58;
+  --shadow:0 1px 2px rgba(17,22,32,.05), 0 8px 24px rgba(17,22,32,.06);
+  --shadow-lg:0 24px 60px rgba(17,22,32,.28);
+
+  --serif:"Noto Serif TC",Georgia,"PingFang TC","Microsoft JhengHei",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+
+  --col:660px;
+  --r:4px;
+}
+
+/* ── 深色：僅覆寫權杖 ── */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
+    --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
+    --rule:#2B323D; --rule-2:#222834;
+    --accent:#7AA4EC; --accent-ink:#0B0E13; --accent-soft:#182233; --accent-line:#7AA4EC;
+    --ok:#4FC2A1; --ok-soft:#10241F; --ok-line:#4FC2A1;
+    --warn:#DCA75C; --warn-soft:#241B0F; --warn-line:#DCA75C;
+    --alert:#E8806F; --alert-soft:#2A1513; --alert-line:#E8806F;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
+  --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
+  --rule:#2B323D; --rule-2:#222834;
+  --accent:#7AA4EC; --accent-ink:#0B0E13; --accent-soft:#182233; --accent-line:#7AA4EC;
+  --ok:#4FC2A1; --ok-soft:#10241F; --ok-line:#4FC2A1;
+  --warn:#DCA75C; --warn-soft:#241B0F; --warn-line:#DCA75C;
+  --alert:#E8806F; --alert-soft:#2A1513; --alert-line:#E8806F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+}
+

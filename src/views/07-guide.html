@@ -1,0 +1,129 @@
+<!-- ══════════ 懶人包 ══════════ -->
+<section class="view" id="v-guide" tabindex="-1">
+  <div class="col wide stack m">
+
+    <div class="btnrow noprint">
+      <button class="btn pri" id="printGuide" type="button">列印 ／ 另存 PDF（A4 一頁）</button>
+      <button class="btn sec" data-go="#/" type="button">回流程總覽</button>
+    </div>
+
+    <div class="sheetdoc">
+      <div class="dochd">
+        <span class="eyebrow">新竹市政府青年發展中心 ｜ AI 領航青年數位工具補助計畫</span>
+        <h1>AI 安全使用懶人包</h1>
+        <p class="small">五條守則、五類紅線、四起真實事件。花三分鐘看完，比外洩後花三個月處理划算。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="stack l">
+
+          <div class="block">
+            <div class="bh">五條守則</div>
+            <div class="stack s">
+              <div class="rule-i"><span class="n">1</span><div>
+                <div class="t">先關掉「用我的內容改善模型」</div>
+                <div class="d">多數 AI 服務<b>預設是開的</b>。被吸收進模型權重的資料刪不掉——刪對話、刪帳號都沒用。這是唯一必須現在就做的設定。</div></div></div>
+              <div class="rule-i"><span class="n">2</span><div>
+                <div class="t">分清楚「在給誰」，不是「能不能給」</div>
+                <div class="d">政府申請系統、銀行、醫院有法律依據、有蒐集告知、您可要求查詢與刪除——該給就給。對話框裡的 AI 三樣都沒有——能不給就不給。</div></div></div>
+              <div class="rule-i"><span class="n">3</span><div>
+                <div class="t">分享連結 ＝ 公開網頁</div>
+                <div class="d">沒有密碼、沒有到期日，拿到網址的人都看得到。用完就去設定裡撤銷；能複製文字就不要給連結。</div></div></div>
+              <div class="rule-i"><span class="n">4</span><div>
+                <div class="t">上傳前先刪掉個資欄位，截圖也算上傳</div>
+                <div class="d">姓名、電話、地址、身分證號全部刪掉，要區分個體就用 A001、A002。截圖前先看一眼分頁標題和側邊欄有沒有客戶名稱。</div></div></div>
+              <div class="rule-i"><span class="n">5</span><div>
+                <div class="t">處理客戶或公司資料，要用有合約的版本</div>
+                <div class="d">下單前問三件事：會不會拿去訓練？資料留多久？存在哪一國、適用哪一國法律。個人版通常三個答案都不利。</div></div></div>
+            </div>
+          </div>
+
+          <div class="block r">
+            <div class="bh">五類紅線：永遠不要貼進對話框</div>
+            <ul class="xlist">
+              <li><b>身分證字號、護照號碼</b><span class="sm">前兩碼就洩漏戶籍地與性別，配上其他資訊足以拼出一個完整的人。</span></li>
+              <li><b>金融資訊</b><span class="sm">帳號、信用卡號、存摺影本、報稅資料。</span></li>
+              <li><b>醫療與健保紀錄</b><span class="sm">屬個資法特種個資，外洩責任更重。</span></li>
+              <li><b>他人的個資</b><span class="sm">客戶名單、學生名冊、員工資料。外洩的是別人的個資，責任在您身上——這一項最常被忽略。</span></li>
+              <li><b>公司未公開資訊</b><span class="sm">原始碼、報價、合約、內部簡報、尚未發表的設計。</span></li>
+            </ul>
+          </div>
+
+          <div class="block w">
+            <div class="bh">30 秒關掉訓練授權</div>
+            <div class="tbl"><table>
+              <thead><tr><th>工具</th><th>設定路徑（介面可能隨版本調整）</th></tr></thead>
+              <tbody>
+                <tr><td><b>ChatGPT</b></td><td><code>設定 → 資料控管 → 改善所有人的模型</code> 關閉</td></tr>
+                <tr><td><b>Gemini</b></td><td><code>設定 → Gemini 應用程式活動記錄</code> 關閉</td></tr>
+                <tr><td><b>Claude</b></td><td>預設不以對話訓練模型；仍請至 <code>設定 → 隱私</code> 確認</td></tr>
+                <tr><td><b>Copilot</b></td><td>先分清版本：公司帳號的 M365 Copilot 受租用戶合約保護；個人版於 <code>隱私權設定 → 模型訓練</code></td></tr>
+                <tr><td><b>Midjourney</b></td><td>基本方案作品<b>預設公開</b>於社群頁面，需含 Stealth Mode 的方案才非公開</td></tr>
+                <tr><td><b>其他</b></td><td>找不到這個選項，就當作「會訓練」，不要拿它處理他人資料</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <div class="stack l">
+
+          <div class="block w">
+            <div class="bh">四起真實事件：這些不是假設</div>
+            <div class="stack s">
+              <div class="evt">
+                <div class="dt">2023.03</div>
+                <div class="t">ChatGPT 讓使用者看見別人的對話</div>
+                <div class="d">所使用的開源函式庫 redis-py 出現錯誤，部分使用者在自己介面上看到<b>其他人的對話標題</b>。OpenAI 後續確認約 1.2% 的 Plus 使用者，其姓名、電子郵件與信用卡末四碼曾短暫可被他人看見。</div>
+                <span class="l">→ 您做對了所有設定，服務商的一個 bug 仍會讓資料曝光。最根本的防線是一開始就不要放進去。</span>
+              </div>
+              <div class="evt">
+                <div class="dt">2023.04</div>
+                <div class="t">三星員工把原始碼貼進 ChatGPT</div>
+                <div class="d">半導體部門員工為了除錯與整理會議記錄，將內部原始碼貼入 ChatGPT，短期內發生三起。三星隨後全面限制員工在公司裝置上使用生成式 AI。</div>
+                <span class="l">→ 沒有人是惡意的，他們只是想把工作做快一點。這正是最危險的地方。</span>
+              </div>
+              <div class="evt">
+                <div class="dt">2023.11</div>
+                <div class="t">研究者用「重複單字」誘出訓練資料</div>
+                <div class="d">Google DeepMind 等團隊發表攻擊手法：讓 ChatGPT 不斷重複某個單字，模型會「發散」並吐出訓練資料原文，其中包含真實姓名、電子郵件與電話號碼。</div>
+                <span class="l">→ 這證明了訓練資料是可以被誘出的，不是存進去就安全。</span>
+              </div>
+              <div class="evt">
+                <div class="dt">2025.08</div>
+                <div class="t">私人對話被 Google 搜尋到</div>
+                <div class="d">OpenAI 緊急下架 ChatGPT 一項「讓分享的對話可被搜尋引擎檢索」的選項——大量使用者的私人對話被索引後可公開搜尋。官方稱該功能造成使用者意外分享的機會過高。</div>
+                <span class="l">→ 使用者以為分享給一個人，實際上分享給了整個網際網路。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="bh">已經貼下去了怎麼辦</div>
+            <div class="sos">
+              <ol>
+                <li><b>刪對話、刪上傳的檔案</b>，並到分享連結管理頁撤銷所有連結。</li>
+                <li><b>關掉訓練授權</b>——即使已經來不及，也能阻止後續的輸入繼續被吸收。</li>
+                <li><b>評估外洩的是誰的資料</b>。若含他人個資，依個資法評估是否須通知當事人；涉及公司資料請立即告知主管或資安窗口。</li>
+                <li><b>換掉可換的</b>：密碼、API 金鑰、存取權杖一律重新產生。身分證字號換不掉，所以第 2 條守則才那麼重要。</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="bh">拿了補助，您就是這件事的示範者</div>
+            <p class="small">新竹市是全國第一個補助青年購買 AI 工具的城市。如果補助款買來的工具造成您自己、您的雇主或客戶資料外洩，這筆補助就成了傷害。</p>
+            <p class="small" style="margin-top:9px">完成核銷檢核清單可取得<b>銀牌資安素養徽章</b>（次年度免重填前 6 項）；參加實體工作坊或種子講師培訓可取得<b>金牌</b>（次年度優先審查，並得列入市府種子講師名冊支領鐘點費）。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="docfoot">
+        <div class="l"><b>新竹市政府青年發展中心</b>　LINE 官方帳號 <b>@youthhsinchu</b>（綠盾認證帳號）<br>
+          加好友前請先確認盾牌顏色——<b>灰盾（一般帳號）任何人都能申請</b>。官方帳號永遠不會在 LINE 上跟您要存摺、密碼或手機驗證碼。</div>
+        <div class="r">AI 領航青年數位工具補助計畫<br>資安宣導文件　YC-SEC-01<br>
+          事件摘要引自各案公開報導<br>請以各服務最新公告為準</div>
+      </div>
+    </div>
+  </div>
+</section>
+

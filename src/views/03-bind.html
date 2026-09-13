@@ -1,0 +1,101 @@
+<!-- ══════════ ② 綁定 ══════════ -->
+<section class="view" id="v-bind" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ② ／ 五</span>
+      <h1>綁定進度通知</h1>
+      <p class="lede">綁定官方 LINE 帳號，審核、核銷與撥款進度會主動推播給您，不必回來刷網頁。</p>
+    </div>
+
+    <div class="callout ok"><span class="t">案件已收件</span><p id="recvLine"></p></div>
+
+    <!-- 步驟 1 -->
+    <div class="stack m" id="b-s1">
+      <div class="assist"><div class="av">AI</div>
+        <div class="tx"><b>申辦小幫手</b>　請在 LINE 搜尋「新竹青年」加入官方帳號。下面是搜尋會跑出來的結果——<b>請選出真正的官方帳號</b>。</div></div>
+
+      <div class="stack s">
+        <h3>LINE 搜尋結果：「新竹青年」</h3>
+        <p class="small">三個看起來都很像。選錯的話，接下來的補助通知就會來自別人。</p>
+      </div>
+
+      <div class="stack s" id="acctList"></div>
+      <div class="fb" id="b-fb"></div>
+    </div>
+
+    <!-- 步驟 2 -->
+    <div class="stack l" id="b-s2" style="display:none">
+      <div class="callout ok">
+        <span class="t">選對了：@youthhsinchu，綠盾認證帳號</span>
+        <p>綠盾（認證帳號）必須通過 LINE 對企業或政府機關的身分審查才拿得到；<b>灰盾（一般帳號）任何人填個資料就能開</b>。冒用者能模仿名稱、大頭貼、簡介，唯獨模仿不了盾牌。</p>
+      </div>
+
+      <div class="stack s">
+        <h2>授權範圍確認</h2>
+        <p class="lede">加好友之後，這個帳號要求存取以下項目。請確認——這一步多數人會直接按同意。</p>
+      </div>
+
+      <div class="card stack m">
+        <div class="stack s">
+          <span style="font-weight:700;font-size:15px">@youthhsinchu 要求的權限</span>
+          <p class="small">共 2 項。這就是「最小權限原則」該有的樣子。</p>
+        </div>
+        <div class="stack s">
+          <div class="scope y"><span class="mk">✓</span><div><b>傳送訊息給您</b>
+            <span class="sd">用途：推播審核結果、核銷期限與撥款完成通知。這是您綁定的目的。</span></div></div>
+          <div class="scope y"><span class="mk">✓</span><div><b>您的顯示名稱與大頭貼</b>
+            <span class="sd">用途：讓承辦人員在客服對話中確認是本人。不含手機號碼與聊天內容。</span></div></div>
+        </div>
+
+        <hr class="sep">
+
+        <div class="stack s">
+          <span style="font-weight:700;font-size:15px">它<span style="color:var(--alert)">沒有</span>要求，也不該要求</span>
+          <p class="small">若有任何帳號或 AI 外掛跟您要下面這些，直接關掉。</p>
+        </div>
+        <div class="stack s">
+          <div class="scope n"><span class="mk">✕</span><div><b>讀取您的好友清單與群組</b>
+            <span class="sd">補助審核完全用不到。拿到手就是一份可轉賣的社交關係圖。</span></div></div>
+          <div class="scope n"><span class="mk">✕</span><div><b>讀取聊天記錄</b>
+            <span class="sd">您和家人、客戶、公司的對話會一起被帶走，包含裡面的個資與商業資訊。</span></div></div>
+          <div class="scope n"><span class="mk">✕</span><div><b>存取通訊錄與位置資訊</b>
+            <span class="sd">補助案不需要知道您人在哪、認識誰。</span></div></div>
+          <div class="scope n"><span class="mk">✕</span><div><b>代您發送訊息</b>
+            <span class="sd">最危險的一項。帳號被接管後，詐騙訊息會以「您」的名義發給所有好友。</span></div></div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="t">把這個習慣帶去用 AI 工具</span>
+        <p>您之後用補助款買的 AI 外掛、瀏覽器擴充功能、自動化連接器，安裝時跳的就是同一種授權畫面。問題永遠是同一個：<b>它要這項權限，是為了做它答應您的事，還是為了別的？</b></p>
+        <p>一個「幫你摘要網頁」的外掛不需要讀取你所有分頁；一個「幫你寫文案」的工具不需要存取你雲端硬碟的全部檔案。</p>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn pri" id="agreeBtn" type="button">同意這 2 項，完成綁定</button>
+        <button class="btn sec" id="backAcctBtn" type="button">回上一步重看</button>
+      </div>
+    </div>
+
+    <!-- 步驟 3 -->
+    <div class="stack l" id="b-s3" style="display:none">
+      <div class="callout ok"><span class="t">綁定完成</span>
+        <p>之後每一個進度都會推播到您的 LINE。以下為通知示意。</p></div>
+
+      <div class="phone">
+        <div class="bar"><span>LINE</span><span id="clk"></span></div>
+        <div id="pushes"></div>
+      </div>
+
+      <div class="callout">
+        <span class="t">為什麼補助案要走 LINE</span>
+        <p>青年族群不會為了查一個補助進度去記一組系統帳密。把進度通知放在他們本來就在用的介面上，回訪率才有意義——<b>而資安宣導也就跟著進了同一個介面</b>：每次推播進度，順帶推一則 30 秒能讀完的 AI 安全提醒，比辦一次講座觸及得久。</p>
+      </div>
+
+      <div class="btnrow"><button class="btn pri" data-go="#/review" type="button">前往 ③ 查看審核進度</button></div>
+    </div>
+  </div>
+</section>
+
+

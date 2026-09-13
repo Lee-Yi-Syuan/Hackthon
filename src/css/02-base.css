@@ -1,0 +1,72 @@
+/* ══ 基礎 ══ */
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.col{max-width:var(--col);margin:0 auto;padding:0 20px}
+.col.wide{max-width:940px}
+
+h1,h2,h3{font-family:var(--serif);font-weight:700;text-wrap:balance;margin:0}
+h1{font-size:clamp(25px,5.2vw,33px);line-height:1.28;letter-spacing:-.01em}
+h2{font-size:clamp(20px,3.6vw,24px);line-height:1.35}
+h3{font-size:17px;line-height:1.45}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3)}
+.lede{font-size:16.5px;color:var(--ink-2);line-height:1.8}
+.small{font-size:13.5px;color:var(--ink-3);line-height:1.75}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+b,strong{font-weight:700;color:var(--ink)}
+
+/* 垂直節奏交給 flex gap */
+.stack{display:flex;flex-direction:column}
+.stack.s{gap:10px} .stack.m{gap:18px} .stack.l{gap:28px} .stack.xl{gap:40px}
+
+/* ══ 頁首 ══ */
+.appbar{position:sticky;top:0;z-index:30;background:var(--surface);
+  border-bottom:1px solid var(--rule);}
+.appbar .in{max-width:940px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;
+  gap:12px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;min-width:0;text-decoration:none;color:inherit}
+.crest{width:26px;height:26px;flex-shrink:0;border-radius:3px;background:var(--accent);
+  color:var(--accent-ink);display:grid;place-items:center;font-family:var(--serif);
+  font-size:14px;font-weight:700;line-height:1}
+.brand .nm{font-size:12.5px;line-height:1.35;color:var(--ink-2);min-width:0}
+.brand .nm b{display:block;font-size:13.5px;color:var(--ink);font-weight:700}
+.appbar .rt{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.caseno{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+@media (max-width:560px){ .caseno{display:none} }
+.iconbtn{width:32px;height:32px;border:1px solid var(--rule);background:var(--surface);
+  color:var(--ink-2);border-radius:var(--r);cursor:pointer;display:grid;place-items:center;
+  font-size:14px;line-height:1;padding:0}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+
+/* ── 階段軌 ── */
+.rail{background:var(--surface);border-bottom:1px solid var(--rule);overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail .in{max-width:940px;margin:0 auto;padding:0 20px;display:flex;min-width:max-content}
+.rail button{flex:1 0 auto;min-width:92px;background:none;border:0;border-bottom:2px solid transparent;
+  padding:10px 12px 8px;font:inherit;font-size:12.5px;color:var(--ink-3);cursor:pointer;
+  display:flex;align-items:center;gap:6px;justify-content:center;white-space:nowrap}
+.rail button:hover{color:var(--ink);background:var(--surface-2)}
+.rail button[aria-current="step"]{color:var(--accent);border-bottom-color:var(--accent-line);
+  font-weight:700}
+.rail .pip{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--rule);
+  display:grid;place-items:center;font-family:var(--mono);font-size:9.5px;flex-shrink:0;
+  color:var(--ink-3)}
+.rail button[aria-current="step"] .pip{border-color:var(--accent);background:var(--accent);
+  color:var(--accent-ink)}
+.rail button.done .pip{border-color:var(--ok);background:var(--ok);color:var(--surface)}
+.rail button.done{color:var(--ok)}
+
+/* ══ 視圖切換 ══ */
+.view{display:none;padding:26px 0 80px}
+.view.on{display:block;animation:vin .24s ease both}
+@keyframes vin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+

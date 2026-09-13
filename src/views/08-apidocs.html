@@ -1,0 +1,63 @@
+<!-- ══════════ API 介接說明 ══════════ -->
+<section class="view" id="v-apidocs" tabindex="-1">
+  <div class="col wide stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">技術附錄</span>
+      <h1>API 介接與自動審核</h1>
+      <p class="lede">哪些欄位機器自己判得掉、哪些要串外部系統、哪些非人看不可。這一頁是給承辦單位資訊科與評審看的。</p>
+    </div>
+
+    <div class="callout">
+      <span class="t">六組裡，兩組已經處理掉了</span>
+      <p><b>匯率</b>改接 open.er-api.com——免金鑰、有 CORS，前端可直連，現在就在運作。<b>行政區</b>乾脆不用 API：22 縣市 368 個鄉鎮市區直接內建，零延遲、離線可用，比呼叫外部服務可靠。</p>
+      <p>剩下四組<b>本質上不可能從前端連</b>：發票查驗的 <code>appID</code> 與 LINE 的 <code>channel_secret</code> 屬於機密，一放進前端就等於公開；戶政與社會救助則限機關以 T-Road 申請，不對外開放。這四組必須由市府端的後端實作。</p>
+    </div>
+
+    <div class="callout warn">
+      <span class="t">在這個分享連結上，連匯率也會被擋</span>
+      <p>本頁若以沙箱化的網頁環境開啟，內容安全政策會<b>封鎖所有對外請求</b>，匯率會連線失敗並自動退回內建示意值——這是預期行為，不是壞掉。自行架站後即可實際連通。按上面的「實際試連」可以當場看到是哪一種情況。</p>
+    </div>
+
+    <div class="stack m">
+      <div class="stack s">
+        <h2>實際試連</h2>
+        <p class="lede">不用相信上面那段話。按下去，它會真的發出請求，回報這個環境下的實際結果。</p>
+      </div>
+      <div class="btnrow"><button class="btn pri" id="probeBtn" type="button">實際試連一次</button></div>
+      <div class="stack s" id="probeOut"></div>
+    </div>
+
+    <div class="stack m">
+      <h2>六組外部介接</h2>
+      <div class="stack s" id="apiList"></div>
+    </div>
+
+    <div class="stack m">
+      <h2>自動審核規則清單</h2>
+      <p class="lede">共 <span id="ruleTotal"></span> 條。<b>本機即時</b>在使用者按送出前就判完，<b>API 介接</b>於送出後由系統呼叫，<b>人工審查</b>才派給承辦人員。</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>#</th><th>審核項目</th><th>判定方式</th><th>依據</th></tr></thead>
+          <tbody id="ruleRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="t">為什麼這樣切分</span>
+      <p>格式、範圍、一致性這類判斷不需要人。把它們擋在送出之前，申請人當場就能改，不必等三天收到退件通知再重來一次——<b>退件率下降，行政量能才有餘裕去辦工作坊</b>。</p>
+      <p>真正需要人的只剩一件事：這個工具的用途，跟他寫的計畫是否相稱。那才是承辦人員該花時間的地方。</p>
+    </div>
+
+    <div class="callout ok">
+      <span class="t">上線所需的後端代理</span>
+      <p>臺銀匯率與國土測繪中心行政區皆無 CORS 標頭，發票與戶政介接則涉及機密金鑰，四者都需要一層自家後端。實作上是四條路徑：<code>/api/bot-rates</code>、<code>/api/districts</code>、<code>/api/einvoice/verify</code>、<code>/api/household/verify</code>，各自轉發並快取即可。</p>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn sec" data-go="#/" type="button">回流程總覽</button>
+      <button class="btn sec" data-go="#/apply" type="button">回 ① 申請看實際運作</button>
+    </div>
+  </div>
+</section>

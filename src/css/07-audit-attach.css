@@ -1,0 +1,44 @@
+/* ── 自動審核列 ── */
+.auditrow{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--rule-2);
+  border-radius:var(--r);background:var(--surface)}
+.auditrow .chip{flex-shrink:0;margin-top:1px}
+.ar-x{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ar-l{font-weight:700;font-size:13.5px;line-height:1.5}
+.ar-m{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+
+/* ── 附件 ── */
+.attach{border:1px solid var(--rule);border-radius:var(--r);padding:12px 14px;background:var(--surface);
+  display:flex;flex-direction:column;gap:7px;transition:opacity .2s}
+.at-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.at-n{font-weight:700;font-size:14.5px}
+.at-hint{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+
+/* ── API 文件表 ── */
+.apirow{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);
+  padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.apirow .an{font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.apirow .ae{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--sunken);
+  border:1px solid var(--rule-2);border-radius:3px;padding:7px 9px;overflow-x:auto;white-space:pre-wrap;
+  word-break:break-all;line-height:1.65}
+.apirow .ad{font-size:13px;color:var(--ink-2);line-height:1.7}
+
+hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
+.dl-list{margin:0;display:flex;flex-direction:column;gap:13px}
+.dl-list dt{font-weight:700;font-size:14.5px;line-height:1.5}
+.dl-list dd{margin:3px 0 0;font-size:13.5px;color:var(--ink-2);line-height:1.75}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);z-index:80;
+  background:var(--ink);color:var(--ground);padding:11px 18px;border-radius:var(--r);
+  font-size:14px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent);color:var(--accent-ink);
+  padding:10px 16px;z-index:100;border-radius:0 0 var(--r) 0}
+.skip:focus{left:0}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important;
+    animation-iteration-count:1!important}
+}
+
