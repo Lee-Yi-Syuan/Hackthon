@@ -1,0 +1,3141 @@
+<title>資安無慮</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   新竹市青年 AI 工具補助 ｜ 全流程資安宣導
+   單檔原型 · 不連線 · 不上傳
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 設計權杖：淺色為基準 ── */
+:root{
+  --ground:#F1F2F5; --surface:#FFFFFF; --surface-2:#E9EBF0; --sunken:#E4E7ED;
+  --ink:#111620; --ink-2:#454D5C; --ink-3:#767E8D;
+  --rule:#C7CBD5; --rule-2:#DCDFE6;
+  --accent:#1B4FA8; --accent-ink:#FFFFFF; --accent-soft:#E5ECF8; --accent-line:#1B4FA8;
+  --ok:#136B56; --ok-soft:#E0EFEB; --ok-line:#136B56;
+  --warn:#8F5A0E; --warn-soft:#FAEFDB; --warn-line:#B4741A;
+  --alert:#AB3325; --alert-soft:#FAE8E5; --alert-line:#AB3325;
+  --term-bg:#05070A; --term:#57E08E; --term-dim:#2C6F4B; --term-hit:#FFCE5C; --term-bad:#FF6B58;
+  --shadow:0 1px 2px rgba(17,22,32,.05), 0 8px 24px rgba(17,22,32,.06);
+  --shadow-lg:0 24px 60px rgba(17,22,32,.28);
+
+  --serif:"Noto Serif TC",Georgia,"PingFang TC","Microsoft JhengHei",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+
+  --col:660px;
+  --r:4px;
+}
+
+/* ── 深色：僅覆寫權杖 ── */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
+    --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
+    --rule:#2B323D; --rule-2:#222834;
+    --accent:#7AA4EC; --accent-ink:#0B0E13; --accent-soft:#182233; --accent-line:#7AA4EC;
+    --ok:#4FC2A1; --ok-soft:#10241F; --ok-line:#4FC2A1;
+    --warn:#DCA75C; --warn-soft:#241B0F; --warn-line:#DCA75C;
+    --alert:#E8806F; --alert-soft:#2A1513; --alert-line:#E8806F;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
+  --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
+  --rule:#2B323D; --rule-2:#222834;
+  --accent:#7AA4EC; --accent-ink:#0B0E13; --accent-soft:#182233; --accent-line:#7AA4EC;
+  --ok:#4FC2A1; --ok-soft:#10241F; --ok-line:#4FC2A1;
+  --warn:#DCA75C; --warn-soft:#241B0F; --warn-line:#DCA75C;
+  --alert:#E8806F; --alert-soft:#2A1513; --alert-line:#E8806F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+}
+
+/* ══ 基礎 ══ */
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.col{max-width:var(--col);margin:0 auto;padding:0 20px}
+.col.wide{max-width:940px}
+
+h1,h2,h3{font-family:var(--serif);font-weight:700;text-wrap:balance;margin:0}
+h1{font-size:clamp(25px,5.2vw,33px);line-height:1.28;letter-spacing:-.01em}
+h2{font-size:clamp(20px,3.6vw,24px);line-height:1.35}
+h3{font-size:17px;line-height:1.45}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3)}
+.lede{font-size:16.5px;color:var(--ink-2);line-height:1.8}
+.small{font-size:13.5px;color:var(--ink-3);line-height:1.75}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+b,strong{font-weight:700;color:var(--ink)}
+
+/* 垂直節奏交給 flex gap */
+.stack{display:flex;flex-direction:column}
+.stack.s{gap:10px} .stack.m{gap:18px} .stack.l{gap:28px} .stack.xl{gap:40px}
+
+/* ══ 頁首 ══ */
+.appbar{position:sticky;top:0;z-index:30;background:var(--surface);
+  border-bottom:1px solid var(--rule);}
+.appbar .in{max-width:940px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;
+  gap:12px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;min-width:0;text-decoration:none;color:inherit}
+.crest{width:26px;height:26px;flex-shrink:0;border-radius:3px;background:var(--accent);
+  color:var(--accent-ink);display:grid;place-items:center;font-family:var(--serif);
+  font-size:14px;font-weight:700;line-height:1}
+.brand .nm{font-size:12.5px;line-height:1.35;color:var(--ink-2);min-width:0}
+.brand .nm b{display:block;font-size:13.5px;color:var(--ink);font-weight:700}
+.appbar .rt{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.caseno{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+@media (max-width:560px){ .caseno{display:none} }
+.iconbtn{width:32px;height:32px;border:1px solid var(--rule);background:var(--surface);
+  color:var(--ink-2);border-radius:var(--r);cursor:pointer;display:grid;place-items:center;
+  font-size:14px;line-height:1;padding:0}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+
+/* ── 階段軌 ── */
+.rail{background:var(--surface);border-bottom:1px solid var(--rule);overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail .in{max-width:940px;margin:0 auto;padding:0 20px;display:flex;min-width:max-content}
+.rail button{flex:1 0 auto;min-width:92px;background:none;border:0;border-bottom:2px solid transparent;
+  padding:10px 12px 8px;font:inherit;font-size:12.5px;color:var(--ink-3);cursor:pointer;
+  display:flex;align-items:center;gap:6px;justify-content:center;white-space:nowrap}
+.rail button:hover{color:var(--ink);background:var(--surface-2)}
+.rail button[aria-current="step"]{color:var(--accent);border-bottom-color:var(--accent-line);
+  font-weight:700}
+.rail .pip{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--rule);
+  display:grid;place-items:center;font-family:var(--mono);font-size:9.5px;flex-shrink:0;
+  color:var(--ink-3)}
+.rail button[aria-current="step"] .pip{border-color:var(--accent);background:var(--accent);
+  color:var(--accent-ink)}
+.rail button.done .pip{border-color:var(--ok);background:var(--ok);color:var(--surface)}
+.rail button.done{color:var(--ok)}
+
+/* ══ 視圖切換 ══ */
+.view{display:none;padding:26px 0 80px}
+.view.on{display:block;animation:vin .24s ease both}
+@keyframes vin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ══ 元件 ══ */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);
+  padding:20px 22px;box-shadow:var(--shadow)}
+@media (max-width:520px){ .card{padding:17px 16px} }
+
+.callout{border:1px solid var(--rule);border-left:3px solid var(--accent-line);
+  background:var(--surface);border-radius:0 var(--r) var(--r) 0;padding:15px 17px;
+  display:flex;flex-direction:column;gap:7px}
+.callout .t{font-weight:700;font-size:15px;line-height:1.5}
+.callout p{font-size:14px;color:var(--ink-2);line-height:1.78}
+.callout.ok{border-left-color:var(--ok-line);background:var(--ok-soft)}
+.callout.ok .t{color:var(--ok)}
+.callout.warn{border-left-color:var(--warn-line);background:var(--warn-soft)}
+.callout.warn .t{color:var(--warn)}
+.callout.bad{border-left-color:var(--alert-line);background:var(--alert-soft)}
+.callout.bad .t{color:var(--alert)}
+
+.chip{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;
+  padding:2px 7px;border-radius:2px;border:1px solid var(--rule);color:var(--ink-3);
+  background:var(--surface);white-space:nowrap}
+.chip.a{border-color:var(--accent-line);color:var(--accent);background:var(--accent-soft)}
+.chip.g{border-color:var(--ok-line);color:var(--ok);background:var(--ok-soft)}
+.chip.r{border-color:var(--alert-line);color:var(--alert);background:var(--alert-soft)}
+.chip.w{border-color:var(--warn-line);color:var(--warn);background:var(--warn-soft)}
+
+/* ── 按鈕 ── */
+.btn{font:inherit;font-size:15px;font-weight:500;padding:12px 20px;border-radius:var(--r);
+  border:1px solid transparent;cursor:pointer;text-decoration:none;display:inline-flex;
+  align-items:center;justify-content:center;gap:7px;line-height:1.3;text-align:center;
+  transition:background .15s,border-color .15s,opacity .15s}
+.btn.pri{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn.pri:hover{opacity:.88}
+.btn.sec{background:var(--surface);color:var(--ink);border-color:var(--rule)}
+.btn.sec:hover{background:var(--surface-2)}
+.btn.sm{padding:8px 14px;font-size:13.5px}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btnrow .btn{flex:1 1 auto;min-width:165px}
+
+/* ── 表單 ── */
+.field{display:flex;flex-direction:column;gap:6px}
+.field > label{font-weight:700;font-size:14.5px;line-height:1.5}
+.field .sub{font-size:12.5px;color:var(--ink-3);font-weight:400;line-height:1.6}
+.field input,.field select{width:100%;padding:12px 13px;font:inherit;font-size:16px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:var(--r)}
+.field input::placeholder{color:var(--ink-3)}
+.field input:focus,.field select:focus{outline:2px solid var(--accent);outline-offset:-1px;
+  border-color:var(--accent)}
+.field input[aria-invalid="true"]{border-color:var(--alert-line);background:var(--alert-soft)}
+.err{font-size:13px;color:var(--alert);display:none;line-height:1.6}
+.err.on{display:block}
+
+/* AI 小幫手即時回應 */
+.echo{font-size:13.5px;color:var(--accent);display:flex;gap:7px;align-items:flex-start;
+  opacity:0;transform:translateY(-3px);transition:opacity .3s,transform .3s;line-height:1.65}
+.echo.on{opacity:1;transform:none}
+.echo.warn{color:var(--alert)}
+.echo .b{font-family:var(--mono);font-size:9.5px;border:1px solid var(--rule);border-radius:2px;
+  padding:1px 4px;flex-shrink:0;margin-top:3px;color:var(--ink-3)}
+
+.assist{display:flex;gap:11px;align-items:flex-start;background:var(--accent-soft);
+  border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px}
+.assist .av{width:29px;height:29px;flex-shrink:0;border-radius:50%;background:var(--accent);
+  color:var(--accent-ink);display:grid;place-items:center;font-size:11px;font-weight:700;
+  font-family:var(--mono)}
+.assist .tx{font-size:14px;color:var(--ink-2);line-height:1.75}
+
+fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:18px}
+legend{font-family:var(--serif);font-weight:700;font-size:17px;padding:0;margin-bottom:2px}
+
+/* ── 時間軸 ── */
+.tl{list-style:none;padding:0;margin:0}
+.tl li{position:relative;padding:0 0 20px 28px;border-left:2px solid var(--rule-2);margin-left:7px}
+.tl li:last-child{border-left-color:transparent;padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:-8px;top:3px;width:14px;height:14px;
+  border-radius:50%;background:var(--surface);border:2px solid var(--rule)}
+.tl li.done{border-left-color:var(--ok)}
+.tl li.done::before{background:var(--ok);border-color:var(--ok)}
+.tl li.now::before{background:var(--accent);border-color:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-soft)}
+.tl .k{font-weight:700;font-size:15px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.tl .d{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:1px}
+.tl .m{font-size:13.5px;color:var(--ink-2);margin-top:3px;line-height:1.7}
+
+/* ── 進度量表 ── */
+.meter{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);
+  padding:15px 17px;display:flex;flex-direction:column;gap:9px}
+.meter .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.meter .lbl{font-weight:700;font-size:14.5px}
+.meter .n{font-family:var(--mono);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.meter .track{height:7px;background:var(--sunken);border-radius:4px;overflow:hidden}
+.meter .fill{display:block;height:100%;width:0;background:var(--alert);border-radius:4px;
+  transition:width .45s ease,background .45s}
+.meter .fill.mid{background:var(--warn-line)}
+.meter .fill.hi{background:var(--ok)}
+.meter .hint{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+
+/* ── 檢核項 ── */
+.item{border:1px solid var(--rule);border-left:3px solid var(--rule);background:var(--surface);
+  border-radius:0 var(--r) var(--r) 0;overflow:hidden}
+.item.pass{border-left-color:var(--ok-line)}
+.item.fail{border-left-color:var(--alert-line)}
+.item > .hd{display:flex;gap:11px;padding:14px 16px;align-items:flex-start;width:100%;
+  background:none;border:0;font:inherit;text-align:left;cursor:pointer;color:inherit}
+.item > .hd:hover{background:var(--surface-2)}
+.item .ix{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);flex-shrink:0;
+  border:1px solid var(--rule);border-radius:2px;padding:2px 5px;margin-top:2px}
+.item.pass .ix{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-line)}
+.item .qz{flex:1;min-width:0}
+.item .q{font-weight:700;font-size:14.5px;line-height:1.55}
+.item .why{display:block;font-weight:400;font-size:12.5px;color:var(--ink-3);margin-top:3px;
+  line-height:1.65}
+.item .stt{flex-shrink:0;margin-top:2px}
+.item .bd{display:none;padding:15px 16px 17px;border-top:1px solid var(--rule-2);
+  flex-direction:column;gap:11px}
+.item.open .bd{display:flex}
+
+.opt{display:flex;gap:9px;align-items:flex-start;padding:11px 13px;border:1px solid var(--rule);
+  border-radius:var(--r);cursor:pointer;font-size:14.5px;line-height:1.6;background:var(--surface)}
+.opt:hover{background:var(--surface-2)}
+.opt input{margin:4px 0 0;flex-shrink:0;accent-color:var(--accent)}
+.opt.picked{border-color:var(--accent);background:var(--accent-soft)}
+
+.path{background:var(--sunken);border:1px solid var(--rule-2);border-radius:var(--r);
+  padding:12px 14px;font-size:13px;line-height:1.85}
+.path .t{font-weight:700;font-size:13px;margin-bottom:4px;color:var(--ink)}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface);border:1px solid var(--rule-2);
+  border-radius:2px;padding:1px 4px;color:var(--ink)}
+.path code{background:var(--surface)}
+
+.fb{font-size:13.5px;padding:11px 13px;border-radius:var(--r);display:none;line-height:1.75}
+.fb.on{display:block}
+.fb.ok{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok-line)}
+.fb.no{background:var(--alert-soft);color:var(--alert);border:1px solid var(--alert-line)}
+.fb b{color:inherit}
+
+.inline-in{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.inline-in input{width:120px;padding:10px 12px;font:inherit;font-size:15px;border:1px solid var(--rule);
+  border-radius:var(--r);background:var(--surface);color:var(--ink)}
+.inline-in .u{font-size:14px;color:var(--ink-3)}
+
+.filepick{display:flex;gap:9px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.filepick input[type=file]{font:inherit;font-size:13px;max-width:100%;color:var(--ink-2)}
+.filepick .nm{font-family:var(--mono);font-size:12px;color:var(--ok)}
+
+/* ── 表格 ── */
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule-2);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--sunken);font-size:12px;color:var(--ink-2);font-weight:700;white-space:nowrap}
+td.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tr.hl{background:var(--accent-soft)}
+tr.tot td{font-weight:700;background:var(--sunken)}
+
+/* ── 帳號卡（LINE） ── */
+.acct{display:flex;gap:12px;align-items:flex-start;background:var(--surface);
+  border:1px solid var(--rule);border-radius:var(--r);padding:14px 15px;cursor:pointer;
+  width:100%;text-align:left;font:inherit;color:inherit;transition:border-color .15s,background .15s}
+.acct:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.acct .ph{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:#06C755;color:#04250F;
+  display:grid;place-items:center;font-size:13px;font-weight:700}
+.acct .ph.grey{background:var(--ink-3);color:var(--surface)}
+.acct .in{flex:1;min-width:0}
+.acct .nm{font-weight:700;font-size:15px;line-height:1.45;display:flex;gap:6px;align-items:center;
+  flex-wrap:wrap}
+.acct .id{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:2px}
+.acct .fr{font-size:12.5px;color:var(--ink-3);margin-top:4px;line-height:1.6}
+
+.scope{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border:1px solid var(--rule);
+  border-left:3px solid var(--rule);border-radius:0 var(--r) var(--r) 0;font-size:14px;
+  background:var(--surface);line-height:1.6}
+.scope .mk{flex-shrink:0;font-family:var(--mono);font-weight:700;font-size:13px;margin-top:2px}
+.scope.y{border-left-color:var(--ok-line)} .scope.y .mk{color:var(--ok)}
+.scope.n{border-left-color:var(--alert-line);background:var(--alert-soft)} .scope.n .mk{color:var(--alert)}
+.scope .sd{display:block;font-size:12.5px;color:var(--ink-3);margin-top:3px;line-height:1.65}
+
+/* ── 手機推播預覽 ── */
+.phone{max-width:320px;margin:0 auto;border:1px solid var(--rule);border-radius:16px;
+  background:#0B0E13;padding:13px 11px 17px;box-shadow:var(--shadow-lg)}
+.phone .bar{font-family:var(--mono);font-size:10px;color:#7A8393;display:flex;
+  justify-content:space-between;padding:0 5px 9px}
+.push{background:#F4F5F8;color:#111620;border-radius:11px;padding:10px 12px;margin-bottom:7px;
+  font-size:12.5px;line-height:1.65;opacity:0;transform:translateY(-6px);
+  transition:opacity .35s,transform .35s}
+.push.on{opacity:1;transform:none}
+.push .hd{display:flex;align-items:center;gap:6px;font-size:10px;color:#767E8D;
+  font-family:var(--mono);margin-bottom:4px}
+.push .dot{width:12px;height:12px;border-radius:3px;background:#06C755;flex-shrink:0}
+.push b{display:block;margin-bottom:2px;color:#111620}
+
+/* ── 徽章 ── */
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:480px){ .badges{grid-template-columns:1fr} }
+.badge{border:1px solid var(--rule);background:var(--surface);border-radius:var(--r);
+  padding:15px 13px;text-align:center;opacity:.4;filter:grayscale(1);transition:opacity .35s,filter .35s}
+.badge.earned{opacity:1;filter:none}
+.badge .ic{font-size:27px;line-height:1;margin-bottom:7px}
+.badge .nm{font-weight:700;font-size:14.5px;font-family:var(--serif)}
+.badge .rq{font-size:11.5px;color:var(--ink-3);margin-top:4px;line-height:1.6}
+.badge.earned.b3{border-color:var(--warn-line);border-top:3px solid var(--warn-line)}
+.badge.earned.b2{border-color:var(--ink-3);border-top:3px solid var(--ink-3)}
+.badge.earned.b1{border-color:#A9703F;border-top:3px solid #A9703F}
+
+/* ── 階段卡（首頁） ── */
+.stagecard{display:flex;gap:14px;align-items:flex-start;background:var(--surface);
+  border:1px solid var(--rule);border-radius:var(--r);padding:17px 18px;cursor:pointer;
+  width:100%;text-align:left;font:inherit;color:inherit;transition:border-color .15s,transform .15s}
+.stagecard:hover{border-color:var(--accent);transform:translateX(2px)}
+.stagecard .n{flex-shrink:0;width:33px;height:33px;border-radius:50%;background:var(--accent);
+  color:var(--accent-ink);display:grid;place-items:center;font-family:var(--mono);font-size:14px;
+  font-weight:700}
+.stagecard.done .n{background:var(--ok);color:var(--surface)}
+.stagecard .x{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.stagecard .t{font-family:var(--serif);font-weight:700;font-size:16.5px;line-height:1.4}
+.stagecard .d{font-size:13.5px;color:var(--ink-2);line-height:1.75}
+
+/* ── 微課程 ── */
+.mc{border:1px solid var(--rule);border-left:3px solid var(--rule);background:var(--surface);
+  border-radius:0 var(--r) var(--r) 0;overflow:hidden}
+.mc.read{border-left-color:var(--ok-line)}
+.mc > .hd{display:flex;gap:11px;align-items:center;padding:14px 16px;width:100%;background:none;
+  border:0;font:inherit;text-align:left;cursor:pointer;color:inherit}
+.mc > .hd:hover{background:var(--surface-2)}
+.mc .ix{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);border:1px solid var(--rule);
+  border-radius:2px;padding:2px 6px;flex-shrink:0}
+.mc.read .ix{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-line)}
+.mc .ti{flex:1;font-weight:700;font-size:14.5px;line-height:1.5}
+.mc .sec{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);flex-shrink:0}
+.mc .bd{display:none;padding:0 16px 17px;flex-direction:column;gap:11px}
+.mc.open .bd{display:flex}
+.mc .bd p{font-size:14px;color:var(--ink-2);line-height:1.8}
+.incident{border-left:3px solid var(--warn-line);background:var(--warn-soft);color:var(--warn);
+  padding:11px 13px;font-size:13px;line-height:1.8;border-radius:0 var(--r) var(--r) 0}
+.incident b{color:var(--warn)}
+
+/* ── 黑幕 + 終端機 ── */
+#veil{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:60;
+  transition:opacity .5s ease-in}
+#veil.on{opacity:1;pointer-events:auto}
+#term{position:fixed;inset:0;z-index:65;display:none;padding:9vh 7vw;overflow:hidden;
+  font-family:var(--mono);font-size:13.5px;line-height:2;color:var(--term);
+  text-shadow:0 0 12px rgba(87,224,142,.32)}
+#term.on{display:block}
+#term .ln{opacity:0;animation:tin .18s forwards}
+@keyframes tin{to{opacity:1}}
+#term .dim{color:var(--term-dim)} #term .hit{color:var(--term-hit)}
+#term.bad{color:var(--term-bad);text-shadow:0 0 14px rgba(255,107,88,.4);animation:shk .34s 2}
+@keyframes shk{0%,100%{transform:none}25%{transform:translate(-5px,2px)}
+  50%{transform:translate(4px,-3px)}75%{transform:translate(-3px,-1px)}}
+@media (max-width:430px){ #term{font-size:11px;padding:7vh 5vw;line-height:1.95} }
+
+#modal{position:fixed;inset:0;z-index:70;display:none;overflow-y:auto;padding:22px 16px 50px}
+#modal.on{display:block}
+.sheet{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--alert-line);
+  border-radius:var(--r);max-width:540px;margin:0 auto;padding:26px 25px;box-shadow:var(--shadow-lg);
+  opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s;
+  display:flex;flex-direction:column;gap:13px}
+@media (min-height:780px){ .sheet{margin-top:5vh} }
+@media (max-width:480px){ .sheet{padding:21px 17px} }
+.sheet.on{opacity:1;transform:none}
+.sheet h2{color:var(--alert);font-size:21px}
+.sheet p{font-size:14.5px;line-height:1.8;color:var(--ink-2)}
+.recap{background:var(--sunken);border:1px solid var(--rule-2);border-radius:var(--r);
+  padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.95}
+.recap div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recap span{color:var(--ink-3);display:inline-block;min-width:6.5em}
+.divide{border-top:1px solid var(--rule);padding-top:14px;display:flex;flex-direction:column;gap:5px}
+.divide .t{font-weight:700;font-size:14.5px}
+.divide p{font-size:14px;margin-bottom:8px}
+
+/* ── 懶人包（可列印） ── */
+.sheetdoc{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);
+  padding:28px 30px;box-shadow:var(--shadow)}
+@media (max-width:560px){ .sheetdoc{padding:20px 17px} }
+.sheetdoc .dochd{border-bottom:3px solid var(--ink);padding-bottom:13px;margin-bottom:20px}
+.sheetdoc h1{font-size:clamp(24px,5vw,31px);margin:5px 0 6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:760px){ .grid2{grid-template-columns:1fr;gap:20px} }
+.block > .bh{font-size:14.5px;font-weight:700;font-family:var(--serif);padding:4px 0 4px 10px;
+  border-left:3px solid var(--accent-line);margin-bottom:11px;line-height:1.4}
+.block.r > .bh{border-left-color:var(--alert-line)}
+.block.w > .bh{border-left-color:var(--warn-line)}
+.rule-i{display:flex;gap:10px;align-items:flex-start}
+.rule-i .n{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--accent);
+  color:var(--accent-ink);font-family:var(--mono);font-size:10.5px;font-weight:700;
+  display:grid;place-items:center;margin-top:2px}
+.rule-i .t{font-weight:700;font-size:14px;line-height:1.5}
+.rule-i .d{font-size:12.5px;color:var(--ink-2);line-height:1.7;margin-top:2px}
+.xlist{list-style:none;margin:0;padding:0}
+.xlist li{font-size:13px;padding:7px 0 7px 22px;border-bottom:1px dashed var(--rule-2);
+  position:relative;line-height:1.6}
+.xlist li:last-child{border-bottom:0}
+.xlist li::before{content:"×";position:absolute;left:5px;top:6px;color:var(--alert);
+  font-family:var(--mono);font-weight:700}
+.xlist .sm{display:block;font-size:11.5px;color:var(--ink-3);margin-top:1px;line-height:1.6}
+.evt{border-left:3px solid var(--warn-line);background:var(--warn-soft);padding:10px 12px;
+  border-radius:0 var(--r) var(--r) 0}
+.evt .dt{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--warn);
+  letter-spacing:.05em}
+.evt .t{font-weight:700;font-size:13.5px;color:var(--warn);margin:2px 0 3px;line-height:1.45}
+.evt .d{font-size:12.3px;color:var(--warn);line-height:1.7;opacity:.92}
+.evt .l{display:block;margin-top:5px;font-size:12px;font-weight:700;color:var(--warn)}
+.sos{background:var(--alert-soft);border:1px solid var(--alert-line);border-radius:var(--r);
+  padding:13px 15px}
+.sos ol{margin:0;padding-left:18px;font-size:12.8px;line-height:1.9;color:var(--ink)}
+.docfoot{border-top:2px solid var(--ink);margin-top:22px;padding-top:13px;display:flex;
+  justify-content:space-between;gap:18px;flex-wrap:wrap}
+.docfoot .l{font-size:12.5px;color:var(--ink-2);line-height:1.75;flex:1 1 300px}
+.docfoot .r{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);text-align:right;
+  line-height:1.85}
+
+/* ── 聲明書 ── */
+.decl{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);
+  padding:28px 30px;font-size:14px;line-height:1.85;display:none}
+.decl.on{display:block}
+@media (max-width:560px){ .decl{padding:20px 17px} }
+.decl .dh{text-align:center;border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:18px}
+.decl .dh h3{font-size:19px;margin-bottom:4px}
+.decl .dh .m{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+.decl dl{margin:0} .decl dt{font-weight:700;font-size:13.5px;margin-top:11px}
+.decl dd{margin:1px 0 0;font-size:13.5px;color:var(--ink-2)}
+.decl .sig{margin-top:20px;padding-top:15px;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:12px;color:var(--ink-3);line-height:2}
+
+/* ── 自動審核列 ── */
+.auditrow{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--rule-2);
+  border-radius:var(--r);background:var(--surface)}
+.auditrow .chip{flex-shrink:0;margin-top:1px}
+.ar-x{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ar-l{font-weight:700;font-size:13.5px;line-height:1.5}
+.ar-m{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+
+/* ── 附件 ── */
+.attach{border:1px solid var(--rule);border-radius:var(--r);padding:12px 14px;background:var(--surface);
+  display:flex;flex-direction:column;gap:7px;transition:opacity .2s}
+.at-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.at-n{font-weight:700;font-size:14.5px}
+.at-hint{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+
+/* ── API 文件表 ── */
+.apirow{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);
+  padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.apirow .an{font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.apirow .ae{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--sunken);
+  border:1px solid var(--rule-2);border-radius:3px;padding:7px 9px;overflow-x:auto;white-space:pre-wrap;
+  word-break:break-all;line-height:1.65}
+.apirow .ad{font-size:13px;color:var(--ink-2);line-height:1.7}
+
+hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
+.dl-list{margin:0;display:flex;flex-direction:column;gap:13px}
+.dl-list dt{font-weight:700;font-size:14.5px;line-height:1.5}
+.dl-list dd{margin:3px 0 0;font-size:13.5px;color:var(--ink-2);line-height:1.75}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);z-index:80;
+  background:var(--ink);color:var(--ground);padding:11px 18px;border-radius:var(--r);
+  font-size:14px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent);color:var(--accent-ink);
+  padding:10px 16px;z-index:100;border-radius:0 0 var(--r) 0}
+.skip:focus{left:0}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important;
+    animation-iteration-count:1!important}
+}
+
+/* ══ 列印 ══ */
+@media print{
+  @page{size:A4 portrait;margin:9mm}
+  :root{--surface:#fff;--ground:#fff;--ink:#000;--ink-2:#333;--ink-3:#555;
+    --rule:#999;--rule-2:#bbb;--sunken:#f4f4f4;--accent:#000;--accent-soft:#eee}
+  body{background:#fff;color:#000;font-size:10.5px}
+  .appbar,.rail,.btnrow,.toast,.skip,#veil,#term,#modal,.noprint{display:none!important}
+  .view{padding:0} .col{max-width:none;padding:0}
+  .sheetdoc,.decl{border:0;padding:0;box-shadow:none}
+  .grid2{gap:12px}
+  .sheetdoc h1{font-size:23px} .sheetdoc .dochd{padding-bottom:8px;margin-bottom:12px}
+  .block > .bh{font-size:12px;margin-bottom:7px}
+  .rule-i .t{font-size:11px} .rule-i .d{font-size:9.6px;line-height:1.5}
+  .rule-i .n{width:16px;height:16px;font-size:9px}
+  .xlist li{font-size:10.2px;padding:4px 0 4px 18px} .xlist .sm{font-size:9.2px}
+  table{font-size:9.5px} th,td{padding:4px 6px}
+  .evt{padding:7px 9px} .evt .t{font-size:10.5px} .evt .d{font-size:9.4px;line-height:1.55}
+  .sos ol{font-size:9.8px;line-height:1.65}
+  .docfoot{margin-top:8px;padding-top:8px} .docfoot .l{font-size:9.4px} .docfoot .r{font-size:8.6px}
+  .stack.l{gap:14px} .stack.xl{gap:18px} .stack.m{gap:10px}
+  a{color:#000;text-decoration:none}
+}
+</style>
+
+<a class="skip" href="#main">跳至主要內容</a>
+
+<!-- ══════════ 頁首 ══════════ -->
+<header class="appbar">
+  <div class="in">
+    <a class="brand" href="#/" id="brandLink">
+      <span class="crest">竹</span>
+      <span class="nm"><b>AI 領航青年數位工具補助</b>新竹市政府青年發展中心</span>
+    </a>
+    <div class="rt">
+      <span class="caseno" id="caseno"></span>
+      <button class="iconbtn" id="themeBtn" type="button" title="切換深淺色" aria-label="切換深淺色">◐</button>
+    </div>
+  </div>
+</header>
+
+<nav class="rail" id="rail" aria-label="申請階段"><div class="in" id="railIn"></div></nav>
+
+<main id="main">
+
+<!-- ══════════ 總覽 ══════════ -->
+<section class="view" id="v-home" tabindex="-1">
+  <div class="col stack xl">
+
+    <div class="stack m">
+      <span class="eyebrow">115 年梅竹黑客松 ｜ 資安無慮</span>
+      <h1>把資安宣導拆開，<br>塞進補助流程的每一關</h1>
+      <p class="lede">
+        傳統做法是在申請頁掛一份「使用須知」，然後所有人直接捲到底按同意。<br>
+        這裡把宣導拆成五段，分別放進<b>申請、綁定、等待、核銷、撥款</b>。申請人的動線沒有變長，
+        但每一關都會帶走一件事——因為那件事出現在他<b>真的會遇到它的那一刻</b>。
+      </p>
+    </div>
+
+    <div class="callout" id="resumeBox" style="display:none">
+      <span class="t">您有未完成的申請</span>
+      <p id="resumeTx"></p>
+      <div class="btnrow"><button class="btn pri" id="resumeBtn" type="button">繼續申請</button></div>
+    </div>
+
+    <div class="stack m">
+      <div class="card stack s">
+        <span class="t" style="font-weight:700;font-size:15px">怎麼看這個原型</span>
+        <p class="small">建議從 ① 申請開始依序走一遍，約 6 分鐘。全程在瀏覽器本機執行，<b>不連線、不上傳任何資料</b>；進度存在您自己的瀏覽器，可隨時清除。</p>
+        <div class="btnrow" style="margin-top:4px">
+          <button class="btn pri" data-go="#/apply" type="button">從 ① 申請開始</button>
+          <button class="btn sec" data-go="#/guide" type="button">直接看懶人包</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack m">
+      <h2>五個階段</h2>
+      <div class="stack s" id="stageCards"></div>
+    </div>
+
+    <div class="stack m">
+      <h2>解題方向對照</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>題目所列解題方向</th><th>本原型的回應</th><th>位置</th></tr></thead>
+          <tbody>
+            <tr><td>一、申請流程導入資安宣導</td><td>五階段各埋一個資安節點，不新增關卡</td><td class="mono">全流程</td></tr>
+            <tr><td>二、審核／核銷／撥款進度追蹤</td><td>申請人端時間軸 ＋ 承辦端自動勾稽後台，人工只看例外</td><td class="mono">③ ⑤</td></tr>
+            <tr><td>三、與 LINE 官方帳號串聯</td><td>綁定 @youthhsinchu；以冒用帳號辨識與授權範圍作為教材</td><td class="mono">②</td></tr>
+            <tr><td>四、AI 安全使用懶人包圖卡</td><td>可列印 A4 一頁，含守則與四起真實事件摘要</td><td class="mono">懶人包</td></tr>
+            <tr><td>五、提升 AI 資安素養工作坊</td><td>線上微課程／實體工作坊／種子講師三級，各附案例與擴散估算</td><td class="mono">⑤</td></tr>
+            <tr><td>六、檢核清單的勾稽與檢核</td><td>12 項要求佐證而非打勾，依工具客製路徑，通過後產出聲明書</td><td class="mono">④</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="stack m">
+      <h2>設計上的四個取捨</h2>
+      <div class="card">
+        <dl class="dl-list">
+          <dt>宣導不另開一頁，拆進既有動線</dt>
+          <dd>另開的「資安須知」頁面沒有人看。拆進動線後，申請人不會感覺自己在上課。</dd>
+          <dt>先示範風險，再講規則</dt>
+          <dd>階段①先讓人被自己的身分證字號嚇一次，後面四關的規則才聽得進去。順序反過來就沒有效果。</dd>
+          <dt>檢核清單要佐證，且答錯不退件</dt>
+          <dd>打勾的清單所有人都會全部打勾；退件率高的政策第二年沒人申請。門檻設在 12/12 但可無限重答。</dd>
+          <dt>素養認證要有實質誘因</dt>
+          <dd>徽章對應次年免重填、優先審查與種子講師鐘點費。沒有好處的認證，第二年不會有人來。</dd>
+        </dl>
+      </div>
+    </div>
+
+    <hr class="sep">
+    <p class="small">原型展示 ｜ 不連線、不上傳。事件摘要引自各案公開報導，設定路徑請以各服務最新公告為準。
+      <button class="btn sec sm" id="resetHome" type="button" style="margin-left:8px">清除展示進度</button></p>
+  </div>
+</section>
+
+
+<!-- ══════════ ① 申請 ══════════ -->
+<section class="view" id="v-apply" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ① ／ 五</span>
+      <h1>補助申請</h1>
+      <p class="lede">請依序填寫，系統會即時協助您確認資料。</p>
+    </div>
+
+    <div class="callout">
+      <span class="t">填寫前，先讓您知道</span>
+      <p>本申請表導入互動式填寫體驗。系統會即時回應您填寫的內容，並在過程中出現<b>一次畫面變化與提醒視窗</b>——那是設計的一部分，不是系統異常，您已填的資料不會遺失。</p>
+      <p>所有即時回應都在您的裝置上完成，不會額外傳送。您填寫的資料僅用於本次申請的審查與撥款，依個人資料保護法保管。</p>
+    </div>
+
+    <div class="assist"><div class="av">AI</div>
+      <div class="tx" id="assistTx"><b>申辦小幫手</b>　這次的表單由我陪您填寫。每填完一欄我會即時確認，有問題我會馬上告訴您。</div></div>
+
+    <div class="callout warn" id="banner" style="display:none">
+      <p>提醒：您在本表單填寫的資料受個人資料保護法規範，市府負有蒐集告知與保管責任。<b>在一般 AI 對話工具中則沒有這層保障。</b></p>
+    </div>
+
+    <form id="form" autocomplete="on" novalidate class="stack l">
+
+      <!-- 一、申請人基本資料 -->
+      <fieldset>
+        <legend>一、申請人基本資料</legend>
+        <p class="small" style="margin-top:-8px">本段資料用於身分核驗與補助撥款。<span class="chip a">自動審核</span></p>
+
+        <div class="field">
+          <label for="f-name">申請人姓名</label>
+          <input type="text" id="f-name" name="name" autocomplete="name" placeholder="請填寫身分證上的姓名">
+          <div class="err" id="e-name-err"></div>
+          <div class="echo" id="e-name"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-phone">聯絡電話</label>
+          <input type="tel" id="f-phone" name="tel" autocomplete="tel" inputmode="numeric"
+                 placeholder="0912345678 或 03-5216121" maxlength="15">
+          <div class="err" id="e-phone-err"></div>
+          <div class="echo" id="e-phone"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-pid">身分證字號 <span class="sub">核驗設籍資格用，本計畫限設籍新竹市</span></label>
+          <input type="text" id="f-pid" name="pid" maxlength="10" autocomplete="off" spellcheck="false"
+                 placeholder="O123456789" style="font-family:var(--mono);text-transform:uppercase">
+          <div class="err" id="e-pid-err"></div>
+          <div class="echo" id="e-pid"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-bday">出生日期 <span class="sub">本計畫限 18 至 40 歲</span></label>
+          <input type="date" id="f-bday" name="bday">
+          <div class="err" id="e-bday-err"></div>
+          <div class="echo" id="e-bday"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-mail">電子郵件 <span class="sub">用於寄送審查通知</span></label>
+          <input type="email" id="f-mail" name="email" autocomplete="email" placeholder="you@example.com">
+          <div class="err" id="e-mail-err"></div>
+          <div class="echo" id="e-mail"></div>
+        </div>
+      </fieldset>
+
+      <!-- 二、地址 -->
+      <fieldset>
+        <legend>二、戶籍與通訊地址</legend>
+        <p class="small" style="margin-top:-8px">戶籍地址須為新竹市，並與身分證字號首碼相符。<span class="chip a">自動審核</span></p>
+
+        <div class="field">
+          <label for="f-hrCity">戶籍地址 — 縣市</label>
+          <select id="f-hrCity"><option value="">請選擇</option></select>
+          <div class="err" id="e-hrCity-err"></div>
+        </div>
+        <div class="field">
+          <label for="f-hrDist">戶籍地址 — 行政區</label>
+          <input type="text" id="f-hrDist" list="dl-hrDist" placeholder="例：東區" autocomplete="off">
+          <datalist id="dl-hrDist"></datalist>
+          <div class="err" id="e-hrDist-err"></div>
+        </div>
+        <div class="field">
+          <label for="f-hrAddr">戶籍地址 — 詳細地址</label>
+          <input type="text" id="f-hrAddr" placeholder="例：中央路 100 號 5 樓" autocomplete="street-address">
+          <div class="err" id="e-hrAddr-err"></div>
+          <div class="echo" id="e-hrAddr"></div>
+        </div>
+
+        <label class="opt" for="f-same" style="margin-top:2px">
+          <input type="checkbox" id="f-same" checked>
+          <span>通訊地址同戶籍地址</span>
+        </label>
+
+        <div class="stack m" id="mailAddrBox" style="display:none">
+          <div class="field">
+            <label for="f-mlCity">通訊地址 — 縣市</label>
+            <select id="f-mlCity"><option value="">請選擇</option></select>
+            <div class="err" id="e-mlCity-err"></div>
+          </div>
+          <div class="field">
+            <label for="f-mlDist">通訊地址 — 行政區</label>
+            <input type="text" id="f-mlDist" list="dl-mlDist" placeholder="例：竹北市" autocomplete="off">
+            <datalist id="dl-mlDist"></datalist>
+            <div class="err" id="e-mlDist-err"></div>
+          </div>
+          <div class="field">
+            <label for="f-mlAddr">通訊地址 — 詳細地址</label>
+            <input type="text" id="f-mlAddr" placeholder="例：光明六路 20 號">
+            <div class="err" id="e-mlAddr-err"></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 三、申請身分類別 -->
+      <fieldset>
+        <legend>三、申請身分類別</legend>
+        <p class="small" style="margin-top:-8px">影響補助比率與上限，選擇特定對象須檢附證明。</p>
+        <div class="field">
+          <label for="f-idType">申請身分類別</label>
+          <select id="f-idType">
+            <option value="general">一般青年 — 補助 50%，每人上限 3,000 元</option>
+            <option value="low">低收入戶 — 補助 90%，每人上限 6,000 元</option>
+            <option value="midlow">中低收入戶 — 補助 90%，每人上限 6,000 元</option>
+          </select>
+          <div class="echo" id="e-idType"></div>
+        </div>
+      </fieldset>
+
+      <!-- 四、購買工具 -->
+      <fieldset>
+        <legend>四、購買工具資訊</legend>
+        <p class="small" style="margin-top:-8px">依購買憑證填寫，金額換算將自動試算。<span class="chip a">自動審核</span></p>
+
+        <div class="field">
+          <label for="f-scheme">繳費制度</label>
+          <select id="f-scheme">
+            <option value="">請選擇</option>
+            <option value="sub">訂閱制（按月／按年續訂）</option>
+            <option value="once">買斷制（一次付清永久授權）</option>
+            <option value="credit">點數／額度制（儲值後扣抵）</option>
+          </select>
+          <div class="err" id="e-scheme-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-func">功能類別</label>
+          <select id="f-func">
+            <option value="">請選擇</option>
+            <option>影像創作</option><option>影音編輯</option>
+            <option>文字與生產力</option><option>程式開發輔助</option>
+            <option>語音與音訊</option><option>簡報與設計</option><option>其他數位生產力工具</option>
+          </select>
+          <div class="err" id="e-func-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-sw">軟體名稱</label>
+          <input type="text" id="f-sw" list="dl-sw" placeholder="例：ChatGPT Plus" autocomplete="off">
+          <datalist id="dl-sw">
+            <option value="ChatGPT Plus"></option><option value="ChatGPT Team"></option>
+            <option value="Google Gemini Advanced"></option><option value="Claude Pro"></option>
+            <option value="Microsoft 365 Copilot"></option><option value="Midjourney"></option>
+            <option value="Adobe Firefly"></option><option value="CapCut Pro"></option>
+            <option value="Canva Pro"></option><option value="Notion AI"></option>
+          </datalist>
+          <div class="err" id="e-sw-err"></div>
+          <div class="echo" id="e-sw"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-vendor">軟體公司名稱</label>
+          <input type="text" id="f-vendor" placeholder="例：OpenAI, L.L.C.">
+          <div class="err" id="e-vendor-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-pdate">購買日期 <span class="sub">須落在補助期間內</span></label>
+          <input type="date" id="f-pdate">
+          <div class="err" id="e-pdate-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-pmethod">付款方式</label>
+          <select id="f-pmethod">
+            <option value="">請選擇</option>
+            <option>信用卡</option><option>金融卡（Debit）</option>
+            <option>轉帳匯款</option><option>電子支付</option><option>現金</option>
+          </select>
+          <div class="err" id="e-pmethod-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-cur">原始幣別</label>
+          <select id="f-cur">
+            <option value="TWD">TWD 新臺幣</option><option value="USD">USD 美元</option>
+            <option value="EUR">EUR 歐元</option><option value="JPY">JPY 日圓</option>
+            <option value="CNY">CNY 人民幣</option><option value="GBP">GBP 英鎊</option>
+            <option value="HKD">HKD 港幣</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-amt">原始費用</label>
+          <input type="number" id="f-amt" min="0" step="0.01" inputmode="decimal" placeholder="例：20">
+          <div class="err" id="e-amt-err"></div>
+        </div>
+
+        <div class="field">
+          <label for="f-twd">換算新臺幣金額
+            <span class="sub">依購買日臺灣銀行牌告匯率自動換算，可手動修正</span></label>
+          <input type="number" id="f-twd" min="0" step="1" inputmode="numeric" placeholder="自動帶入">
+          <div class="err" id="e-twd-err"></div>
+          <div class="echo" id="e-twd"></div>
+        </div>
+      </fieldset>
+
+      <!-- 五、憑證檢核 -->
+      <fieldset>
+        <legend>五、憑證檢核項目確認</legend>
+        <p class="small" style="margin-top:-8px">請逐項對照您的購買憑證。五項皆須符合才能受理。</p>
+        <div class="stack s" id="voucherList"></div>
+        <div class="err" id="e-voucher-err"></div>
+      </fieldset>
+
+      <!-- 六、附件 -->
+      <fieldset>
+        <legend>六、附件上傳</legend>
+        <p class="small" style="margin-top:-8px">
+          接受 JPG／PNG／PDF，單檔 10MB 以內。<b>本原型不會上傳任何檔案</b>，僅在您的瀏覽器讀取檔名與大小做格式檢查。</p>
+        <div class="stack s" id="attachList"></div>
+        <div class="err" id="e-attach-err"></div>
+      </fieldset>
+
+      <!-- 自動審核結果 -->
+      <div class="card stack m" id="auditCard">
+        <div class="stack s">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+            <h3 style="margin:0">自動審核結果</h3>
+            <span class="mono" style="font-size:12px;color:var(--ink-3)" id="auditCount">—</span>
+          </div>
+          <p class="small">這些項目在您按送出之前就判定完成，承辦人員只會看到系統標紅的案子。
+            <button class="btn sec sm" type="button" data-go="#/apidocs" style="margin-left:4px">看 API 介接說明</button></p>
+        </div>
+        <div class="stack s" id="auditList"></div>
+      </div>
+
+      <div class="btnrow">
+        <button type="button" class="btn pri" id="submitBtn">送出申請</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+
+<!-- ══════════ ② 綁定 ══════════ -->
+<section class="view" id="v-bind" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ② ／ 五</span>
+      <h1>綁定進度通知</h1>
+      <p class="lede">綁定官方 LINE 帳號，審核、核銷與撥款進度會主動推播給您，不必回來刷網頁。</p>
+    </div>
+
+    <div class="callout ok"><span class="t">案件已收件</span><p id="recvLine"></p></div>
+
+    <!-- 步驟 1 -->
+    <div class="stack m" id="b-s1">
+      <div class="assist"><div class="av">AI</div>
+        <div class="tx"><b>申辦小幫手</b>　請在 LINE 搜尋「新竹青年」加入官方帳號。下面是搜尋會跑出來的結果——<b>請選出真正的官方帳號</b>。</div></div>
+
+      <div class="stack s">
+        <h3>LINE 搜尋結果：「新竹青年」</h3>
+        <p class="small">三個看起來都很像。選錯的話，接下來的補助通知就會來自別人。</p>
+      </div>
+
+      <div class="stack s" id="acctList"></div>
+      <div class="fb" id="b-fb"></div>
+    </div>
+
+    <!-- 步驟 2 -->
+    <div class="stack l" id="b-s2" style="display:none">
+      <div class="callout ok">
+        <span class="t">選對了：@youthhsinchu，綠盾認證帳號</span>
+        <p>綠盾（認證帳號）必須通過 LINE 對企業或政府機關的身分審查才拿得到；<b>灰盾（一般帳號）任何人填個資料就能開</b>。冒用者能模仿名稱、大頭貼、簡介，唯獨模仿不了盾牌。</p>
+      </div>
+
+      <div class="stack s">
+        <h2>授權範圍確認</h2>
+        <p class="lede">加好友之後，這個帳號要求存取以下項目。請確認——這一步多數人會直接按同意。</p>
+      </div>
+
+      <div class="card stack m">
+        <div class="stack s">
+          <span style="font-weight:700;font-size:15px">@youthhsinchu 要求的權限</span>
+          <p class="small">共 2 項。這就是「最小權限原則」該有的樣子。</p>
+        </div>
+        <div class="stack s">
+          <div class="scope y"><span class="mk">✓</span><div><b>傳送訊息給您</b>
+            <span class="sd">用途：推播審核結果、核銷期限與撥款完成通知。這是您綁定的目的。</span></div></div>
+          <div class="scope y"><span class="mk">✓</span><div><b>您的顯示名稱與大頭貼</b>
+            <span class="sd">用途：讓承辦人員在客服對話中確認是本人。不含手機號碼與聊天內容。</span></div></div>
+        </div>
+
+        <hr class="sep">
+
+        <div class="stack s">
+          <span style="font-weight:700;font-size:15px">它<span style="color:var(--alert)">沒有</span>要求，也不該要求</span>
+          <p class="small">若有任何帳號或 AI 外掛跟您要下面這些，直接關掉。</p>
+        </div>
+        <div class="stack s">
+          <div class="scope n"><span class="mk">✕</span><div><b>讀取您的好友清單與群組</b>
+            <span class="sd">補助審核完全用不到。拿到手就是一份可轉賣的社交關係圖。</span></div></div>
+          <div class="scope n"><span class="mk">✕</span><div><b>讀取聊天記錄</b>
+            <span class="sd">您和家人、客戶、公司的對話會一起被帶走，包含裡面的個資與商業資訊。</span></div></div>
+          <div class="scope n"><span class="mk">✕</span><div><b>存取通訊錄與位置資訊</b>
+            <span class="sd">補助案不需要知道您人在哪、認識誰。</span></div></div>
+          <div class="scope n"><span class="mk">✕</span><div><b>代您發送訊息</b>
+            <span class="sd">最危險的一項。帳號被接管後，詐騙訊息會以「您」的名義發給所有好友。</span></div></div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="t">把這個習慣帶去用 AI 工具</span>
+        <p>您之後用補助款買的 AI 外掛、瀏覽器擴充功能、自動化連接器，安裝時跳的就是同一種授權畫面。問題永遠是同一個：<b>它要這項權限，是為了做它答應您的事，還是為了別的？</b></p>
+        <p>一個「幫你摘要網頁」的外掛不需要讀取你所有分頁；一個「幫你寫文案」的工具不需要存取你雲端硬碟的全部檔案。</p>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn pri" id="agreeBtn" type="button">同意這 2 項，完成綁定</button>
+        <button class="btn sec" id="backAcctBtn" type="button">回上一步重看</button>
+      </div>
+    </div>
+
+    <!-- 步驟 3 -->
+    <div class="stack l" id="b-s3" style="display:none">
+      <div class="callout ok"><span class="t">綁定完成</span>
+        <p>之後每一個進度都會推播到您的 LINE。以下為通知示意。</p></div>
+
+      <div class="phone">
+        <div class="bar"><span>LINE</span><span id="clk"></span></div>
+        <div id="pushes"></div>
+      </div>
+
+      <div class="callout">
+        <span class="t">為什麼補助案要走 LINE</span>
+        <p>青年族群不會為了查一個補助進度去記一組系統帳密。把進度通知放在他們本來就在用的介面上，回訪率才有意義——<b>而資安宣導也就跟著進了同一個介面</b>：每次推播進度，順帶推一則 30 秒能讀完的 AI 安全提醒，比辦一次講座觸及得久。</p>
+      </div>
+
+      <div class="btnrow"><button class="btn pri" data-go="#/review" type="button">前往 ③ 查看審核進度</button></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ ③ 審核 ══════════ -->
+<section class="view" id="v-review" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ③ ／ 五</span>
+      <h1>審核進度</h1>
+      <p class="lede">案件審查中。這段等待時間，我們拿來做一件事。</p>
+    </div>
+
+    <div class="card"><ol class="tl" id="reviewTl"></ol></div>
+
+    <div class="callout">
+      <span class="t">為什麼進度可以標到這麼細</span>
+      <p>因為前三關不是人工看的。設籍、年齡、重複申請由系統自動勾稽，承辦人員只處理系統標紅的案子——
+        <button class="btn sec sm" id="adminJump" type="button" style="margin-left:2px">看承辦端的做法</button></p>
+    </div>
+
+    <div class="stack m">
+      <div class="stack s">
+        <h2>等待期 AI 安全微課程</h2>
+        <p class="lede">五則，每則約 30 秒。全部讀完可取得<b>銅牌資安素養徽章</b>，核銷時的檢核清單會輕鬆很多。</p>
+      </div>
+
+      <div class="meter">
+        <div class="top"><span class="lbl">微課程進度</span><span class="n" id="mcN">0 / 5</span></div>
+        <div class="track"><i class="fill" id="mcBar"></i></div>
+        <span class="hint" id="mcHint">點開任一則即視為讀畢。</span>
+      </div>
+
+      <div class="stack s" id="mcList"></div>
+
+      <div class="callout ok" id="mcDone" style="display:none">
+        <span class="t">五則都讀完了 — 銅牌徽章已入帳</span>
+        <p>這五件事就是核銷檢核清單的主幹。</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="t">一頁式圖卡：AI 安全使用懶人包</span>
+      <p>上面五則的濃縮版，加上四起真實事件摘要，設計成可列印的 A4 一頁——給不會點進系統的人、給工作坊當講義、給里辦公處貼公布欄。</p>
+      <div class="btnrow" style="margin-top:4px">
+        <button class="btn sec" data-go="#/guide" type="button">開啟懶人包圖卡</button>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="stack m" id="adminSec">
+      <div class="stack s">
+        <h2>承辦人員檢視</h2>
+        <p class="lede">同一筆案件在市府端長什麼樣。這一段回應的是「如何有效率辦理審核、核銷與撥款追蹤」。</p>
+      </div>
+      <div class="btnrow"><button class="btn sec" id="adminBtn" type="button">展開承辦端後台（示意）</button></div>
+
+      <div class="stack m" id="adminBox" style="display:none">
+        <div class="callout">
+          <span class="t">自動勾稽，人工只看例外</span>
+          <p>四項自動比對：<b>設籍</b>（串接戶政資料介接服務）、<b>年齡</b>（由出生年月日計算 18–40）、<b>重複申請</b>（同一身分證字號跨年度比對）、<b>發票真偽</b>（串接財政部電子發票整合服務平台查驗）。四項全綠自動進入文件審查；任一項紅燈才派給承辦人員。</p>
+        </div>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>案號</th><th>申請人</th><th>設籍</th><th>年齡</th><th>重複</th><th>發票</th><th>檢核</th><th>狀態</th></tr></thead>
+            <tbody id="adminRows"></tbody>
+          </table>
+        </div>
+        <div class="callout bad">
+          <span class="t">紅燈案件的處理</span>
+          <p><b>YC-2026-3317</b>：發票查驗不符——上傳的是訂閱制工具的「續訂預繳」憑證，跨越補助期間。系統自動退回並附可補件說明，不佔用承辦人員時間。</p>
+          <p><b>YC-2026-5520</b>：檢核清單未通過——購買的是境外 AI 服務，但第 4 項「已關閉資料訓練授權」未提供佐證。系統自動發 LINE 推播請其補做設定，而不是直接退件。<b>這是關鍵設計：檢核清單的目的是把人教會，不是把人刷掉。</b></p>
+        </div>
+        <div class="callout ok">
+          <span class="t">撥款進度也是同一套</span>
+          <p>核銷通過後自動排入主計作業批次，每次狀態變動同步推播 LINE。申請人不必打電話問「我的錢什麼時候下來」——這類詢問正是青年補助案最大宗的行政負擔。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnrow"><button class="btn pri" data-go="#/checklist" type="button">前往 ④ 核銷資安檢核</button></div>
+  </div>
+</section>
+
+
+<!-- ══════════ ④ 核銷 ══════════ -->
+<section class="view" id="v-checklist" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ④ ／ 五</span>
+      <h1>新竹市青年 AI 工具資安檢核清單</h1>
+      <p class="lede">核銷必填。12 項，全數達標才能送出請款。</p>
+    </div>
+
+    <div class="callout">
+      <span class="t">這份清單為什麼不是打勾就好</span>
+      <p>打勾的清單，所有人都會全部打勾。所以這裡的每一項都要求<b>可勾稽的佐證</b>——答出設定的實際位置、填入您查到的數值，或附上設定畫面截圖。答錯不會退件，會告訴您正確答案，改完再送。</p>
+      <p><b>目的是把人教會，不是把人刷掉。</b></p>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label for="toolPick">您以本次補助款購買的 AI 工具
+          <span class="sub">依核銷發票品項選擇，清單會依工具給出實際設定路徑</span></label>
+        <select id="toolPick">
+          <option value="">請選擇</option>
+          <option value="chatgpt">ChatGPT（OpenAI）</option>
+          <option value="gemini">Gemini（Google）</option>
+          <option value="claude">Claude（Anthropic）</option>
+          <option value="copilot">Microsoft Copilot</option>
+          <option value="midjourney">Midjourney</option>
+          <option value="other">其他 AI 工具</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="meter" id="chkMeter" style="display:none">
+      <div class="top"><span class="lbl">檢核完成度</span><span class="n" id="chkN">0 / 12</span></div>
+      <div class="track"><i class="fill" id="chkBar"></i></div>
+      <span class="hint" id="chkHint">尚未開始。</span>
+    </div>
+
+    <div class="stack m" id="chkList"></div>
+
+    <div class="card stack m" id="chkGate" style="display:none">
+      <div class="stack s">
+        <h3 id="gateT">尚未達標，無法送出核銷</h3>
+        <p class="small" id="gateP">請完成上方所有項目。每一項都可以重答，答錯會附上正確做法。</p>
+      </div>
+      <div class="btnrow">
+        <button class="btn pri" id="chkSubmit" type="button" disabled>送出核銷申請</button>
+        <button class="btn sec" id="printDecl" type="button" style="display:none">列印檢核聲明書</button>
+      </div>
+    </div>
+
+    <div class="decl" id="decl">
+      <div class="dh">
+        <h3>新竹市青年 AI 工具資安檢核聲明書</h3>
+        <div class="m">AI 領航青年數位工具補助計畫 ｜ 核銷附件 ｜ <span id="dCase"></span></div>
+      </div>
+      <dl>
+        <dt>申請人</dt><dd id="dName"></dd>
+        <dt>補助工具</dt><dd id="dTool"></dd>
+        <dt>檢核結果</dt><dd id="dScore"></dd>
+        <dt>資安素養徽章</dt><dd id="dBadge"></dd>
+      </dl>
+      <div id="dItems"></div>
+      <div class="sig">
+        本人確認以上 12 項檢核內容均屬實，並已就所使用之 AI 工具完成前述設定。<br>
+        如因不實聲明致生資料外洩或第三人權益受損，本人願負相關責任。<br><br>
+        申請人簽章：______________　　日期：<span id="dDate"></span><br>
+        承辦人員核章：______________　　複核：______________
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ ⑤ 撥款 ══════════ -->
+<section class="view" id="v-payout" tabindex="-1">
+  <div class="col stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">階段 ⑤ ／ 五</span>
+      <h1>撥款進度</h1>
+      <p class="lede" id="payLede">核銷文件審核中。</p>
+    </div>
+
+    <div class="callout warn" id="payBlocked" style="display:none">
+      <span class="t">尚未完成核銷檢核</span>
+      <p>撥款進度須待 <b>④ 資安檢核清單</b> 12 項全數達標並送出核銷後才會啟動。以下為完成後的樣貌，供展示用。</p>
+      <div class="btnrow" style="margin-top:4px">
+        <button class="btn sec" data-go="#/checklist" type="button">前往完成檢核清單</button></div>
+    </div>
+
+    <div class="card"><ol class="tl" id="payTl"></ol></div>
+
+    <div class="stack s">
+      <h3>核撥金額</h3>
+      <div class="tbl"><table><tbody id="moneyRows"></tbody></table></div>
+      <p class="small" id="rateLine"></p>
+    </div>
+
+    <hr class="sep">
+
+    <div class="stack m">
+      <div class="stack s">
+        <h2>資安素養徽章</h2>
+        <p class="lede">徽章不是裝飾。它是這套流程唯一的<b>正向誘因</b>——把資安從「核銷的關卡」變成「值得拿的東西」。</p>
+      </div>
+      <div class="badges">
+        <div class="badge b1" id="badge1"><div class="ic">🥉</div><div class="nm">銅牌</div>
+          <div class="rq">完成等待期微課程 5 則</div></div>
+        <div class="badge b2" id="badge2"><div class="ic">🥈</div><div class="nm">銀牌</div>
+          <div class="rq">＋ 檢核清單 12 項全數達標</div></div>
+        <div class="badge b3" id="badge3"><div class="ic">🥇</div><div class="nm">金牌</div>
+          <div class="rq">＋ 完成工作坊或種子講師培訓</div></div>
+      </div>
+      <div class="callout ok"><span class="t" id="badgeT"></span><p id="badgeP"></p></div>
+      <div class="callout">
+        <span class="t">徽章換得到什麼</span>
+        <p><b>銀牌</b>：次年度申請免重填檢核清單前 6 項（已驗證項目沿用一年）。<br>
+          <b>金牌</b>：次年度補助案<b>優先審查</b>，並列入市府「青年 AI 資安種子講師」名冊，受邀至里民活動中心、學校社團、微型企業講習授課，<b>支領鐘點費</b>。</p>
+        <p>這一項是把成本轉成產能：市府不必自己養講師，受補助青年學會之後回頭教下一批——這也是整套機制最容易被其他縣市複製的部分。</p>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="stack m">
+      <div class="stack s">
+        <h2>AI 資安素養工作坊</h2>
+        <p class="lede">三種強度，對應三種人。重點不在辦幾場，在於<b>每一場都綁著一件當事人現在就需要辦的事</b>——所以人會來。</p>
+      </div>
+      <div class="stack m" id="wsList"></div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="stack m">
+      <h2>可被其他縣市複製的部分</h2>
+      <div class="card">
+        <dl class="dl-list">
+          <dt>① 資安宣導不是新增的一關，是塞進既有的每一關</dt>
+          <dd>申請時示範風險、綁定時教授權範圍、等待時推微課程、核銷時驗檢核清單、撥款時發徽章。申請人的動線沒有變長，但每一步都帶走一件事。</dd>
+          <dt>② 檢核清單要求佐證，不要求打勾</dt>
+          <dd>填實際數值、答出設定路徑、附設定截圖。打勾的清單所有人都會全部打勾，要求佐證的清單才有勾稽的意義。</dd>
+          <dt>③ 答錯不退件，答錯就教</dt>
+          <dd>通過門檻是 12／12，但可無限次重答，每次答錯附上正確做法。退件率高的政策，第二年就沒人申請了。</dd>
+          <dt>④ 承辦端自動勾稽，人工只看例外</dt>
+          <dd>設籍、年齡、重複申請、發票真偽四項自動比對，全綠自動放行，紅燈才派件。行政量能省下來的部分，才有餘裕去辦工作坊。</dd>
+          <dt>⑤ 徽章給實質好處，不給榮譽</dt>
+          <dd>次年免重填、優先審查、種子講師鐘點費。沒有誘因的素養認證，第二年不會有人來。</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn sec" data-go="#/" type="button">回流程總覽</button>
+      <button class="btn sec" id="resetPay" type="button">重置展示資料</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ 懶人包 ══════════ -->
+<section class="view" id="v-guide" tabindex="-1">
+  <div class="col wide stack m">
+
+    <div class="btnrow noprint">
+      <button class="btn pri" id="printGuide" type="button">列印 ／ 另存 PDF（A4 一頁）</button>
+      <button class="btn sec" data-go="#/" type="button">回流程總覽</button>
+    </div>
+
+    <div class="sheetdoc">
+      <div class="dochd">
+        <span class="eyebrow">新竹市政府青年發展中心 ｜ AI 領航青年數位工具補助計畫</span>
+        <h1>AI 安全使用懶人包</h1>
+        <p class="small">五條守則、五類紅線、四起真實事件。花三分鐘看完，比外洩後花三個月處理划算。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="stack l">
+
+          <div class="block">
+            <div class="bh">五條守則</div>
+            <div class="stack s">
+              <div class="rule-i"><span class="n">1</span><div>
+                <div class="t">先關掉「用我的內容改善模型」</div>
+                <div class="d">多數 AI 服務<b>預設是開的</b>。被吸收進模型權重的資料刪不掉——刪對話、刪帳號都沒用。這是唯一必須現在就做的設定。</div></div></div>
+              <div class="rule-i"><span class="n">2</span><div>
+                <div class="t">分清楚「在給誰」，不是「能不能給」</div>
+                <div class="d">政府申請系統、銀行、醫院有法律依據、有蒐集告知、您可要求查詢與刪除——該給就給。對話框裡的 AI 三樣都沒有——能不給就不給。</div></div></div>
+              <div class="rule-i"><span class="n">3</span><div>
+                <div class="t">分享連結 ＝ 公開網頁</div>
+                <div class="d">沒有密碼、沒有到期日，拿到網址的人都看得到。用完就去設定裡撤銷；能複製文字就不要給連結。</div></div></div>
+              <div class="rule-i"><span class="n">4</span><div>
+                <div class="t">上傳前先刪掉個資欄位，截圖也算上傳</div>
+                <div class="d">姓名、電話、地址、身分證號全部刪掉，要區分個體就用 A001、A002。截圖前先看一眼分頁標題和側邊欄有沒有客戶名稱。</div></div></div>
+              <div class="rule-i"><span class="n">5</span><div>
+                <div class="t">處理客戶或公司資料，要用有合約的版本</div>
+                <div class="d">下單前問三件事：會不會拿去訓練？資料留多久？存在哪一國、適用哪一國法律。個人版通常三個答案都不利。</div></div></div>
+            </div>
+          </div>
+
+          <div class="block r">
+            <div class="bh">五類紅線：永遠不要貼進對話框</div>
+            <ul class="xlist">
+              <li><b>身分證字號、護照號碼</b><span class="sm">前兩碼就洩漏戶籍地與性別，配上其他資訊足以拼出一個完整的人。</span></li>
+              <li><b>金融資訊</b><span class="sm">帳號、信用卡號、存摺影本、報稅資料。</span></li>
+              <li><b>醫療與健保紀錄</b><span class="sm">屬個資法特種個資，外洩責任更重。</span></li>
+              <li><b>他人的個資</b><span class="sm">客戶名單、學生名冊、員工資料。外洩的是別人的個資，責任在您身上——這一項最常被忽略。</span></li>
+              <li><b>公司未公開資訊</b><span class="sm">原始碼、報價、合約、內部簡報、尚未發表的設計。</span></li>
+            </ul>
+          </div>
+
+          <div class="block w">
+            <div class="bh">30 秒關掉訓練授權</div>
+            <div class="tbl"><table>
+              <thead><tr><th>工具</th><th>設定路徑（介面可能隨版本調整）</th></tr></thead>
+              <tbody>
+                <tr><td><b>ChatGPT</b></td><td><code>設定 → 資料控管 → 改善所有人的模型</code> 關閉</td></tr>
+                <tr><td><b>Gemini</b></td><td><code>設定 → Gemini 應用程式活動記錄</code> 關閉</td></tr>
+                <tr><td><b>Claude</b></td><td>預設不以對話訓練模型；仍請至 <code>設定 → 隱私</code> 確認</td></tr>
+                <tr><td><b>Copilot</b></td><td>先分清版本：公司帳號的 M365 Copilot 受租用戶合約保護；個人版於 <code>隱私權設定 → 模型訓練</code></td></tr>
+                <tr><td><b>Midjourney</b></td><td>基本方案作品<b>預設公開</b>於社群頁面，需含 Stealth Mode 的方案才非公開</td></tr>
+                <tr><td><b>其他</b></td><td>找不到這個選項，就當作「會訓練」，不要拿它處理他人資料</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <div class="stack l">
+
+          <div class="block w">
+            <div class="bh">四起真實事件：這些不是假設</div>
+            <div class="stack s">
+              <div class="evt">
+                <div class="dt">2023.03</div>
+                <div class="t">ChatGPT 讓使用者看見別人的對話</div>
+                <div class="d">所使用的開源函式庫 redis-py 出現錯誤，部分使用者在自己介面上看到<b>其他人的對話標題</b>。OpenAI 後續確認約 1.2% 的 Plus 使用者，其姓名、電子郵件與信用卡末四碼曾短暫可被他人看見。</div>
+                <span class="l">→ 您做對了所有設定，服務商的一個 bug 仍會讓資料曝光。最根本的防線是一開始就不要放進去。</span>
+              </div>
+              <div class="evt">
+                <div class="dt">2023.04</div>
+                <div class="t">三星員工把原始碼貼進 ChatGPT</div>
+                <div class="d">半導體部門員工為了除錯與整理會議記錄，將內部原始碼貼入 ChatGPT，短期內發生三起。三星隨後全面限制員工在公司裝置上使用生成式 AI。</div>
+                <span class="l">→ 沒有人是惡意的，他們只是想把工作做快一點。這正是最危險的地方。</span>
+              </div>
+              <div class="evt">
+                <div class="dt">2023.11</div>
+                <div class="t">研究者用「重複單字」誘出訓練資料</div>
+                <div class="d">Google DeepMind 等團隊發表攻擊手法：讓 ChatGPT 不斷重複某個單字，模型會「發散」並吐出訓練資料原文，其中包含真實姓名、電子郵件與電話號碼。</div>
+                <span class="l">→ 這證明了訓練資料是可以被誘出的，不是存進去就安全。</span>
+              </div>
+              <div class="evt">
+                <div class="dt">2025.08</div>
+                <div class="t">私人對話被 Google 搜尋到</div>
+                <div class="d">OpenAI 緊急下架 ChatGPT 一項「讓分享的對話可被搜尋引擎檢索」的選項——大量使用者的私人對話被索引後可公開搜尋。官方稱該功能造成使用者意外分享的機會過高。</div>
+                <span class="l">→ 使用者以為分享給一個人，實際上分享給了整個網際網路。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="bh">已經貼下去了怎麼辦</div>
+            <div class="sos">
+              <ol>
+                <li><b>刪對話、刪上傳的檔案</b>，並到分享連結管理頁撤銷所有連結。</li>
+                <li><b>關掉訓練授權</b>——即使已經來不及，也能阻止後續的輸入繼續被吸收。</li>
+                <li><b>評估外洩的是誰的資料</b>。若含他人個資，依個資法評估是否須通知當事人；涉及公司資料請立即告知主管或資安窗口。</li>
+                <li><b>換掉可換的</b>：密碼、API 金鑰、存取權杖一律重新產生。身分證字號換不掉，所以第 2 條守則才那麼重要。</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="bh">拿了補助，您就是這件事的示範者</div>
+            <p class="small">新竹市是全國第一個補助青年購買 AI 工具的城市。如果補助款買來的工具造成您自己、您的雇主或客戶資料外洩，這筆補助就成了傷害。</p>
+            <p class="small" style="margin-top:9px">完成核銷檢核清單可取得<b>銀牌資安素養徽章</b>（次年度免重填前 6 項）；參加實體工作坊或種子講師培訓可取得<b>金牌</b>（次年度優先審查，並得列入市府種子講師名冊支領鐘點費）。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="docfoot">
+        <div class="l"><b>新竹市政府青年發展中心</b>　LINE 官方帳號 <b>@youthhsinchu</b>（綠盾認證帳號）<br>
+          加好友前請先確認盾牌顏色——<b>灰盾（一般帳號）任何人都能申請</b>。官方帳號永遠不會在 LINE 上跟您要存摺、密碼或手機驗證碼。</div>
+        <div class="r">AI 領航青年數位工具補助計畫<br>資安宣導文件　YC-SEC-01<br>
+          事件摘要引自各案公開報導<br>請以各服務最新公告為準</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ API 介接說明 ══════════ -->
+<section class="view" id="v-apidocs" tabindex="-1">
+  <div class="col wide stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">技術附錄</span>
+      <h1>API 介接與自動審核</h1>
+      <p class="lede">哪些欄位機器自己判得掉、哪些要串外部系統、哪些非人看不可。這一頁是給承辦單位資訊科與評審看的。</p>
+    </div>
+
+    <div class="callout">
+      <span class="t">六組裡，兩組已經處理掉了</span>
+      <p><b>匯率</b>改接 open.er-api.com——免金鑰、有 CORS，前端可直連，現在就在運作。<b>行政區</b>乾脆不用 API：22 縣市 368 個鄉鎮市區直接內建，零延遲、離線可用，比呼叫外部服務可靠。</p>
+      <p>剩下四組<b>本質上不可能從前端連</b>：發票查驗的 <code>appID</code> 與 LINE 的 <code>channel_secret</code> 屬於機密，一放進前端就等於公開；戶政與社會救助則限機關以 T-Road 申請，不對外開放。這四組必須由市府端的後端實作。</p>
+    </div>
+
+    <div class="callout warn">
+      <span class="t">在這個分享連結上，連匯率也會被擋</span>
+      <p>本頁若以沙箱化的網頁環境開啟，內容安全政策會<b>封鎖所有對外請求</b>，匯率會連線失敗並自動退回內建示意值——這是預期行為，不是壞掉。自行架站後即可實際連通。按上面的「實際試連」可以當場看到是哪一種情況。</p>
+    </div>
+
+    <div class="stack m">
+      <div class="stack s">
+        <h2>實際試連</h2>
+        <p class="lede">不用相信上面那段話。按下去，它會真的發出請求，回報這個環境下的實際結果。</p>
+      </div>
+      <div class="btnrow"><button class="btn pri" id="probeBtn" type="button">實際試連一次</button></div>
+      <div class="stack s" id="probeOut"></div>
+    </div>
+
+    <div class="stack m">
+      <h2>六組外部介接</h2>
+      <div class="stack s" id="apiList"></div>
+    </div>
+
+    <div class="stack m">
+      <h2>自動審核規則清單</h2>
+      <p class="lede">共 <span id="ruleTotal"></span> 條。<b>本機即時</b>在使用者按送出前就判完，<b>API 介接</b>於送出後由系統呼叫，<b>人工審查</b>才派給承辦人員。</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>#</th><th>審核項目</th><th>判定方式</th><th>依據</th></tr></thead>
+          <tbody id="ruleRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="t">為什麼這樣切分</span>
+      <p>格式、範圍、一致性這類判斷不需要人。把它們擋在送出之前，申請人當場就能改，不必等三天收到退件通知再重來一次——<b>退件率下降，行政量能才有餘裕去辦工作坊</b>。</p>
+      <p>真正需要人的只剩一件事：這個工具的用途，跟他寫的計畫是否相稱。那才是承辦人員該花時間的地方。</p>
+    </div>
+
+    <div class="callout ok">
+      <span class="t">上線所需的後端代理</span>
+      <p>臺銀匯率與國土測繪中心行政區皆無 CORS 標頭，發票與戶政介接則涉及機密金鑰，四者都需要一層自家後端。實作上是四條路徑：<code>/api/bot-rates</code>、<code>/api/districts</code>、<code>/api/einvoice/verify</code>、<code>/api/household/verify</code>，各自轉發並快取即可。</p>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn sec" data-go="#/" type="button">回流程總覽</button>
+      <button class="btn sec" data-go="#/apply" type="button">回 ① 申請看實際運作</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="veil"></div>
+<div id="term" aria-hidden="true"></div>
+
+<div id="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="sheet" id="modalSheet">
+    <h2 id="modalTitle">停一下。剛才那一整份，您是交給誰的？</h2>
+    <p>畫面上只有一個自稱「小幫手」的 AI，一路回著您的名字、生日、住址，連您上傳的證件都說「很清楚，我幫您存好了」。您填得很順，因為它看起來很親切。</p>
+    <div class="recap" id="recap"></div>
+    <p id="idLine"></p>
+
+    <div class="divide">
+      <span class="t">這張表單，是安全的。</span>
+      <p>它是新竹市政府的申請系統，依個資法有蒐集告知、特定目的與保管責任，您隨時可以要求查詢或刪除。上面這些欄位都是審查與撥款必要的。</p>
+      <span class="t">同樣這些東西打進 AI 對話框，就不是了。</span>
+      <p>ChatGPT、Copilot、各種外掛與自動化工具——沒有人告訴您資料存在哪個國家、留多久、誰調得出來、會不會被拿去訓練。您也沒有辦法要求它刪掉。</p>
+      <span class="t">所以要記住的不是「個資不能給」，是「看清楚在給誰」。</span>
+      <p>有法律依據、有蒐集告知的申請系統，該給就給。對話框裡的 AI，能不給就不給——尤其是身分證字號、住址、證件影像、存摺與健保財務資料。</p>
+      <span class="t">這個提醒，會一路跟著您的補助案。</span>
+      <p>接下來綁定通知、等待審核、核銷請款——每一關都有一件跟 AI 資料安全有關的事要您確認。不是多填幾張表，是把「該注意什麼」放在您真的會遇到它的那一刻。</p>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn pri" id="closeModal" type="button">我知道了，回去完成申請</button>
+      <button class="btn sec" id="guideFromModal" type="button">先看懶人包</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* ═══════════════════════════════════════════════════════════
+   狀態：localStorage，失敗時降級為記憶體
+   ═══════════════════════════════════════════════════════════ */
+var KEY = "hc-ai-subsidy-v2", mem = null;
+function readS(){
+  if (mem) return mem;
+  try { var r = localStorage.getItem(KEY); return r ? JSON.parse(r) : {}; }
+  catch(e){ mem = {}; return mem; }
+}
+function writeS(s){
+  if (mem) { mem = s; return; }
+  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){ mem = s; }
+}
+var S = {
+  get: function(k,d){ var v = readS()[k]; return (v === undefined || v === null) ? d : v; },
+  set: function(k,v){ var s = readS(); s[k] = v; writeS(s); return v; },
+  merge: function(o){ var s = readS(); for (var k in o) if (o.hasOwnProperty(k)) s[k] = o[k]; writeS(s); },
+  reset: function(){ mem = null; try{ localStorage.removeItem(KEY); }catch(e){ mem = {}; } }
+};
+
+var $  = function(id){ return document.getElementById(id); };
+var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+
+function fmt(d){ var p=function(x){return (x<10?"0":"")+x;};
+  return d.getFullYear()+"/"+p(d.getMonth()+1)+"/"+p(d.getDate()); }
+function workday(n){
+  var d=new Date(), step=n<0?-1:1, left=Math.abs(n);
+  while(left>0){ d.setDate(d.getDate()+step); var w=d.getDay(); if(w!==0&&w!==6) left--; }
+  return d;
+}
+var toastT;
+function toast(msg){
+  var t=$("toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toastT); toastT=setTimeout(function(){ t.classList.remove("on"); },2600);
+}
+
+/* 沙箱化的 iframe 可能擋掉列印對話框，擋掉時告訴使用者替代做法 */
+function doPrint(){
+  var framed = true;
+  try { framed = window.self !== window.top; } catch(e){ framed = true; }
+  try {
+    window.print();
+    if (framed) setTimeout(function(){
+      toast("若沒有跳出列印視窗，請先以新分頁開啟本頁，再按 Ctrl／Cmd + P");
+    }, 900);
+  } catch(e){
+    toast("此環境擋住了列印對話框，請以新分頁開啟本頁後按 Ctrl／Cmd + P");
+  }
+}
+
+/* ═══ 主題 ═══ */
+(function(){
+  var saved = S.get("theme","");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+  $("themeBtn").addEventListener("click", function(){
+    var cur = document.documentElement.getAttribute("data-theme");
+    var next = cur === "dark" ? "light" : (cur === "light" ? "dark"
+      : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark"));
+    document.documentElement.setAttribute("data-theme", next);
+    S.set("theme", next);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   路由
+   ═══════════════════════════════════════════════════════════ */
+var STAGES = [
+  {id:"home",     hash:"#/",          n:"·", t:"總覽", flag:null},
+  {id:"apply",    hash:"#/apply",     n:"1", t:"申請", flag:"applied"},
+  {id:"bind",     hash:"#/bind",      n:"2", t:"綁定", flag:"bound"},
+  {id:"review",   hash:"#/review",    n:"3", t:"審核", flag:"reviewed"},
+  {id:"checklist",hash:"#/checklist", n:"4", t:"核銷", flag:"checklistPassed"},
+  {id:"payout",   hash:"#/payout",    n:"5", t:"撥款", flag:"paid"},
+  {id:"guide",    hash:"#/guide",     n:"＊", t:"懶人包", flag:null},
+  {id:"apidocs",  hash:"#/apidocs",   n:"⚙", t:"API", flag:null}
+];
+
+function drawRail(cur){
+  $("railIn").innerHTML = STAGES.map(function(s){
+    var done = s.flag && S.get(s.flag,false);
+    return '<button type="button" data-go="'+s.hash+'" class="'+(done?"done":"")+'"'
+      + (s.id===cur?' aria-current="step"':"") + '>'
+      + '<span class="pip">'+(done && s.id!==cur ? "✓" : s.n)+'</span>'+s.t+'</button>';
+  }).join("");
+}
+
+var ENTER = {
+  home: renderHome, apply: renderApply, bind: renderBind, review: renderReview,
+  checklist: renderChecklist, payout: renderPayout, guide: function(){},
+  apidocs: renderApiDocs
+};
+
+function route(){
+  var h = location.hash || "#/";
+  var st = STAGES.filter(function(s){ return s.hash === h; })[0] || STAGES[0];
+  STAGES.forEach(function(s){
+    var el = $("v-"+s.id); if (el) el.classList.toggle("on", s.id === st.id);
+  });
+  drawRail(st.id);
+  ENTER[st.id]();
+  var v = $("v-"+st.id);
+  if (v) v.focus({preventScroll:true});
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", route);
+
+document.addEventListener("click", function(e){
+  var b = e.target.closest("[data-go]");
+  if (!b) return;
+  e.preventDefault();
+  location.hash = b.getAttribute("data-go");
+});
+
+/* 案號顯示 */
+function paintCase(){
+  var c = S.get("caseNo","");
+  $("caseno").textContent = c ? "案件編號 " + c : "";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   總覽
+   ═══════════════════════════════════════════════════════════ */
+var STAGE_CARDS = [
+  {h:"#/apply", n:"1", flag:"applied", t:"申請 — 讓 AI 小幫手當場示範一次外洩",
+   d:'表單上有個親切的「申辦小幫手」，每填一欄就熱心地覆誦一次，最後從身分證字號推出您的戶籍地與性別。送出的瞬間畫面轉黑，跑出資料被打包送往 <code>unknown-host</code> 的過程。<b>先讓人嚇一跳，再告訴他這張表單其實是安全的——不安全的是他等一下要去用的那個對話框。</b>',
+   g:["解題方向 一"]},
+  {h:"#/bind", n:"2", flag:"bound", t:"綁定 — 從三個相似帳號中選出真的官方帳號",
+   d:'LINE 搜尋「新竹青年」跑出三個帳號，兩個是冒用的。選完再看授權範圍：官方帳號只要 2 項權限。<b>這套判斷標準，正是他之後安裝 AI 外掛時要用的同一套。</b>',
+   g:["解題方向 三"]},
+  {h:"#/review", n:"3", flag:"reviewed", t:"審核 — 把等待期變成教室",
+   d:'送件到核定約 5 至 7 個工作天，過去這段時間是純粹的空白。放進 5 則各 30 秒的微課程，每則附一起真實事件。讀完得銅牌。另含<b>承辦端後台檢視</b>：四項自動勾稽、人工只看紅燈案件。',
+   g:["解題方向 二","解題方向 四"]},
+  {h:"#/checklist", n:"4", flag:"checklistPassed", t:"核銷 — 12 項檢核清單，要佐證不要打勾",
+   d:'依核銷發票選出購買的工具，清單就長出<b>該工具的實際設定路徑</b>。每一項要求答出正確做法、填入查到的數值或附上設定截圖。全數達標才能送出請款，但可無限次重答——<b>答錯不退件，答錯就教</b>。',
+   g:["解題方向 六"]},
+  {h:"#/payout", n:"5", flag:"paid", t:"撥款 — 進度追蹤，加上一個值得拿的東西",
+   d:'撥款時間軸與金額試算。銅／銀／金三級徽章給的不是榮譽是實質好處：次年免重填、優先審查、列入<b>種子講師名冊支領鐘點費</b>。受補助青年學會之後回頭教下一批。',
+   g:["解題方向 二","解題方向 五"]}
+];
+
+function renderHome(){
+  paintCase();
+  $("stageCards").innerHTML = STAGE_CARDS.map(function(c){
+    return '<button class="stagecard '+(S.get(c.flag,false)?"done":"")+'" type="button" data-go="'+c.h+'">'
+      + '<span class="n">'+(S.get(c.flag,false)?"✓":c.n)+'</span><span class="x">'
+      + '<span class="t">'+c.t+'</span><span class="d">'+c.d+'</span>'
+      + '<span>'+c.g.map(function(g){return '<span class="chip a">'+g+'</span>';}).join(" ")+'</span>'
+      + '</span></button>';
+  }).join("");
+
+  var nm = S.get("name",""), applied = S.get("applied",false);
+  if (applied) {
+    var nxt = !S.get("bound",false) ? ["#/bind","② 綁定進度通知"]
+            : !S.get("checklistPassed",false) ? ["#/checklist","④ 核銷資安檢核"]
+            : ["#/payout","⑤ 撥款進度"];
+    $("resumeBox").style.display = "flex";
+    $("resumeTx").innerHTML = (nm ? esc(nm)+"，您的" : "您的") + "案件 <b>"
+      + esc(S.get("caseNo","")) + "</b> 已於 " + esc(S.get("appliedAt","")) + " 收件。下一步是 " + nxt[1] + "。";
+    $("resumeBtn").onclick = function(){ location.hash = nxt[0]; };
+  } else {
+    $("resumeBox").style.display = "none";
+  }
+}
+
+/* ── 重置 ──
+   沙箱化的 iframe 常擋掉 confirm() 與 location.reload()，所以確認改成
+   頁內兩段式，重置也不靠重新載入，直接把記憶體狀態與畫面一起清乾淨。 */
+function hardReset(){
+  S.reset();
+
+  /* 階段① 的暫存與畫面 */
+  done = {}; done.files = {}; fired = false; ASYNC = {};
+  ["name","phone","pid","bday","mail","hrCity","hrDist","hrAddr","mlCity","mlDist","mlAddr",
+   "idType","scheme","func","sw","vendor","pdate","pmethod","cur","amt","twd"].forEach(function(k){
+    var inp = $("f-"+k);
+    if (inp) {
+      if (inp.tagName === "SELECT") inp.selectedIndex = 0; else inp.value = "";
+      inp.removeAttribute("aria-invalid");
+      if (inp.dataset) delete inp.dataset.touched;
+    }
+    var er = $("e-"+k+"-err"); if (er) { er.textContent = ""; er.classList.remove("on"); }
+    var ec = $("e-"+k); if (ec) { ec.className = "echo"; ec.innerHTML = ""; }
+  });
+  $("f-hrCity").value = "新竹市";
+  $("f-same").checked = true;
+  $("mailAddrBox").style.display = "none";
+  VOUCHER.forEach(function(_,i){ var c = $("v"+i); if (c) c.checked = false; });
+  ATTACH.forEach(function(a){
+    var inp = $(a.id); if (inp) inp.value = "";
+    var n = $("n-"+a.id); if (n) n.innerHTML = "";
+  });
+  if (typeof runAudit === "function") runAudit();
+  $("banner").style.display = "none";
+  $("submitBtn").textContent = "送出申請";
+  $("assistTx").innerHTML = "<b>申辦小幫手</b>　這次的表單由我陪您填寫。每填完一欄我會即時確認，有問題我會馬上告訴您。";
+
+  /* 覆蓋層若還開著 */
+  $("modal").classList.remove("on");
+  $("modalSheet").classList.remove("on");
+  $("veil").classList.remove("on");
+  $("term").className = ""; $("term").innerHTML = "";
+
+  /* 其他階段由狀態重畫 */
+  $("toolPick").value = "";
+  $("decl").classList.remove("on");
+  $("chkSubmit").textContent = "送出核銷申請";
+  $("printDecl").style.display = "none";
+  buildMcList();
+  showBind(1);
+  $("b-fb").className = "fb";
+  $("adminBox").style.display = "none";
+  $("adminBtn").textContent = "展開承辦端後台（示意）";
+
+  location.hash = "#/";
+  route();
+  toast("展示進度已清除");
+}
+
+/* 兩段式確認：第一次按進入確認狀態，第二次才真的執行 */
+function wireReset(btnId){
+  var btn = $(btnId), label = btn.textContent, armed = false, t;
+  btn.addEventListener("click", function(){
+    if (!armed) {
+      armed = true;
+      btn.textContent = "確定清除？再按一次";
+      btn.classList.add("pri"); btn.classList.remove("sec");
+      t = setTimeout(function(){
+        armed = false; btn.textContent = label;
+        btn.classList.remove("pri"); btn.classList.add("sec");
+      }, 4000);
+      return;
+    }
+    clearTimeout(t); armed = false;
+    btn.textContent = label;
+    btn.classList.remove("pri"); btn.classList.add("sec");
+    hardReset();
+  });
+}
+wireReset("resetHome");
+
+/* ═══════════════════════════════════════════════════════════
+   ① 申請
+   ═══════════════════════════════════════════════════════════ */
+var CITY = {A:"臺北市",B:"臺中市",C:"基隆市",D:"臺南市",E:"高雄市",F:"新北市",G:"宜蘭縣",H:"桃園市",
+ I:"嘉義市",J:"新竹縣",K:"苗栗縣",L:"臺中縣",M:"南投縣",N:"彰化縣",O:"新竹市",P:"雲林縣",Q:"嘉義縣",
+ R:"臺南縣",S:"高雄縣",T:"屏東縣",U:"花蓮縣",V:"臺東縣",W:"金門縣",X:"澎湖縣",Y:"陽明山",Z:"連江縣"};
+var LV = {A:10,B:11,C:12,D:13,E:14,F:15,G:16,H:17,I:34,J:18,K:19,L:20,M:21,N:22,O:35,P:23,Q:24,
+ R:25,S:26,T:27,U:28,V:29,W:32,X:30,Y:31,Z:33};
+
+function checkPid(v){
+  if(!/^[A-Z][12][0-9]{8}$/.test(v)) return null;
+  var n = LV[v[0]], sum = Math.floor(n/10) + (n%10)*9;
+  for(var i=1;i<=8;i++) sum += (+v[i]) * (9-i);
+  sum += (+v[9]);
+  if(sum % 10 !== 0) return false;
+  return { city: CITY[v[0]], sex: v[1] === "1" ? "男性" : "女性", hsinchu: v[0] === "O" };
+}
+function ageOf(d){
+  var b=new Date(d), t=new Date(), a=t.getFullYear()-b.getFullYear(), m=t.getMonth()-b.getMonth();
+  if(m<0 || (m===0 && t.getDate()<b.getDate())) a--;
+  return a;
+}
+
+var done = {}, fired = false, applyInit = false;
+
+function echo(id, text, warn){
+  var el = $("e-"+id);
+  el.className = "echo" + (warn ? " warn" : "");
+  el.innerHTML = '<span class="b">AI</span><span>'+text+'</span>';
+  requestAnimationFrame(function(){ el.classList.add("on"); });
+}
+function fieldErr(id, msg){
+  var e = $("e-"+id+"-err"), inp = $("f-"+id);
+  if (msg) { e.textContent = msg; e.classList.add("on"); if(inp) inp.setAttribute("aria-invalid","true"); }
+  else { e.classList.remove("on"); if(inp) inp.removeAttribute("aria-invalid"); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   縣市與行政區
+   行政區僅內建新竹生活圈四縣市；其餘縣市改為自由填寫，
+   由 API.districts() 在 live 模式下向國土測繪中心取得。
+   ═══════════════════════════════════════════════════════════ */
+var COUNTIES = ["臺北市","新北市","桃園市","臺中市","臺南市","高雄市","基隆市","新竹市","嘉義市",
+  "新竹縣","苗栗縣","彰化縣","南投縣","雲林縣","嘉義縣","屏東縣","宜蘭縣","花蓮縣","臺東縣",
+  "澎湖縣","金門縣","連江縣"];
+
+/* 全國 22 縣市 368 鄉鎮市區。
+   這份資料多年不變，直接內建比呼叫 API 可靠，也省掉一層後端代理。 */
+var DISTRICTS = {
+"臺北市":["中正區","大同區","中山區","松山區","大安區","萬華區","信義區","士林區","北投區","內湖區","南港區","文山區"],
+"新北市":["板橋區","三重區","中和區","永和區","新莊區","新店區","樹林區","鶯歌區","三峽區","淡水區","汐止區","瑞芳區","土城區","蘆洲區","五股區","泰山區","林口區","深坑區","石碇區","坪林區","三芝區","石門區","八里區","平溪區","雙溪區","貢寮區","金山區","萬里區","烏來區"],
+"桃園市":["桃園區","中壢區","大溪區","楊梅區","蘆竹區","大園區","龜山區","八德區","龍潭區","平鎮區","新屋區","觀音區","復興區"],
+"臺中市":["中區","東區","南區","西區","北區","北屯區","西屯區","南屯區","太平區","大里區","霧峰區","烏日區","豐原區","后里區","石岡區","東勢區","和平區","新社區","潭子區","大雅區","神岡區","大肚區","沙鹿區","龍井區","梧棲區","清水區","大甲區","外埔區","大安區"],
+"臺南市":["中西區","東區","南區","北區","安平區","安南區","永康區","歸仁區","新化區","左鎮區","玉井區","楠西區","南化區","仁德區","關廟區","龍崎區","官田區","麻豆區","佳里區","西港區","七股區","將軍區","學甲區","北門區","新營區","後壁區","白河區","東山區","六甲區","下營區","柳營區","鹽水區","善化區","大內區","山上區","新市區","安定區"],
+"高雄市":["楠梓區","左營區","鼓山區","三民區","鹽埕區","前金區","新興區","苓雅區","前鎮區","旗津區","小港區","鳳山區","大寮區","鳥松區","林園區","仁武區","大樹區","大社區","岡山區","路竹區","橋頭區","梓官區","彌陀區","永安區","燕巢區","田寮區","阿蓮區","茄萣區","湖內區","旗山區","美濃區","內門區","杉林區","甲仙區","六龜區","茂林區","桃源區","那瑪夏區"],
+"基隆市":["仁愛區","信義區","中正區","中山區","安樂區","暖暖區","七堵區"],
+"新竹市":["東區","北區","香山區"],
+"嘉義市":["東區","西區"],
+"新竹縣":["竹北市","竹東鎮","新埔鎮","關西鎮","湖口鄉","新豐鄉","芎林鄉","橫山鄉","北埔鄉","寶山鄉","峨眉鄉","尖石鄉","五峰鄉"],
+"苗栗縣":["苗栗市","頭份市","竹南鎮","後龍鎮","通霄鎮","苑裡鎮","卓蘭鎮","造橋鄉","西湖鄉","頭屋鄉","公館鄉","銅鑼鄉","三義鄉","大湖鄉","獅潭鄉","三灣鄉","南庄鄉","泰安鄉"],
+"彰化縣":["彰化市","員林市","和美鎮","鹿港鎮","溪湖鎮","二林鎮","田中鎮","北斗鎮","花壇鄉","芬園鄉","大村鄉","永靖鄉","伸港鄉","線西鄉","福興鄉","秀水鄉","埔心鄉","埔鹽鄉","大城鄉","芳苑鄉","竹塘鄉","社頭鄉","二水鄉","田尾鄉","埤頭鄉","溪州鄉"],
+"南投縣":["南投市","埔里鎮","草屯鎮","竹山鎮","集集鎮","名間鄉","鹿谷鄉","中寮鄉","魚池鄉","國姓鄉","水里鄉","信義鄉","仁愛鄉"],
+"雲林縣":["斗六市","斗南鎮","虎尾鎮","西螺鎮","土庫鎮","北港鎮","莿桐鄉","林內鄉","古坑鄉","大埤鄉","崙背鄉","二崙鄉","麥寮鄉","臺西鄉","東勢鄉","褒忠鄉","四湖鄉","口湖鄉","水林鄉","元長鄉"],
+"嘉義縣":["太保市","朴子市","布袋鎮","大林鎮","民雄鄉","溪口鄉","新港鄉","六腳鄉","東石鄉","義竹鄉","鹿草鄉","水上鄉","中埔鄉","竹崎鄉","梅山鄉","番路鄉","大埔鄉","阿里山鄉"],
+"屏東縣":["屏東市","潮州鎮","東港鎮","恆春鎮","萬丹鄉","長治鄉","麟洛鄉","九如鄉","里港鄉","鹽埔鄉","高樹鄉","萬巒鄉","內埔鄉","竹田鄉","新埤鄉","枋寮鄉","新園鄉","崁頂鄉","林邊鄉","南州鄉","佳冬鄉","琉球鄉","車城鄉","滿州鄉","枋山鄉","三地門鄉","霧臺鄉","瑪家鄉","泰武鄉","來義鄉","春日鄉","獅子鄉","牡丹鄉"],
+"宜蘭縣":["宜蘭市","羅東鎮","蘇澳鎮","頭城鎮","礁溪鄉","壯圍鄉","員山鄉","冬山鄉","五結鄉","三星鄉","大同鄉","南澳鄉"],
+"花蓮縣":["花蓮市","鳳林鎮","玉里鎮","新城鄉","吉安鄉","壽豐鄉","光復鄉","豐濱鄉","瑞穗鄉","富里鄉","秀林鄉","萬榮鄉","卓溪鄉"],
+"臺東縣":["臺東市","成功鎮","關山鎮","卑南鄉","鹿野鄉","池上鄉","東河鄉","長濱鄉","太麻里鄉","大武鄉","綠島鄉","海端鄉","延平鄉","金峰鄉","達仁鄉","蘭嶼鄉"],
+"澎湖縣":["馬公市","湖西鄉","白沙鄉","西嶼鄉","望安鄉","七美鄉"],
+"金門縣":["金城鎮","金沙鎮","金湖鎮","金寧鄉","烈嶼鄉","烏坵鄉"],
+"連江縣":["南竿鄉","北竿鄉","莒光鄉","東引鄉"]
+};
+
+/* 補助期間：115 年 4 月起 */
+var PERIOD = { from:"2026-04-01", to:"2026-12-31" };
+
+/* ═══════════════════════════════════════════════════════════
+   API 介接層
+
+   mode = "auto"：能直連的就真的連，連不上自動退回內建資料。
+   目前實際狀況（詳見 ⚙ API 頁的「實際試連」）：
+
+     ● 匯率        → 可直連 open.er-api.com（免金鑰、有 CORS）
+     ● 行政區      → 已改為本機內建 368 筆，不需要 API
+     ✕ 發票查驗    → appID 屬機密，必須後端
+     ✕ 戶政        → 限機關申請，不對外開放
+     ✕ 社會救助    → 限機關申請
+     ✕ LINE Login  → channel_secret 屬機密，必須後端
+
+   本原型發佈於沙箱化的網頁環境時，內容安全政策會封鎖所有對外
+   請求，連匯率也會被擋下並自動退回內建值——這是預期行為。
+   自行架站後匯率即可實際連通。
+   ═══════════════════════════════════════════════════════════ */
+/* 連線失敗時的備援值，取自 2026-09-13 實際匯率；正式核銷以臺銀牌告匯率為準 */
+var FX_MOCK = { TWD:1, USD:31.57, EUR:36.67, JPY:0.2058, CNY:4.71, GBP:42.72, HKD:4.03 };
+var FX_SRC = "內建示意值";
+
+var API = {
+  mode: "auto",
+  log: {},
+
+  /* 即時市場匯率
+     直連端點：GET https://open.er-api.com/v6/latest/TWD   （免金鑰、回應 CORS 標頭）
+     回傳 rates 為「1 TWD 可換多少外幣」，取倒數即為每單位外幣的臺幣價。
+     ※ 這是市場參考匯率，核銷正式認定仍以購買日臺灣銀行牌告匯率為準
+       （臺銀 CSV 無 CORS 標頭，需後端代理 /api/bot-rates）。 */
+  rates: function(){
+    var self = this;
+    if (this.mode === "mock") {
+      this.log.fx = { live:false, note:"模擬模式，未嘗試連線" };
+      return Promise.resolve({ ok:true, src:"mock", rates:FX_MOCK });
+    }
+    return fetch("https://open.er-api.com/v6/latest/TWD", { cache:"no-store" })
+      .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function(j){
+        if (!j || j.result !== "success" || !j.rates) throw new Error("回應格式不符");
+        var out = { TWD:1 }, n = 0;
+        ["USD","EUR","JPY","CNY","GBP","HKD"].forEach(function(c){
+          if (j.rates[c]) { out[c] = Math.round((1 / j.rates[c]) * 10000) / 10000; n++; }
+        });
+        if (!n) throw new Error("無可用幣別");
+        FX_SRC = "即時市場匯率";
+        self.log.fx = { live:true, note:"open.er-api.com · 更新於 " + (j.time_last_update_utc || "—") };
+        return { ok:true, src:"live", rates:out, at:j.time_last_update_utc || "" };
+      })
+      .catch(function(e){
+        FX_SRC = "內建示意值";
+        self.log.fx = { live:false, note:"連線失敗（" + (e && e.message ? e.message : "已被封鎖") + "），改用內建示意值" };
+        return { ok:false, src:"mock", rates:FX_MOCK };
+      });
+  },
+
+  /* 行政區清單 — 已本機內建，不發出任何請求 */
+  districts: function(county){
+    var list = DISTRICTS[county] || [];
+    this.log.dist = { live:true, note:"本機內建 " + countDistricts() + " 筆，免介接" };
+    return Promise.resolve({ ok:true, src:"builtin", list:list });
+  },
+
+  /* 財政部電子發票整合服務平台 — 發票查驗
+     真實端點：POST https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp
+     參數：version / type=Barcode / invNum / invDate / randomNumber / appID
+     appID 須向財政部申請且屬機密，必須放後端，前端只呼叫 /api/einvoice/verify */
+  verifyInvoice: function(d){
+    this.log.einvoice = { live:false, note:"需 appID，僅後端可呼叫" };
+    var sane = !!(d.sw && d.amt > 0 && d.pdate);
+    var inPeriod = d.pdate >= PERIOD.from && d.pdate <= PERIOD.to;
+    return delay(620).then(function(){
+      return { ok:true, src:"mock", valid: sane && inPeriod,
+               reason: !sane ? "憑證欄位不完整" : (!inPeriod ? "購買日期不在補助期間內" : "") };
+    });
+  },
+
+  /* 戶政資料介接 — 內政部戶政司，限機關以 T-Road 申請，不對外開放。
+     原型改以身分證字號首碼與檢查碼本機推算替代。 */
+  verifyHousehold: function(pid){
+    this.log.household = { live:false, note:"限機關介接，改以檢查碼本機推算" };
+    var r = checkPid(pid);
+    return delay(480).then(function(){
+      return { ok:true, src:"mock", valid: !!(r && r.hsinchu), city: r ? r.city : "",
+               reason: !r ? "身分證字號無效" : (r.hsinchu ? "" : "戶籍地非新竹市") };
+    });
+  },
+
+  /* 重複申請比對 — 需查詢市府補助案件資料庫，後端實作 */
+  checkDuplicate: function(pid){
+    this.log.dup = { live:false, note:"需查詢市府案件資料庫，後端實作" };
+    return delay(400).then(function(){ return { ok:true, src:"mock", duplicated:false }; });
+  },
+
+  /* 特定對象資格 — 衛福部社會救助資料／新竹市社會處，限機關介接 */
+  verifyLowIncome: function(pid, type){
+    this.log.lowinc = { live:false, note:"限機關介接，以檢附證明文件為準" };
+    return delay(520).then(function(){
+      return { ok:true, src:"mock", valid:true, note:"以檢附之證明文件為準" };
+    });
+  },
+
+  /* LINE Login v2.1 — channel_secret 屬機密，token 交換必須在後端 */
+  lineAuthUrl: function(){
+    this.log.line = { live:false, note:"需 channel_id 與後端 callback" };
+    return null;
+  }
+};
+
+function countDistricts(){
+  var n = 0;
+  for (var k in DISTRICTS) if (DISTRICTS.hasOwnProperty(k)) n += DISTRICTS[k].length;
+  return n;
+}
+
+function delay(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+
+/* ═══════════════════════════════════════════════════════════
+   自動審核引擎
+   scope：local = 本機即時判定｜api = 需外部介接｜manual = 必須人工
+   ═══════════════════════════════════════════════════════════ */
+var RULES = [
+  { id:"name", scope:"local", label:"申請人姓名格式",
+    run:function(d){ if(!d.name) return W("尚未填寫");
+      return d.name.length >= 2 ? OK("已填寫") : NO("姓名至少 2 個字"); } },
+
+  { id:"phone", scope:"local", label:"聯絡電話格式",
+    run:function(d){ if(!d.phone) return W("尚未填寫");
+      return /^09\d{8}$/.test(d.phone) ? OK("手機號碼格式正確")
+           : /^0\d{1,2}\d{6,8}$/.test(d.phone) ? OK("市話格式正確")
+           : NO("請填 09 開頭 10 碼手機，或含區碼的市話"); } },
+
+  { id:"pid", scope:"local", label:"身分證字號檢查碼",
+    run:function(d){ if(!d.pid) return W("尚未填寫");
+      var r = checkPid(d.pid);
+      return r === null ? NO("格式不符：1 個英文字母 + 1 或 2 + 8 位數字")
+           : r === false ? NO("檢查碼不符，號碼可能打錯")
+           : OK("檢查碼正確"); } },
+
+  { id:"reside", scope:"local", label:"設籍新竹市",
+    run:function(d){ if(!d.pid) return W("待填身分證字號");
+      var r = checkPid(d.pid);
+      if(!r) return W("待身分證字號有效");
+      return r.hsinchu ? OK("身分證字號首碼 O，設籍新竹市")
+                       : NO("首碼顯示設籍「"+r.city+"」，本計畫限設籍新竹市"); } },
+
+  { id:"crosscheck", scope:"local", label:"身分證字號與戶籍地址勾稽",
+    run:function(d){ if(!d.pid || !d.hrCity) return W("待兩項皆填寫");
+      var r = checkPid(d.pid);
+      if(!r) return W("待身分證字號有效");
+      return r.city === d.hrCity ? OK("首碼「"+d.pid[0]+"」與戶籍縣市一致")
+        : NO("首碼推得「"+r.city+"」，但戶籍填「"+d.hrCity+"」，兩者不符"); } },
+
+  { id:"age", scope:"local", label:"年齡 18 至 40 歲",
+    run:function(d){ if(!d.bdayRaw) return W("尚未填寫");
+      var a = ageOf(d.bdayRaw);
+      if(a < 0 || a > 120) return NO("出生日期不合理");
+      return (a >= 18 && a <= 40) ? OK("目前 "+a+" 歲，符合") : NO("目前 "+a+" 歲，不在 18 至 40 歲範圍"); } },
+
+  { id:"mail", scope:"local", label:"電子郵件格式",
+    run:function(d){ if(!d.mail) return W("尚未填寫");
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.mail) ? OK("格式正確") : NO("請填完整信箱，例如 you@example.com"); } },
+
+  { id:"dist", scope:"local", label:"行政區屬於所選縣市",
+    run:function(d){ if(!d.hrCity || !d.hrDist) return W("待地址填寫完成");
+      var list = DISTRICTS[d.hrCity];
+      if(!list) return W("查無該縣市");
+      return list.indexOf(d.hrDist) >= 0 ? OK(d.hrCity+d.hrDist+" 存在")
+        : NO("「"+d.hrDist+"」不屬於"+d.hrCity+"，可選："+list.join("、")); } },
+
+  { id:"pdate", scope:"local", label:"購買日期在補助期間內",
+    run:function(d){ if(!d.pdate) return W("尚未填寫");
+      return (d.pdate >= PERIOD.from && d.pdate <= PERIOD.to)
+        ? OK("落在 "+PERIOD.from+" 至 "+PERIOD.to+" 之間")
+        : NO("購買日期須介於 "+PERIOD.from+" 至 "+PERIOD.to); } },
+
+  { id:"fx", scope:"api", label:"外幣換算金額合理性",
+    run:function(d){ if(!d.amt) return W("尚未填寫費用");
+      if(d.cur === "TWD") return OK("原始幣別為新臺幣，無須換算");
+      if(!d.twd) return W("待換算金額填入");
+      if(!d.rate) return W("待匯率載入");
+      var expect = d.amt * d.rate, diff = Math.abs(d.twd - expect) / expect;
+      return diff <= 0.05 ? OK("與牌告匯率相符（誤差 "+(diff*100).toFixed(1)+"%）")
+        : NO("換算金額與牌告匯率差 "+(diff*100).toFixed(1)+"%，建議填 "+Math.round(expect)+" 元"); } },
+
+  { id:"voucher", scope:"local", label:"憑證檢核五項確認",
+    run:function(d){ var n = d.voucher.filter(Boolean).length;
+      return n === VOUCHER.length ? OK("五項皆已確認") : W("已確認 "+n+" / "+VOUCHER.length+" 項"); } },
+
+  { id:"attach", scope:"local", label:"附件齊備與格式",
+    run:function(d){
+      var need = ATTACH.filter(function(a){ return a.req || (a.cond && d.idType !== "general"); });
+      var miss = need.filter(function(a){ return !d.files[a.id]; });
+      if (miss.length) return W("尚缺 "+miss.length+" 項："+miss.map(function(a){return a.n;}).join("、"));
+      var bad = need.filter(function(a){ return d.files[a.id].bad; });
+      return bad.length ? NO("格式或大小不符："+bad.map(function(a){return a.n;}).join("、"))
+                        : OK("必要附件齊備，格式正確"); } },
+
+  { id:"einvoice", scope:"api", label:"發票真偽查驗（財政部電子發票平台）", async:true },
+  { id:"household", scope:"api", label:"戶籍核驗（內政部戶政資料介接）", async:true },
+  { id:"dup", scope:"api", label:"重複申請比對（跨年度）", async:true },
+  { id:"lowinc", scope:"api", label:"特定對象資格查驗（衛福部／社會處）", async:true },
+
+  { id:"content", scope:"manual", label:"工具用途合理性",
+    run:function(){ return W("由承辦人員審查，系統不自動判定"); } }
+];
+
+function OK(m){ return {s:"ok", m:m}; }
+function NO(m){ return {s:"no", m:m}; }
+function W(m){ return {s:"wait", m:m}; }
+
+var VOUCHER = [
+  "憑證抬頭為申請人本人姓名（或本人統一編號）",
+  "載明品名，且可辨識為 AI 數位工具",
+  "載明購買日期，且落在補助期間內",
+  "載明金額與幣別",
+  "為原始憑證，非影本重製、非估價單或訂購單"
+];
+
+var ATTACH = [
+  {id:"a-id",        n:"身分證正反面",     req:true,  hint:"正反面各一張，四角完整可辨識"},
+  {id:"a-invoice",   n:"購買憑證與發票",   req:true,  hint:"電子發票證明聯或信用卡帳單明細"},
+  {id:"a-special",   n:"特定對象證明",     req:false, cond:true,
+   hint:"低收入戶／中低收入戶證明，選擇一般青年者免附"},
+  {id:"a-bank",      n:"存摺封面影本",     req:true,  hint:"須可見戶名與帳號，供撥款使用"},
+  {id:"a-affidavit", n:"切結書",           req:true,  hint:"請下載範本簽名後掃描或拍照上傳"}
+];
+
+var FX = { TWD:1 };     /* 由 API.rates() 填入 */
+var ASYNC = {};         /* API 規則的非同步結果 */
+
+/* ═══════════════════════════════════════════════════════════
+   ① 申請 — 畫面與邏輯
+   ═══════════════════════════════════════════════════════════ */
+function formData(){
+  var files = {};
+  ATTACH.forEach(function(a){ files[a.id] = done.files ? done.files[a.id] : null; });
+  var bdayRaw = $("f-bday").value;
+  return {
+    name:$("f-name").value.trim(),
+    phone:$("f-phone").value.replace(/[^\d]/g,""),
+    pid:$("f-pid").value.trim().toUpperCase(),
+    bdayRaw:bdayRaw,
+    mail:$("f-mail").value.trim(),
+    hrCity:$("f-hrCity").value, hrDist:$("f-hrDist").value.trim(), hrAddr:$("f-hrAddr").value.trim(),
+    mlCity:$("f-mlCity").value, mlDist:$("f-mlDist").value.trim(), mlAddr:$("f-mlAddr").value.trim(),
+    same:$("f-same").checked,
+    idType:$("f-idType").value,
+    scheme:$("f-scheme").value, func:$("f-func").value,
+    sw:$("f-sw").value.trim(), vendor:$("f-vendor").value.trim(),
+    pdate:$("f-pdate").value, pmethod:$("f-pmethod").value,
+    cur:$("f-cur").value,
+    amt:parseFloat($("f-amt").value) || 0,
+    twd:parseInt($("f-twd").value, 10) || 0,
+    rate:FX[$("f-cur").value] || 0,
+    voucher:VOUCHER.map(function(_,i){ var el = $("v"+i); return el ? el.checked : false; }),
+    files:files
+  };
+}
+
+function runAudit(){
+  var d = formData();
+  var rows = RULES.map(function(r){
+    var res;
+    if (r.async) {
+      res = ASYNC[r.id] || W("待送出後由系統呼叫");
+    } else {
+      try { res = r.run(d); } catch(e){ res = W("待資料填寫完成"); }
+    }
+    var chip = res.s === "ok" ? "g" : (res.s === "no" ? "r" : "w");
+    var mark = res.s === "ok" ? "✓ 通過" : (res.s === "no" ? "✕ 不符" : "◷ 待驗");
+    var scope = r.scope === "local" ? "本機即時" : (r.scope === "api" ? "API 介接" : "人工審查");
+    return '<div class="auditrow">'
+      + '<span class="chip '+chip+'">'+mark+'</span>'
+      + '<span class="ar-x"><span class="ar-l">'+r.label
+      + ' <span class="chip">'+scope+'</span></span>'
+      + '<span class="ar-m">'+esc(res.m)+'</span></span></div>';
+  }).join("");
+  $("auditList").innerHTML = rows;
+
+  var okN = 0, noN = 0;
+  RULES.forEach(function(r){
+    var res = r.async ? (ASYNC[r.id] || W("")) : (function(){ try{ return r.run(d); }catch(e){ return W(""); } })();
+    if (res.s === "ok") okN++; else if (res.s === "no") noN++;
+  });
+  $("auditCount").textContent = "通過 " + okN + " ／ 不符 " + noN + " ／ 共 " + RULES.length + " 項";
+  return { ok:okN, no:noN, data:d };
+}
+
+function fillCounties(sel){
+  var s = $(sel);
+  s.innerHTML = '<option value="">請選擇</option>'
+    + COUNTIES.map(function(c){ return '<option'+(c==="新竹市"?' value="新竹市"':'')+'>'+c+'</option>'; }).join("");
+}
+function fillDistricts(county, listId){
+  API.districts(county).then(function(r){
+    $(listId).innerHTML = r.list.map(function(d){ return '<option value="'+d+'"></option>'; }).join("");
+  });
+}
+
+function renderApply(){
+  paintCase();
+  if (applyInit) return;
+  applyInit = true;
+
+  fillCounties("f-hrCity"); fillCounties("f-mlCity");
+  $("f-hrCity").value = "新竹市";
+  fillDistricts("新竹市", "dl-hrDist");
+
+  /* 憑證檢核五項 */
+  $("voucherList").innerHTML = VOUCHER.map(function(t,i){
+    return '<label class="opt" for="v'+i+'"><input type="checkbox" id="v'+i+'"><span>'+t+'</span></label>';
+  }).join("");
+
+  /* 附件 */
+  done.files = {};
+  $("attachList").innerHTML = ATTACH.map(function(a){
+    return '<div class="attach" data-a="'+a.id+'">'
+      + '<div class="at-h"><span class="at-n">'+a.n+'</span>'
+      + (a.req ? '<span class="chip r">必附</span>'
+               : '<span class="chip w">特定對象必附</span>')+'</div>'
+      + '<div class="at-hint">'+a.hint+'</div>'
+      + '<div class="filepick"><input type="file" id="'+a.id+'" accept="image/jpeg,image/png,application/pdf">'
+      + '<span class="nm" id="n-'+a.id+'"></span></div></div>';
+  }).join("");
+
+  /* ── 欄位監聽 ── */
+  $("f-name").addEventListener("blur", function(e){
+    var v = e.target.value.trim(); if(!v) return;
+    if(v.length < 2){ fieldErr("name","姓名至少 2 個字，請填寫身分證上的全名。"); return; }
+    fieldErr("name",""); done.name = v;
+    echo("name", esc(v) + " 您好，我先幫您記下來了。");
+  });
+
+  $("f-phone").addEventListener("blur", function(e){
+    var v = e.target.value.replace(/[^\d]/g,""); if(!v) return;
+    if(!/^09\d{8}$/.test(v) && !/^0\d{7,9}$/.test(v)){
+      fieldErr("phone","請填 09 開頭共 10 碼的手機，或含區碼的市話，例如 0351xxxxx。"); return; }
+    fieldErr("phone",""); done.phone = v;
+    echo("phone", (/^09/.test(v) ? v.slice(0,4)+"-"+v.slice(4,7)+"-"+v.slice(7) : v)
+      + "，收到。有狀況我直接打給您。");
+  });
+
+  $("f-pid").addEventListener("input", function(e){ e.target.value = e.target.value.toUpperCase(); });
+  $("f-pid").addEventListener("blur", function(e){
+    var v = e.target.value.trim().toUpperCase(); if(!v) return;
+    var r = checkPid(v);
+    if(r === null){ fieldErr("pid","格式應為 1 個英文字母 + 1 或 2 + 8 位數字，例如 O123456789。");
+      echo("pid","格式看起來不太對，請確認一次。",true); return; }
+    if(r === false){ fieldErr("pid","檢查碼不符，請再核對一次號碼。");
+      echo("pid","這組號碼的檢查碼不符，您是不是打錯了？",true); return; }
+    fieldErr("pid", r.hsinchu ? "" : "本計畫限設籍新竹市（身分證字號 O 開頭）。展示模式仍可繼續填寫。");
+    done.pid = v; done.city = r.city; done.sex = r.sex;
+    if (!$("f-hrCity").value) { $("f-hrCity").value = r.city; onCity("hr"); }
+    echo("pid","身分核驗完成。您設籍在"+r.city+"、"+r.sex+"，我一併記下了。");
+  });
+
+  $("f-bday").addEventListener("change", function(e){
+    var v = e.target.value; if(!v) return;
+    var a = ageOf(v);
+    if(a < 0 || a > 120){ fieldErr("bday","請確認出生日期是否正確。"); return; }
+    fieldErr("bday", (a < 18 || a > 40)
+      ? "本計畫限 18 至 40 歲青年申請，您目前為 "+a+" 歲。展示模式仍可繼續填寫。" : "");
+    done.bday = a;
+    echo("bday", "今年 " + a + " 歲。" + v.slice(5).replace("-","/") + " 生日，到時候我提醒您。");
+  });
+
+  $("f-mail").addEventListener("blur", function(e){
+    var v = e.target.value.trim(); if(!v) return;
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
+      fieldErr("mail","請填寫完整的電子郵件，例如 you@example.com。"); return; }
+    fieldErr("mail",""); done.mail = v;
+    echo("mail", "之後所有通知都會寄到這裡，我存好了。");
+  });
+
+  /* 地址 */
+  function onCity(p){
+    var c = $("f-"+p+"City").value;
+    fillDistricts(c, "dl-"+p+"Dist");
+    $("f-"+p+"Dist").value = "";
+  }
+  $("f-hrCity").addEventListener("change", function(){ onCity("hr"); runAudit(); });
+  $("f-mlCity").addEventListener("change", function(){ onCity("ml"); runAudit(); });
+
+  $("f-hrAddr").addEventListener("blur", function(){
+    var d = formData();
+    if (!d.hrCity || !d.hrDist || !d.hrAddr) return;
+    done.addr = d.hrCity + d.hrDist + d.hrAddr;
+    echo("hrAddr", "住址我記下來了：" + esc(done.addr) + "。撥款通知會寄到這裡。");
+  });
+
+  $("f-same").addEventListener("change", function(e){
+    $("mailAddrBox").style.display = e.target.checked ? "none" : "flex";
+    runAudit();
+  });
+
+  $("f-idType").addEventListener("change", function(e){
+    var t = e.target.value;
+    echo("idType", t === "general"
+      ? "一般青年，補助 50%、上限 3,000 元。"
+      : "特定對象，補助 90%、上限 6,000 元，記得附上證明文件。");
+    paintAttachReq();
+    runAudit();
+  });
+
+  /* 購買工具 */
+  $("f-sw").addEventListener("blur", function(e){
+    var v = e.target.value.trim(); if(!v) return;
+    done.sw = v;
+    var k = guessTool(v);
+    echo("sw", k ? "「"+esc(v)+"」我認得，等一下核銷的資安檢核清單會直接帶出它的設定路徑。"
+                 : "「"+esc(v)+"」記下了。");
+  });
+
+  function recalc(){
+    var cur = $("f-cur").value, amt = parseFloat($("f-amt").value) || 0;
+    if (!amt) return;
+    var rate = FX[cur] || 0;
+    if (!rate) return;
+    var twd = Math.round(amt * rate);
+    if (cur === "TWD") { $("f-twd").value = Math.round(amt); }
+    else if (!$("f-twd").dataset.touched) { $("f-twd").value = twd; }
+    echo("twd", cur === "TWD" ? "新臺幣 " + twd.toLocaleString("en-US") + " 元。"
+      : "依 1 " + cur + " ＝ " + rate + " 元（" + FX_SRC + "）換算，約新臺幣 "
+        + twd.toLocaleString("en-US") + " 元。正式核銷以購買日臺灣銀行牌告匯率為準。");
+    runAudit();
+  }
+  $("f-cur").addEventListener("change", recalc);
+  $("f-amt").addEventListener("input", recalc);
+  $("f-twd").addEventListener("input", function(e){ e.target.dataset.touched = "1"; runAudit(); });
+
+  /* 憑證與附件 */
+  $("voucherList").addEventListener("change", runAudit);
+
+  $("attachList").addEventListener("change", function(e){
+    var inp = e.target;
+    if (inp.type !== "file" || !inp.files || !inp.files.length) return;
+    var f = inp.files[0];
+    var okType = /\.(jpe?g|png|pdf)$/i.test(f.name);
+    var okSize = f.size <= 10 * 1024 * 1024;
+    done.files[inp.id] = { name:f.name, size:f.size, bad: !okType || !okSize };
+    $("n-"+inp.id).innerHTML = esc(f.name) + " · " + (f.size/1024).toFixed(0) + " KB"
+      + (okType && okSize ? "" : ' <span class="chip r">'
+        + (!okType ? "格式不符" : "超過 10MB") + "</span>");
+    var meta = ATTACH.filter(function(a){ return a.id === inp.id; })[0];
+    if (inp.id === "a-id") echo2("身分證正反面我收到了，兩面都很清楚，我幫您存好了。");
+    if (inp.id === "a-bank") echo2("存摺封面也收到了，戶名和帳號我記下來了，撥款會匯到這裡。");
+    runAudit();
+  });
+
+  $("submitBtn").addEventListener("click", onSubmit);
+
+  /* 其他欄位一律觸發重新審核 */
+  ["f-scheme","f-func","f-vendor","f-pdate","f-pmethod","f-hrDist","f-hrAddr","f-mlDist","f-mlAddr"]
+    .forEach(function(id){
+      var el = $(id); if (el) el.addEventListener("change", runAudit);
+    });
+  $("form").addEventListener("blur", runAudit, true);
+
+  /* 載入匯率後再跑一次 */
+  API.rates().then(function(r){ FX = r.rates; runAudit(); });
+
+  paintAttachReq();
+  runAudit();
+}
+
+/* 小幫手的額外發話（附件用） */
+function echo2(msg){
+  var tx = $("assistTx");
+  tx.innerHTML = "<b>申辦小幫手</b>　" + msg;
+  tx.parentElement.animate
+    ? tx.parentElement.animate([{opacity:.4},{opacity:1}], {duration:420})
+    : null;
+}
+
+function paintAttachReq(){
+  var special = $("f-idType").value !== "general";
+  var box = $("attachList").querySelector('[data-a="a-special"]');
+  if (box) box.style.opacity = special ? "1" : ".55";
+}
+
+function guessTool(name){
+  var s = (name || "").toLowerCase();
+  if (s.indexOf("chatgpt") >= 0 || s.indexOf("openai") >= 0) return "chatgpt";
+  if (s.indexOf("gemini") >= 0 || s.indexOf("google") >= 0) return "gemini";
+  if (s.indexOf("claude") >= 0 || s.indexOf("anthropic") >= 0) return "claude";
+  if (s.indexOf("copilot") >= 0 || s.indexOf("microsoft") >= 0) return "copilot";
+  if (s.indexOf("midjourney") >= 0) return "midjourney";
+  return "";
+}
+
+function onSubmit(){
+  if (fired) {
+    var a = runAudit();
+    if (a.no > 0) {
+      toast("尚有 " + a.no + " 項自動審核不符，請修正後再送出。");
+      $("auditCard").scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+    submitCase(a.data);
+    return;
+  }
+  var d = formData();
+  var filled = [d.name, d.phone, d.pid, d.bdayRaw, d.mail].filter(function(x){ return x; }).length;
+  if (filled < 3) { toast("請先完成「申請人基本資料」再送出。"); $("f-name").focus(); return; }
+  blackout();
+}
+
+function buildRecap(){
+  var d = formData();
+  var f = function(id){ return done.files && done.files[id] ? done.files[id].name : null; };
+  var rows = [
+    ["姓名", d.name || "—"],
+    ["出生日期", d.bdayRaw || "—"],
+    ["聯絡電話", d.phone || "—"],
+    ["電子郵件", d.mail || "—"],
+    ["身分證字號", d.pid ? d.pid.slice(0,4)+"******" : "—"],
+    ["戶籍地址", d.hrCity ? d.hrCity + d.hrDist + d.hrAddr : "—"]
+  ];
+  if (f("a-id"))   rows.push(["身分證影像", f("a-id")]);
+  if (f("a-bank")) rows.push(["存摺封面", f("a-bank")]);
+
+  $("recap").innerHTML = rows.map(function(r){
+    return "<div><span>"+esc(r[0])+"</span>"+esc(r[1])+"</div>"; }).join("");
+
+  var lines = [];
+  if (d.pid && done.city) {
+    lines.push("而最後那句「您設籍在"+esc(done.city)+"、"+esc(done.sex)
+      +"」，不是我猜的。那組號碼的第一個字母就是戶籍地，第二碼就是性別。"
+      +"您以為只填了一個欄位，它讀到的是一整組資訊。");
+  }
+  if (f("a-id") && f("a-bank")) {
+    lines.push("<b>而您剛剛還上傳了身分證正反面和存摺封面。</b>"
+      + "這兩樣東西湊在一起，足以讓人以您的名義去辦門號、開帳戶、申辦貸款——"
+      + "這正是人頭帳戶最常見的取得方式。市府的系統依法有保管責任；"
+      + "把同樣兩張圖丟進 AI 對話框請它「幫我看看這份文件」，沒有任何人對它負責。");
+  } else if (f("a-id") || f("a-bank")) {
+    lines.push("<b>而您剛剛上傳了證件影像。</b>"
+      + "證件照片一旦離開有保管責任的系統，就再也收不回來了。");
+  }
+  if (!lines.length) lines.push("您以為只填了幾個欄位，對方讀到的是一整組可以互相拼湊的資訊。");
+  $("idLine").innerHTML = lines.join("<br><br>");
+}
+
+function openSheet(){
+  $("term").classList.remove("on");
+  $("modal").classList.add("on");
+  requestAnimationFrame(function(){ $("modalSheet").classList.add("on"); });
+  $("closeModal").focus();
+}
+
+function blackout(){
+  if (fired) return;
+  fired = true;
+  buildRecap();
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) { $("veil").classList.add("on"); openSheet(); return; }
+
+  var pid = done.pid ? done.pid.slice(0,4)+"******" : "—";
+  var dd = formData();
+  var addr = dd.hrCity ? dd.hrCity + dd.hrDist + dd.hrAddr : "—";
+  var fn = function(id){ return done.files && done.files[id] ? done.files[id].name : null; };
+
+  var seq = [
+    ["> 正在送出申請資料 ...", "dim", 260],
+    ["> 姓名　　　　" + (dd.name || "—") + "　　[ 已擷取 ]", "", 190],
+    ["> 出生日期　　" + (dd.bdayRaw || "—") + "　　[ 已擷取 ]", "", 170],
+    ["> 聯絡電話　　" + (dd.phone || "—") + "　　[ 已擷取 ]", "", 170],
+    ["> 電子郵件　　" + (dd.mail || "—") + "　　[ 已擷取 ]", "", 170],
+    ["> 戶籍地址　　" + addr + "　　[ 已擷取 ]", "", 240],
+    ["> 身分證字號　" + pid + "　　[ 已擷取 ]", "hit", 380]
+  ];
+  if (fn("a-id"))   seq.push(["> 附件　　　　" + fn("a-id") + "　　[ 影像已保存 ]", "hit", 380]);
+  if (fn("a-bank")) seq.push(["> 附件　　　　" + fn("a-bank") + "　　[ 影像已保存 ]", "hit", 420]);
+  seq.push(
+    ["> 封包轉送中 ████████████████ 100%", "dim", 420],
+    ["> 目的地：unknown-host.??? ", "hit", 520],
+    ["> 對方留存期限：？？？　可否刪除：？？？", "hit", 760]
+  );
+
+  $("veil").classList.add("on");
+  var term = $("term");
+  term.className = "on"; term.innerHTML = "";
+
+  var t = 700;
+  seq.forEach(function(row){
+    setTimeout(function(){
+      term.insertAdjacentHTML("beforeend", '<div class="ln '+row[1]+'">'+esc(row[0])+"</div>");
+    }, t);
+    t += row[2];
+  });
+  setTimeout(function(){ term.classList.add("bad"); }, t);
+  setTimeout(function(){
+    term.insertAdjacentHTML("beforeend",
+      '<div class="ln" style="margin-top:1.4em">&gt; 模擬傳輸結束</div>');
+  }, t + 700);
+  setTimeout(openSheet, t + 1500);
+}
+
+$("closeModal").addEventListener("click", function(){
+  $("modalSheet").classList.remove("on");
+  $("modal").classList.remove("on");
+  $("veil").classList.remove("on");
+  $("term").className = ""; $("term").innerHTML = "";
+  $("banner").style.display = "flex";
+  $("assistTx").innerHTML = "<b>申辦小幫手</b>　剩下的是購買工具與憑證資訊，不涉及您的個人身分資料，可以放心填寫。";
+  $("submitBtn").textContent = "完成其餘欄位，正式送件";
+  var nx = $("f-scheme"); if (nx) nx.focus();
+});
+$("guideFromModal").addEventListener("click", function(){
+  $("closeModal").click();
+  location.hash = "#/guide";
+});
+
+function submitCase(d){
+  var no = "YC-2026-" + String(Math.floor(Math.random()*9000)+1000);
+  S.merge({
+    applied:true, caseNo:no,
+    name:d.name, age:d.bdayRaw ? ageOf(d.bdayRaw) : null, bday:d.bdayRaw,
+    phone:d.phone, mail:d.mail,
+    pidMask: d.pid ? d.pid.slice(0,4)+"******" : "",
+    city: done.city || "", hsinchu: !!(d.pid && d.pid[0] === "O"),
+    addr: d.hrCity ? d.hrCity + d.hrDist + d.hrAddr : "",
+    mailAddr: d.same ? "同戶籍地址" : (d.mlCity + d.mlDist + d.mlAddr),
+    idType:d.idType, scheme:d.scheme, func:d.func,
+    sw:d.sw, vendor:d.vendor, pdate:d.pdate, pmethod:d.pmethod,
+    cur:d.cur, amt:d.amt, twd:d.twd,
+    tool: guessTool(d.sw) || S.get("tool",""),
+    toolName: d.sw || S.get("toolName",""),
+    appliedAt: fmt(new Date())
+  });
+
+  /* 送出後由系統呼叫外部介接，結果回填自動審核面板 */
+  Promise.all([
+    API.verifyInvoice({sw:d.sw, amt:d.amt, pdate:d.pdate}),
+    API.verifyHousehold(d.pid),
+    API.checkDuplicate(d.pid),
+    d.idType === "general" ? Promise.resolve(null) : API.verifyLowIncome(d.pid, d.idType)
+  ]).then(function(r){
+    ASYNC.einvoice  = r[0].valid ? OK("查驗相符（" + r[0].src + "）") : NO(r[0].reason || "查驗不符");
+    ASYNC.household = r[1].valid ? OK("戶籍核驗通過：" + r[1].city) : NO(r[1].reason || "核驗不符");
+    ASYNC.dup       = r[2].duplicated ? NO("本年度已有申請紀錄") : OK("無重複申請紀錄");
+    ASYNC.lowinc    = r[3] === null ? OK("一般青年，無須查驗")
+                    : (r[3].valid ? OK("資格查驗通過，" + r[3].note) : NO("查無特定對象資格"));
+    S.set("auditAsync", ASYNC);
+  });
+
+  toast("申請已送出，案件編號 " + no);
+  location.hash = "#/bind";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ② 綁定
+   ═══════════════════════════════════════════════════════════ */
+var ACCTS = [
+  {k:"fake1", grey:true, av:"新青", nm:"新竹青年補助小幫手 AI", shield:["灰盾 一般帳號",""],
+   id:"@hsinchu-youth-ai", fr:"好友 1,132 ｜ 簡介：AI 補助申請免費代辦，快速核撥"},
+  {k:"real", grey:false, av:"青年", nm:"新竹市青年發展中心", shield:["綠盾 認證帳號","g"],
+   id:"@youthhsinchu", fr:"好友 12,847 ｜ 簡介：新竹市政府青年發展中心官方帳號"},
+  {k:"fake2", grey:true, av:"新竹", nm:"新竹市青年發展中心【補助專線】", shield:["灰盾 一般帳號",""],
+   id:"@youthhsinchu-tw", fr:"好友 486 ｜ 簡介：補助進度查詢、撥款帳戶確認"}
+];
+var WRONG = {
+  fake1: "<b>這是冒用帳號。</b><br>它掛著<b>灰盾（一般帳號）</b>——任何人都能申請，不需要證明自己是政府機關。簡介寫「免費代辦、快速核撥」，真正的市府不會用這種話術，而「代辦」意味著它要跟您收身分證、存摺封面和申請帳密。好友數 1,132 也遠低於官方帳號的量級。",
+  fake2: "<b>這也是冒用帳號，而且更難看出來。</b><br>名稱和官方一模一樣，ID 只多了 <code>-tw</code> 兩個字，但它一樣是<b>灰盾（一般帳號）</b>。簡介主打「撥款帳戶確認」——這正是詐騙的目的：等您綁定後，傳一則「帳戶有誤請重新提供存摺」的訊息給您。"
+};
+var TIPS = "<br><br><b>三個辨識動作：</b>① 看盾牌顏色，綠盾或藍盾才是經過審查的帳號。② 不要從 LINE 搜尋結果直接加，改從市府官網或紙本公文上的 QR code 進入。③ 官方帳號<b>永遠不會</b>在 LINE 上跟您要存摺、密碼或手機驗證碼。";
+
+var bindInit = false;
+
+function renderBind(){
+  paintCase();
+  var nm = S.get("name","");
+  $("recvLine").innerHTML = (nm ? esc(nm)+"，您的" : "您的") + "申請已於 "
+    + esc(S.get("appliedAt", fmt(new Date()))) + " 收件，進入資格核驗程序。";
+
+  if (!bindInit) {
+    bindInit = true;
+    $("acctList").innerHTML = ACCTS.map(function(a){
+      return '<button class="acct" type="button" data-k="'+a.k+'">'
+        + '<span class="ph'+(a.grey?" grey":"")+'">'+a.av+'</span><span class="in">'
+        + '<span class="nm">'+a.nm+' <span class="chip '+a.shield[1]+'">'+a.shield[0]+'</span></span>'
+        + '<span class="id">'+a.id+'</span><span class="fr">'+a.fr+'</span></span></button>';
+    }).join("");
+
+    $("acctList").addEventListener("click", function(e){
+      var b = e.target.closest(".acct"); if (!b) return;
+      var k = b.getAttribute("data-k");
+      if (k === "real") { showBind(2); return; }
+      var fb = $("b-fb");
+      fb.className = "fb no on";
+      fb.innerHTML = WRONG[k] + TIPS;
+      fb.scrollIntoView({behavior:"smooth", block:"center"});
+    });
+
+    $("backAcctBtn").addEventListener("click", function(){ showBind(1); });
+    $("agreeBtn").addEventListener("click", function(){
+      S.merge({bound:true, lineId:"@youthhsinchu", boundAt:fmt(new Date())});
+      showBind(3); runPushes(); toast("已綁定 @youthhsinchu");
+    });
+  }
+
+  showBind(S.get("bound",false) ? 3 : 1);
+  if (S.get("bound",false)) runPushes();
+}
+
+function showBind(n){
+  $("b-s1").style.display = n === 1 ? "flex" : "none";
+  $("b-s2").style.display = n === 2 ? "flex" : "none";
+  $("b-s3").style.display = n === 3 ? "flex" : "none";
+  if (n !== 1) $("b-fb").className = "fb";
+}
+
+function runPushes(){
+  var now = new Date();
+  $("clk").textContent = ("0"+now.getHours()).slice(-2)+":"+("0"+now.getMinutes()).slice(-2);
+  var who = S.get("name",""), caseNo = S.get("caseNo","YC-2026-0000");
+  var msgs = [
+    ["綁定成功", (who ? esc(who)+"您好，" : "") + "案件 " + esc(caseNo) + " 已完成通知綁定。後續進度將於此推播。"],
+    ["資格核驗通過", "設籍與年齡條件符合，案件進入文件審查。預計 " + fmt(workday(5)) + " 前完成。"],
+    ["【AI 安全提醒 1/5】您的資料會被拿去訓練嗎？", "多數 AI 服務預設「可使用您的對話改善模型」。花 30 秒關掉它 → 點我看懶人包"]
+  ];
+  var box = $("pushes"); box.innerHTML = "";
+  msgs.forEach(function(m,i){
+    var el = document.createElement("div");
+    el.className = "push";
+    el.innerHTML = '<div class="hd"><span class="dot"></span>新竹市青年發展中心</div><b>'
+      + esc(m[0]) + "</b>" + m[1];
+    box.appendChild(el);
+    setTimeout(function(){ el.classList.add("on"); }, 340 + i*600);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ③ 審核
+   ═══════════════════════════════════════════════════════════ */
+var MC = [
+  { t:"您的對話，預設是會被拿去訓練的", sec:"30 秒",
+    p:"多數消費級 AI 服務的<b>預設值</b>是「可使用您的內容改善模型」。一旦被吸收進模型權重，它就不再是一筆可以刪除的資料列——您刪掉對話、登出帳號都沒有用，它已經是模型的一部分。",
+    hT:"先做這件事",
+    hB:"ChatGPT：<code>設定 → 資料控管 → 改善所有人的模型</code> 關閉。<br>Gemini：<code>設定 → Gemini 應用程式活動記錄</code> 關閉。<br>Claude：預設不以對話訓練模型，仍建議確認 <code>設定 → 隱私</code>。<br>企業／教育版通常預設不訓練，但<b>要看合約寫什麼，不要看行銷頁寫什麼</b>。",
+    c:"<b>2023 年 11 月</b>：Google DeepMind 等研究團隊發表攻擊手法，只要讓 ChatGPT 不斷重複某個單字，模型就會「發散」並吐出訓練資料原文——其中包含真實姓名、電子郵件與電話號碼。這證明了訓練資料是<b>可以被誘出的</b>，不是存進去就安全。" },
+  { t:"有五類資料，永遠不要貼進對話框", sec:"30 秒",
+    p:"不是「個資都不能給」，是<b>分清楚在給誰</b>。有法律依據、有蒐集告知的政府或企業系統，該給就給；對話框裡的 AI，能不給就不給。",
+    hT:"紅線清單",
+    hB:"① 身分證字號、護照號碼<br>② 金融資訊：帳號、信用卡、存摺影本<br>③ 醫療與健保紀錄<br>④ <b>他人</b>的個資：客戶名單、員工資料、學生名冊<br>⑤ 公司未公開資訊：原始碼、報價、合約、內部簡報<br><br>第 ④ 項最常被忽略——您把客戶名單貼進去，外洩的是<b>別人的</b>個資，責任在您身上。",
+    c:"<b>2023 年 4 月</b>：三星半導體部門員工將內部原始碼與會議記錄貼入 ChatGPT 尋求協助，短期內發生三起，三星隨後全面限制員工在公司裝置上使用生成式 AI。員工並非惡意，只是想把工作做快一點。" },
+  { t:"「分享連結」等於公開網頁", sec:"30 秒",
+    p:"AI 工具的「建立分享連結」很好用，但那個連結<b>沒有密碼、沒有到期日</b>。任何拿到網址的人都能看，而網址會從您貼過它的任何地方流出去——群組、信件、文件、書籤同步。",
+    hT:"定期做這件事",
+    hB:"① 分享前先想：這段對話裡有沒有第 2 則說的五類資料？<br>② 用完就刪：<code>設定 → 分享連結 → 管理</code>，逐一撤銷。<br>③ 需要給別人看，優先<b>複製文字</b>而不是給連結。",
+    c:"<b>2025 年 8 月</b>：OpenAI 緊急下架 ChatGPT 中一項「讓分享的對話可被搜尋引擎檢索」的選項——大量使用者的私人對話被 Google 索引後可公開搜尋到。官方稱該功能「造成使用者意外分享的機會過高」。使用者以為分享給一個人，實際上分享給了整個網際網路。" },
+  { t:"上傳檔案前，先把個資欄位清掉", sec:"30 秒",
+    p:"「幫我分析這份 Excel」「幫我摘要這份 PDF」——最方便，也最容易一次外洩一整份名冊。檔案裡的每一欄都會進去，包括您根本沒要它看的那幾欄。",
+    hT:"上傳前三個動作",
+    hB:"① 刪欄：姓名、電話、地址、身分證號、email 全部刪掉，只留要分析的數值。<br>② 代碼化：真的需要區分個體，用 A001、A002 取代姓名。<br>③ <b>截圖也算上傳</b>：截圖前先確認畫面上沒有其他人的資料、沒有瀏覽器分頁標題、沒有側邊欄的客戶名稱。",
+    c:"<b>2023 年 3 月</b>：ChatGPT 因所使用的開源函式庫 redis-py 出現錯誤，部分使用者在自己的介面上看見<b>其他人的對話標題</b>；OpenAI 後續確認約 1.2% 的 ChatGPT Plus 使用者，其姓名、電子郵件與信用卡末四碼曾短暫可被他人看見。您做對了所有設定，服務商的一個 bug 仍然會讓資料曝光——所以最根本的防線是「一開始就不要放進去」。" },
+  { t:"拿補助買工具時，順便看一下合約", sec:"30 秒",
+    p:"這是這份補助案特有的一則。您用市府補助款購買的工具，如果要拿來處理<b>客戶或雇主</b>的資料，個人版方案通常不夠——您需要的是有資料處理條款的版本。",
+    hT:"下單前確認三件事",
+    hB:"① <b>是否以您的資料訓練模型</b>：企業版多數承諾不訓練，個人版多數預設訓練。<br>② <b>資料保留期</b>：查明留存多久、能否要求刪除、刪除多久生效。<br>③ <b>資料存放地與適用法律</b>：資料在哪個國家、出事時依哪一國法律處理。<br><br>這三項的答案，核銷時的檢核清單會問您。",
+    c:"<b>為什麼市府要管到這裡</b>：補助款買的工具若造成青年自身、其雇主或客戶的資料外洩，就成了「補助卻造成傷害」的政策反效果。把這三個問題放在購買前，成本是三分鐘；放在外洩後，成本是一個人的信用與一間公司的商譽。" }
+];
+
+var reviewInit = false;
+
+function renderReview(){
+  paintCase();
+  S.set("reviewed", true);
+
+  var applied = S.get("appliedAt", fmt(new Date()));
+  var steps = [
+    ["收件", applied, "done", "線上申請送出，系統編號建立。"],
+    ["資格核驗", fmt(workday(1)), "done", "設籍新竹市、年齡 18–40、無重複申請 — 自動勾稽通過。"],
+    ["文件審查", fmt(workday(2)), "now", "承辦人員審查計畫內容與工具用途合理性。"],
+    ["核定公告", fmt(workday(5)), "", "核定結果以 LINE 推播，同步公告於青年發展中心網站。"],
+    ["可辦理核銷", fmt(workday(6)), "", "取得核定後購買工具，檢附發票與資安檢核清單辦理核銷。"],
+    ["撥款", fmt(workday(16)), "", "核銷通過後排入主計批次，入帳後推播通知。"]
+  ];
+  $("reviewTl").innerHTML = steps.map(function(s){
+    return '<li class="'+s[2]+'"><div class="k">'+s[0]
+      + (s[2]==="now" ? ' <span class="chip a">進行中</span>' : "")
+      + '</div><div class="d">'+s[1]+'</div><div class="m">'+s[3]+'</div></li>';
+  }).join("");
+
+  if (!reviewInit) {
+    reviewInit = true;
+
+    buildMcList();
+
+    $("mcList").addEventListener("click", function(e){
+      var h = e.target.closest(".mc > .hd"); if (!h) return;
+      var card = h.parentElement, i = +card.getAttribute("data-i");
+      card.classList.toggle("open");
+      var r = S.get("mcRead", []);
+      if (r.indexOf(i) < 0) {
+        r.push(i); S.set("mcRead", r);
+        card.classList.add("read");
+        card.querySelector(".ix").textContent = "✓";
+        paintMc();
+      }
+    });
+
+    $("adminBtn").addEventListener("click", function(){
+      var box = $("adminBox"), on = box.style.display === "none";
+      box.style.display = on ? "flex" : "none";
+      $("adminBtn").textContent = on ? "收合承辦端後台" : "展開承辦端後台（示意）";
+    });
+    $("adminJump").addEventListener("click", function(){
+      $("adminBox").style.display = "flex";
+      $("adminBtn").textContent = "收合承辦端後台";
+      $("adminSec").scrollIntoView({behavior:"smooth"});
+    });
+  }
+
+  paintMc();
+  paintAdmin();
+}
+
+/* 微課程卡片的 HTML 由狀態長出來，重置後要能重畫（監聽器綁在容器上，不會重複） */
+function buildMcList(){
+  var read = S.get("mcRead", []);
+  $("mcList").innerHTML = MC.map(function(m,i){
+    return '<div class="mc'+(read.indexOf(i)>=0?" read":"")+'" data-i="'+i+'">'
+      + '<button class="hd" type="button"><span class="ix">'+(read.indexOf(i)>=0?"✓":(i+1))+'</span>'
+      + '<span class="ti">'+m.t+'</span><span class="sec">'+m.sec+'</span></button>'
+      + '<div class="bd"><p>'+m.p+'</p>'
+      + '<div class="path"><div class="t">'+m.hT+'</div>'+m.hB+'</div>'
+      + '<div class="incident">'+m.c+'</div></div></div>';
+  }).join("");
+}
+
+function paintMc(){
+  var r = S.get("mcRead", []), pct = Math.round(r.length/MC.length*100);
+  $("mcN").textContent = r.length + " / " + MC.length;
+  var bar = $("mcBar");
+  bar.style.width = pct + "%";
+  bar.className = "fill " + (pct >= 100 ? "hi" : (pct >= 50 ? "mid" : ""));
+  if (r.length >= MC.length) {
+    S.set("bronze", true);
+    $("mcDone").style.display = "flex";
+    $("mcHint").textContent = "已全部讀畢。銅牌徽章已入帳。";
+  } else {
+    $("mcDone").style.display = "none";
+    $("mcHint").textContent = "還差 " + (MC.length - r.length) + " 則。點開任一則即視為讀畢。";
+  }
+}
+
+function paintAdmin(){
+  var caseNo = S.get("caseNo","YC-2026-0000");
+  var mine = (S.get("name","申請人") || "申請人").slice(0,1) + "**";
+  var rows = [
+    {no:caseNo, who:mine, pid:S.get("pidMask","O123******"), mine:true,
+     f:["ok","ok","ok","wait"], chk:"wait", st:"文件審查中"},
+    {no:"YC-2026-2841", who:"林**", pid:"O222******", f:["ok","ok","ok","ok"], chk:"ok", st:"已撥款"},
+    {no:"YC-2026-3317", who:"黃**", pid:"O112******", f:["ok","ok","ok","no"], chk:"wait", st:"退回補件"},
+    {no:"YC-2026-5520", who:"吳**", pid:"O223******", f:["ok","ok","ok","ok"], chk:"no", st:"待補檢核"},
+    {no:"YC-2026-6093", who:"陳**", pid:"O223******", f:["ok","ok","ok","ok"], chk:"ok", st:"核銷通過"}
+  ];
+  var cell = function(v){
+    return v==="ok" ? '<span class="chip g">✓ 通過</span>'
+         : v==="no" ? '<span class="chip r">✕ 不符</span>'
+                    : '<span class="chip w">◷ 待驗</span>'; };
+  $("adminRows").innerHTML = rows.map(function(r){
+    return '<tr'+(r.mine?' class="hl"':"")+'>'
+      + '<td class="mono">'+esc(r.no)+(r.mine?' <span class="chip a">本案</span>':"")+'</td>'
+      + '<td>'+esc(r.who)+'<br><span class="mono" style="font-size:11px;color:var(--ink-3)">'+esc(r.pid)+'</span></td>'
+      + r.f.map(function(x){ return "<td>"+cell(x)+"</td>"; }).join("")
+      + '<td>'+cell(r.chk)+'</td><td>'+esc(r.st)+'</td></tr>';
+  }).join("");
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ④ 檢核清單
+   ═══════════════════════════════════════════════════════════ */
+var TOOLS = {
+  chatgpt:{ n:"ChatGPT（OpenAI）",
+    train:"<code>設定 → 資料控管 → 改善所有人的模型</code>，切換為關閉。關閉後新對話不再用於訓練，但<b>先前已被納入訓練的內容無法追回</b>。",
+    keep:"關閉訓練後，對話仍會保留於帳號中直到您刪除；刪除的對話官方說明為 30 日內自系統移除。另有「臨時交談」模式不留存歷史。",
+    share:"<code>設定 → 資料控管 → 共用連結 → 管理</code>，可看到所有已建立的連結並逐一刪除。" },
+  gemini:{ n:"Gemini（Google）",
+    train:"<code>設定 → Gemini 應用程式活動記錄</code> 關閉（或至 myactivity.google.com 管理）。注意：即使關閉，Google 說明仍會將對話保留一段期間以供安全檢視。",
+    keep:"活動記錄開啟時預設保留 18 個月，可改為 3 或 36 個月；關閉活動記錄後，對話仍會短期保留（官方說明為最長 72 小時）。",
+    share:"分享的 Gemini 對話會產生公開連結，於 <code>Gemini 應用程式活動記錄 → 你的公開連結</code> 撤銷。" },
+  claude:{ n:"Claude（Anthropic）",
+    train:"Anthropic 的消費者服務預設<b>不以您的對話訓練模型</b>，但此為可變更設定，請於 <code>設定 → 隱私</code> 確認目前狀態，並保留截圖作為佐證。",
+    keep:"一般對話於您刪除後自系統移除；因信任與安全政策標記的內容可能留存較久。企業方案的保留期依合約約定。",
+    share:"以「共用」產生的對話連結為公開連結，於對話的共用設定中撤銷。" },
+  copilot:{ n:"Microsoft Copilot",
+    train:"須先分清版本：<b>Microsoft 365 Copilot（公司帳號）</b>的資料受租用戶合約保護、不用於訓練基礎模型；<b>消費版 Copilot（個人 Microsoft 帳號）</b>則於 <code>隱私權設定 → 模型訓練</code> 中控制。用錯版本處理公司資料，是最常見的錯誤。",
+    keep:"企業版依租用戶保留原則與合約；個人版可於 Microsoft 帳號隱私權儀表板刪除活動記錄。",
+    share:"檢查是否曾將 Copilot 產出貼入公開的 Word／Teams 共用連結，並確認該檔案的共用對象不是「任何擁有連結的人」。" },
+  midjourney:{ n:"Midjourney",
+    train:"影像生成工具的風險點不同：您輸入的<b>提示詞與上傳的參考圖</b>會被保留。上傳真人照片前，須取得該人同意。",
+    keep:"生成紀錄保留於帳號中，可於網頁版個人頁面刪除。",
+    share:"<b>這一項最容易出事</b>：基本方案的作品<b>預設公開</b>於社群頁面，任何人都能瀏覽您的提示詞與成品。需要非公開必須使用含 Stealth Mode 的方案。拿補助做客戶案件前，請先確認這一點。" },
+  other:{ n:"其他 AI 工具",
+    train:"請至該服務的「隱私權設定」或「資料控管」頁面，尋找「使用我的資料改善模型／improve the model／training」之類的選項並關閉，截圖存證。若遍尋不著該選項，視同「預設會訓練」，請勿用於處理他人資料。",
+    keep:"請查閱該服務的隱私權政策，找出「資料保留期（data retention）」的實際天數並填入。",
+    share:"請至該服務的分享／公開連結管理頁面，確認目前有效的連結數量並撤銷不需要的。" }
+};
+
+var ITEMS = [
+  {g:"A. 帳號與存取", must:true, type:"choice",
+   q:"您用來登入這項 AI 工具的帳號，目前是哪一種狀態？",
+   why:"補助款買的工具帳號一旦被盜，裡面的歷史對話會一次全部曝光。",
+   o:[["個人常用信箱，密碼和其他網站共用",false,"密碼共用是外洩的頭號原因。其他網站被脫庫，您的 AI 帳號就一起破了——而 AI 帳號裡存著您所有歷史對話。"],
+      ["個人或公司信箱，專用密碼，並已啟用雙因素驗證",true,"正確。專用密碼 ＋ 雙因素驗證是最低標準。"],
+      ["與同事／合作夥伴共用同一組帳號",false,"共用帳號的每個人都看得到彼此的全部對話，且事後無法追查是誰外洩。若以補助款購買，也不符「補助個人」的核銷要件。"],
+      ["公司信箱，但密碼存在瀏覽器、沒設雙因素驗證",false,"瀏覽器存密碼本身可接受，但少了雙因素驗證，電腦被他人使用或遭側錄時就直接進去了。請補開 2FA。"]]},
+  {g:"A. 帳號與存取", must:true, type:"evidence",
+   q:"請上傳「已啟用雙因素驗證（2FA）」的設定畫面截圖。",
+   why:"這是本清單唯一要求畫面佐證的帳號安全項目，承辦人員以此核對。",
+   tip:"截圖前請先遮蔽畫面上的電子郵件與電話號碼——<b>連截圖給市府也要遮</b>，這正是第 4 則微課程講的習慣。"},
+  {g:"A. 帳號與存取", must:false, type:"choice",
+   q:"除了您本人，還有誰能存取這個帳號？",
+   why:"存取範圍決定外洩時的責任歸屬。",
+   o:[["只有我本人",true,"正確。個人補助的工具帳號應僅限本人使用。"],
+      ["我和一到兩位同事",false,"請改為各自申請帳號。共用帳號無法區分責任，且多數服務的使用條款禁止帳號共用。"],
+      ["家人也會用同一台電腦登入",false,"請至少設定裝置鎖定與獨立的作業系統使用者；家人誤用您的 AI 帳號處理其個資，責任仍在您。"],
+      ["不確定",false,"請至該服務的「已登入裝置／工作階段」頁面檢查，並登出所有不認得的裝置。"]]},
+
+  {g:"B. 資料訓練與保留", must:true, type:"choice", path:"train",
+   q:"「使用我的內容改善模型」這項設定，目前是什麼狀態？",
+   why:"本計畫的核心風險。被納入模型權重的資料無法收回。",
+   o:[["已確認並關閉（或該服務預設不訓練，已截圖確認）",true,"正確。這是整份清單最重要的一項。"],
+      ["開著，因為關掉功能會變差",false,"關閉此設定<b>不會</b>降低模型能力——它影響的是您的資料會不會被用於未來的訓練，不是您這次得到的回答品質。請關閉。"],
+      ["找不到這個設定",false,"請依上方路徑再找一次。若該服務確實沒有提供這個選項，請視同「會訓練」，不得用它處理客戶、雇主或任何他人的個資。"],
+      ["沒注意過",false,"多數服務的預設值是「開啟」。請現在就去關掉——這件事花不到 30 秒，但決定了您過去與未來輸入的內容會不會永久留在模型裡。"]]},
+  {g:"B. 資料訓練與保留", must:false, type:"num", unit:"天", path:"keep",
+   q:"該服務刪除對話後，多久內自系統移除？請填入天數。",
+   why:"要求填入具體數字，是為了確認申請人真的翻過隱私權政策。",
+   lo:1, hi:400,
+   ok:"已記錄。重點不在數字大小，而在您<b>查得到</b>這個數字——查不到保留期的服務，不要拿來處理他人資料。",
+   no:"請填入 1 至 400 之間的天數。若隱私權政策中查不到明確保留期，這件事本身就是風險，請改用其他工具處理敏感資料。"},
+  {g:"B. 資料訓練與保留", must:false, type:"choice",
+   q:"這項服務的資料存放在哪裡、出事時適用哪一國法律？",
+   why:"跨境傳輸是個資法的告知事項，也決定您能否主張刪除權。",
+   o:[["已查閱隱私權政策，知道存放地與適用法律",true,"正確。多數國際 AI 服務的資料存於境外、適用他國法律，這不必然有問題，但您必須知道。"],
+      ["應該是在台灣吧",false,"幾乎所有國際 AI 服務的資料都不在台灣。請實際查閱隱私權政策的「資料傳輸」或「國際傳輸」段落。"],
+      ["沒查過，反正我只拿來寫文案",false,"只寫文案也會把客戶名稱、產品規格、報價打進去。請查一次，五分鐘的事。"],
+      ["查不到",false,"查不到即視為高風險。請勿以該工具處理他人個資，並於備註欄說明。"]]},
+
+  {g:"C. 分享與外流", must:true, type:"num", unit:"個", path:"share",
+   q:"您目前仍有效的「分享連結／公開連結」共有幾個？請實際去看並填入。",
+   why:"分享連結沒有密碼、沒有到期日，是最被低估的外洩管道。",
+   lo:0, hi:999,
+   ok:"已記錄。請把不再需要的連結全部撤銷——連結一旦流出去就收不回，唯一能做的是讓它失效。",
+   no:"請填入 0 至 999 之間的整數。若您從未建立過分享連結，填 0。"},
+  {g:"C. 分享與外流", must:true, type:"choice",
+   q:"您曾上傳到這項工具的檔案或截圖，是否包含他人的個人資料？",
+   why:"外洩他人個資，責任在上傳的人身上，不在 AI 服務商。",
+   o:[["沒有；上傳前都會先刪除姓名、電話、地址等欄位",true,"正確。這是處理他人資料時唯一安全的做法。"],
+      ["有，但只有姓名而已",false,"姓名就是個人資料。請刪除該對話與檔案，並改以 A001、A002 之類的代碼取代後重做。"],
+      ["有上傳過客戶名單／學生名冊／員工資料",false,"<b>請立即處理</b>：刪除該對話與已上傳檔案、撤銷相關分享連結。若該服務的訓練設定當時是開啟的，請依個資法評估是否需通知當事人。日後一律先去識別化再上傳。"],
+      ["有截圖過含其他人資料的畫面",false,"截圖等同上傳。請刪除，並養成截圖前先檢查畫面的習慣——包括分頁標題與側邊欄的客戶名稱。"]]},
+  {g:"C. 分享與外流", must:false, type:"choice",
+   q:"您安裝的 AI 外掛、瀏覽器擴充功能或連接器，權限檢查過了嗎？",
+   why:"與階段②的 LINE 授權是同一個概念：最小權限原則。",
+   o:[["已逐一檢查，移除了不必要的權限與沒在用的外掛",true,"正確。沒在用的外掛權限仍然有效，這是最容易被忘記的破口。"],
+      ["都是從官方商店裝的，應該沒問題",false,"官方商店只審核惡意程式，不審核「權限是否過度」。一個摘要網頁的外掛要求讀取您所有分頁，就是過度。"],
+      ["裝了很多，沒特別看過權限",false,"請現在打開擴充功能管理頁，逐一檢查。判斷標準：它要這項權限，是為了做它答應您的事，還是為了別的？"],
+      ["沒有安裝任何外掛",true,"沒有安裝即無此風險。日後安裝時請套用同一套判斷標準。"]]},
+
+  {g:"D. 輸出與責任", must:false, type:"choice",
+   q:"AI 產出的內容，您對外使用前會做什麼？",
+   why:"AI 會生成看似正確但錯誤的內容，也可能重現訓練資料中的他人作品。",
+   o:[["查證事實、確認無他人個資，必要時標示為 AI 協助產出",true,"正確。產出的責任在使用者，不在工具。"],
+      ["直接用，AI 寫的通常都對",false,"AI 會以流暢的語氣寫出錯誤的法規、金額與人名。對外文件請務必查證，錯了是您的名字在上面。"],
+      ["會改寫過，但不會特別查證",false,"改寫不會讓錯誤的事實變正確。請至少查證數字、法規名稱與引用來源。"],
+      ["不確定需不需要標示",false,"目前無一體適用的法規要求，但涉及投稿、標案、學術或客戶交付時，多有各自的揭露規定，請先確認對方要求。"]]},
+  {g:"D. 輸出與責任", must:false, type:"evidence",
+   q:"請上傳本次核銷的發票或收據（品項需可辨識為 AI 工具）。",
+   why:"核銷必要文件，並由系統串接財政部電子發票平台查驗真偽。",
+   tip:"訂閱制工具請確認發票所載期間落在<b>核定日之後</b>；跨期的續訂預繳無法核銷。"},
+  {g:"D. 輸出與責任", must:true, type:"choice",
+   q:"最後一題。如果明天有人問您「我可以把身分證字號貼進 ChatGPT 嗎」，您會怎麼回答？",
+   why:"這份清單真正的目標，是讓受補助青年變成身邊那個會提醒別人的人。",
+   o:[["不行；而且重點是先看清楚在給誰——有法律依據的系統該給就給，對話框裡的 AI 能不給就不給",true,"完全正確。這正是整個流程從第一關就想告訴您的一句話。您已經可以去提醒別人了。"],
+      ["不行，個資通通不能給任何人",false,"太嚴格了，反而沒人做得到。市府申請系統、銀行、醫院依法該收的就該給——差別在於它們有法律依據、有蒐集告知、您可以要求查詢與刪除。對話框裡的 AI 三樣都沒有。"],
+      ["可以，反正大家都在用",false,"使用人數多不等於安全。身分證字號的前兩碼就洩漏了戶籍地與性別，配上您在同一個對話裡提過的其他資訊，足以拼出一個完整的人。"],
+      ["看情況，如果是付費版應該還好",false,"付費不等於不訓練，也不等於不外洩。判斷依據是<b>合約怎麼寫、設定怎麼開</b>，不是有沒有付錢。"]]}
+];
+
+var chkInit = false;
+
+function renderChecklist(){
+  paintCase();
+  if (!chkInit) {
+    chkInit = true;
+    $("toolPick").value = S.get("tool","");
+    if (!$("toolPick").value) {
+      var g = guessTool(S.get("sw",""));
+      if (g) { $("toolPick").value = g; S.merge({tool:g, toolName:TOOLS[g].n}); }
+    }
+    $("toolPick").addEventListener("change", function(e){
+      S.merge({tool:e.target.value, toolName: e.target.value ? TOOLS[e.target.value].n : ""});
+      drawChk();
+    });
+    $("chkSubmit").addEventListener("click", submitChk);
+    $("printDecl").addEventListener("click", doPrint);
+  }
+  drawChk();
+  if (S.get("checklistPassed",false)) buildDecl();
+}
+
+function drawChk(){
+  var tool = S.get("tool","");
+  if (!tool) {
+    $("chkList").innerHTML = ""; $("chkMeter").style.display = "none";
+    $("chkGate").style.display = "none"; return;
+  }
+  $("chkMeter").style.display = "flex";
+  $("chkGate").style.display = "flex";
+
+  var ans = S.get("chkAns", {}), html = "", lastG = "";
+  ITEMS.forEach(function(it,i){
+    if (it.g !== lastG) { html += '<div class="eyebrow" style="margin-top:8px">'+it.g+"</div>"; lastG = it.g; }
+    var st = ans[i];
+    html += '<div class="item'+(st===true?" pass":(st===false?" fail":""))+'" data-i="'+i+'">'
+      + '<button class="hd" type="button"><span class="ix">'+(st===true?"✓":("0"+(i+1)).slice(-2))+'</span>'
+      + '<span class="qz"><span class="q">'+it.q
+      + (it.must?' <span class="chip r">必要項</span>':"")+'</span>'
+      + '<span class="why">'+it.why+'</span></span>'
+      + '<span class="stt"><span class="chip '+(st===true?"g":(st===false?"r":""))+'">'
+      + (st===true?"已達標":(st===false?"未達標":"未作答"))+'</span></span></button>'
+      + '<div class="bd">';
+
+    if (it.path) {
+      var lbl = {train:"關閉訓練授權", keep:"查詢資料保留期", share:"管理分享連結"}[it.path];
+      html += '<div class="path"><div class="t">'+TOOLS[tool].n+" ｜ "+lbl+"</div>"+TOOLS[tool][it.path]+"</div>";
+    }
+    if (it.type === "choice") {
+      html += '<div class="stack s">' + it.o.map(function(o,j){
+        return '<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'">'
+          + '<span>'+o[0]+'</span></label>'; }).join("") + "</div>";
+    } else if (it.type === "num") {
+      html += '<div class="inline-in"><input type="number" id="n'+i+'" min="'+it.lo+'" max="'+it.hi
+        + '" step="1" placeholder="填入數字" inputmode="numeric">'
+        + '<span class="u">'+it.unit+'</span>'
+        + '<button class="btn pri sm" type="button" data-num="'+i+'">送出</button></div>';
+    } else {
+      html += '<div class="path">'+it.tip+'</div>'
+        + '<div class="filepick"><input type="file" id="f'+i+'" accept="image/*,.pdf">'
+        + '<span class="nm" id="fn'+i+'"></span></div>';
+    }
+    html += '<div class="fb" id="fb'+i+'"></div></div></div>';
+  });
+  $("chkList").innerHTML = html;
+  paintChk();
+}
+
+function setAns(i, ok, msg){
+  var ans = S.get("chkAns", {});
+  ans[i] = ok; S.set("chkAns", ans);
+  var card = $("chkList").querySelector('.item[data-i="'+i+'"]');
+  card.classList.toggle("pass", ok); card.classList.toggle("fail", !ok);
+  card.querySelector(".ix").textContent = ok ? "✓" : ("0"+(i+1)).slice(-2);
+  card.querySelector(".stt").innerHTML = '<span class="chip '+(ok?"g":"r")+'">'+(ok?"已達標":"未達標")+"</span>";
+  var fb = $("fb"+i);
+  fb.className = "fb on " + (ok ? "ok" : "no");
+  fb.innerHTML = msg;
+  paintChk();
+}
+
+$("chkList").addEventListener("click", function(e){
+  var hd = e.target.closest(".item > .hd");
+  if (hd) { hd.parentElement.classList.toggle("open"); return; }
+  var nb = e.target.closest("[data-num]");
+  if (nb) {
+    var i = +nb.getAttribute("data-num"), it = ITEMS[i], v = parseInt($("n"+i).value, 10);
+    if (isNaN(v) || v < it.lo || v > it.hi) { setAns(i, false, it.no); return; }
+    S.set("chkNum"+i, v);
+    setAns(i, true, it.ok);
+  }
+});
+
+$("chkList").addEventListener("change", function(e){
+  var t = e.target;
+  if (t.type === "radio") {
+    var i = +t.name.slice(1), it = ITEMS[i];
+    Array.prototype.forEach.call($("chkList").querySelectorAll('input[name="'+t.name+'"]'), function(x){
+      x.parentElement.classList.toggle("picked", x.checked); });
+    var o = it.o[+t.value];
+    setAns(i, o[1], o[2]);
+  } else if (t.type === "file" && t.files && t.files.length) {
+    var idx = +t.id.slice(1);
+    $("fn"+idx).textContent = "已選擇：" + t.files[0].name;
+    setAns(idx, true, "佐證已附上（本原型僅於本機顯示檔名，<b>檔案不會離開您的裝置</b>）。正式系統中，此檔將隨核銷申請送交承辦人員存查。");
+  }
+});
+
+function paintChk(){
+  var ans = S.get("chkAns", {});
+  var okN = ITEMS.filter(function(_,i){ return ans[i] === true; }).length;
+  var pct = Math.round(okN/ITEMS.length*100);
+  $("chkN").textContent = okN + " / " + ITEMS.length;
+  var bar = $("chkBar");
+  bar.style.width = pct + "%";
+  bar.className = "fill " + (pct >= 100 ? "hi" : (pct >= 60 ? "mid" : ""));
+
+  var left = ITEMS.length - okN;
+  var mustLeft = ITEMS.filter(function(it,i){ return it.must && ans[i] !== true; }).length;
+  var pass = left === 0;
+
+  $("chkHint").textContent = pass ? "全數達標，可以送出核銷。"
+    : "尚有 " + left + " 項未達標" + (mustLeft ? "（其中 "+mustLeft+" 項為必要項）" : "") + "。";
+  $("gateT").textContent = pass ? "檢核通過，可以送出核銷" : "尚未達標，無法送出核銷";
+  $("gateP").innerHTML = pass
+    ? "12 項全數達標。送出後將產生<b>檢核聲明書</b>，隨核銷文件送交承辦人員存查。"
+    : "請完成上方所有項目。每一項都可以重答，答錯會附上正確做法。";
+  $("chkSubmit").disabled = !pass || S.get("checklistPassed",false);
+}
+
+function submitChk(){
+  S.merge({checklistPassed:true, silver:true, checkedAt:fmt(new Date())});
+  buildDecl();
+  $("gateT").textContent = "核銷已送出";
+  $("gateP").innerHTML = "檢核聲明書已產生（如下）。您可以列印或另存為 PDF 併入核銷文件。";
+  $("chkSubmit").disabled = true;
+  $("chkSubmit").textContent = "已送出";
+  $("printDecl").style.display = "inline-flex";
+  toast("核銷已送出，銀牌徽章已入帳");
+  drawRail("checklist");
+  $("decl").scrollIntoView({behavior:"smooth"});
+}
+
+function buildDecl(){
+  var tool = S.get("tool","other");
+  $("dCase").textContent = S.get("caseNo","YC-2026-0000");
+  $("dName").textContent = (S.get("name","—") || "—") + "（" + S.get("pidMask","—") + "）";
+  $("dTool").textContent = TOOLS[tool] ? TOOLS[tool].n : "—";
+  $("dScore").textContent = "12 / 12 項全數達標　｜　檢核日期 " + S.get("checkedAt", fmt(new Date()));
+  $("dBadge").textContent = S.get("bronze",false)
+    ? "銀牌（已完成微課程 5 則 ＋ 檢核清單 12 項）"
+    : "銅牌（檢核清單 12 項達標；微課程尚未完成）";
+  $("dItems").innerHTML = "<dl>" + ITEMS.map(function(it,i){
+    return "<dt>" + ("0"+(i+1)).slice(-2) + ". " + it.q.replace(/<[^>]+>/g,"")
+      + (it.must ? "（必要項）" : "") + "</dt><dd>✓ 已達標</dd>"; }).join("") + "</dl>";
+  $("dDate").textContent = S.get("checkedAt", fmt(new Date()));
+  $("decl").classList.add("on");
+  $("printDecl").style.display = "inline-flex";
+  $("chkSubmit").disabled = true;
+  $("chkSubmit").textContent = "已送出";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ⑤ 撥款
+   ═══════════════════════════════════════════════════════════ */
+var WS = [
+  {nm:"① 線上微課程", meta:"15 分鐘 ｜ 隨到隨看 ｜ 已內建於流程",
+   p:"不是額外的課，就是階段③ 等待期推播的那 5 則。申請人在等審核的空檔讀完，取得銅牌。",
+   exT:"案例：為什麼放在「等待期」",
+   exB:"青年補助案從送件到核定約 5 至 7 個工作天。過去這段時間是純粹的空白，申請人唯一的行為是回來刷進度。把微課程放在這個窗口，<b>觸及率遠高於事前宣導</b>——事前他還沒送件，沒有動機；事後錢已入帳，更沒有動機。等待期是他一天會想起這個案子三次的時候。",
+   btn:null, id:"ws1"},
+  {nm:"② 實體工作坊：「把你的 AI 工具設定一次做對」", meta:"2 小時 ｜ 每月 2 場 ｜ 每場 25 人",
+   p:"不講投影片。參加者<b>帶自己的筆電、用自己的帳號</b>，兩小時內當場把 12 項檢核清單全部做完，離場時銀牌到手、核銷文件也齊了。",
+   exT:"案例：新竹市某文創工作室，3 人",
+   exB:"三位夥伴都申請了補助購買影像生成與影音剪輯工具。工作坊當場才發現：他們用的方案<b>作品預設公開</b>於社群頁面，過去半年替客戶做的 40 多張提案圖、連同寫著客戶品牌名稱的提示詞，全部可被任何人瀏覽。<br>現場處理：升級至含非公開模式的方案、逐一刪除已公開作品、撤銷 3 個仍有效的分享連結、補簽客戶告知書。<br><b>這件事不可能靠一份文宣解決</b>——必須有人在旁邊陪他打開那個設定頁面。",
+   btn:"報名下一場", id:"ws2"},
+  {nm:"③ 種子講師培訓", meta:"6 小時 ｜ 每季 1 期 ｜ 限銀牌以上",
+   p:"把受過訓的受補助青年，變成下一批的講師。結訓後列入市府名冊，受邀至社區、學校、微型企業授課並支領鐘點費。",
+   exT:"案例：擴散路徑怎麼算",
+   exB:"每期培訓 20 位種子講師，每人一年授課 4 場、每場 30 人 → <b>年觸及 2,400 人次</b>，成本僅為培訓費與鐘點費。<br>相較之下，由市府自行委外辦理同等場次的講座，成本約為三倍，且講師不具備「我也拿過這筆補助、我也踩過這個坑」的說服力。<br>種子講師本身是青年就業與斜槓收入的一環，同時回應了青年發展中心的另一項政策目標。",
+   btn:"報名種子講師培訓", id:"ws3"}
+];
+
+var payInit = false;
+
+function renderPayout(){
+  paintCase();
+  var passed = S.get("checklistPassed", false);
+  $("payBlocked").style.display = passed ? "none" : "flex";
+  if (passed) S.set("paid", true);
+
+  $("payLede").textContent = passed
+    ? "檢核已通過，案件進入主計作業。預計 " + fmt(workday(10)) + " 前入帳。"
+    : "核銷文件審核中。";
+
+  var tl = [
+    ["核銷收件", S.get("checkedAt", fmt(new Date())), passed?"done":"", "發票與資安檢核聲明書送達，系統自動查驗發票真偽。"],
+    ["檢核清單覆核", fmt(workday(1)), passed?"done":"", "12 項全數達標，承辦人員免逐項審查，僅抽核佐證截圖。"],
+    ["主計覆核", fmt(workday(3)), passed?"now":"", "排入主計作業批次，核對受款帳戶。"],
+    ["撥款入帳", fmt(workday(10)), "", "入帳後以 LINE 推播通知，並附次年度申請提醒。"]
+  ];
+  $("payTl").innerHTML = tl.map(function(s){
+    return '<li class="'+s[2]+'"><div class="k">'+s[0]
+      + (s[2]==="now"?' <span class="chip a">進行中</span>':"")
+      + '</div><div class="d">'+s[1]+'</div><div class="m">'+s[3]+'</div></li>';
+  }).join("");
+
+  /* 金額：依身分別套用 50%/3,000 或 90%/6,000 */
+  var low = S.get("idType","general") !== "general";
+  var spend = S.get("twd", 0) || 4200;
+  var rate = low ? 0.9 : 0.5, cap = low ? 6000 : 3000;
+  var calc = Math.round(spend*rate), grant = Math.min(calc, cap);
+  var nt = function(n){ return "NT$ " + n.toLocaleString("en-US"); };
+  $("moneyRows").innerHTML =
+      "<tr><td>購買金額（發票金額）</td><td class='num'>"+nt(spend)+"</td></tr>"
+    + "<tr><td>補助比率（"+({general:"一般青年",low:"低收入戶",midlow:"中低收入戶"}[S.get("idType","general")])+"）</td><td class='num'>"+(rate*100)+"%</td></tr>"
+    + "<tr><td>計算補助額</td><td class='num'>"+nt(calc)+"</td></tr>"
+    + "<tr><td>補助上限</td><td class='num'>"+nt(cap)+"</td></tr>"
+    + "<tr class='tot'><td>核定撥款金額</td><td class='num'>"+nt(grant)+"</td></tr>";
+  $("rateLine").innerHTML = low
+    ? "具低收入戶／中低收入戶資格，補助比率 90%、上限 6,000 元。工具品項：" + esc(S.get("toolName","—")) + "。"
+    : "一般青年補助比率 50%、上限 3,000 元；具低收／中低收入戶資格者為 90%、上限 6,000 元。工具品項：" + esc(S.get("toolName","—")) + "。";
+
+  if (!payInit) {
+    payInit = true;
+    $("wsList").innerHTML = WS.map(function(w){
+      return '<div class="card stack s">'
+        + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline">'
+        + '<span style="font-weight:700;font-size:16px;font-family:var(--serif)">'+w.nm+'</span>'
+        + '<span class="mono" style="font-size:11px;color:var(--ink-3)">'+w.meta+'</span></div>'
+        + '<p style="font-size:14px;color:var(--ink-2);line-height:1.8">'+w.p+'</p>'
+        + '<div class="path"><div class="t">'+w.exT+'</div>'+w.exB+'</div>'
+        + '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">'
+        + (w.btn ? '<button class="btn pri sm" type="button" data-ws="'+w.id+'">'+w.btn+'</button>' : "")
+        + '<span class="mono" style="font-size:12.5px;color:var(--ok)" id="'+w.id+'"></span></div></div>';
+    }).join("");
+
+    $("wsList").addEventListener("click", function(e){
+      var b = e.target.closest("[data-ws]"); if (!b) return;
+      var id = b.getAttribute("data-ws");
+      if (id === "ws2") S.merge({wsBooked:true, wsDate:fmt(workday(12)), gold:true});
+      else S.merge({seedBooked:true, gold:true});
+      toast("報名完成，金牌徽章已入帳");
+      paintWs(); paintBadges();
+    });
+
+    wireReset("resetPay");
+  }
+
+  paintWs();
+  paintBadges();
+}
+
+function paintWs(){
+  $("ws1").textContent = S.get("bronze",false)
+    ? "✓ 已完成（銅牌已入帳）" : "尚未完成 — 請至階段③ 閱讀 5 則微課程";
+  /* 報名狀態雙向還原，重置後按鈕要能再按 */
+  var b2 = $("ws2"), btn2 = $("wsList").querySelector('[data-ws="ws2"]');
+  if (S.get("wsBooked",false)) {
+    b2.textContent = "✓ 已報名 " + S.get("wsDate", fmt(workday(12))) + " 場次（青年發展中心 3F）";
+    if (btn2) { btn2.disabled = true; btn2.textContent = "已報名"; }
+  } else {
+    b2.textContent = "下一場 " + fmt(workday(12));
+    if (btn2) { btn2.disabled = false; btn2.textContent = "報名下一場"; }
+  }
+  var b3 = $("ws3"), btn3 = $("wsList").querySelector('[data-ws="ws3"]');
+  if (S.get("seedBooked",false)) {
+    b3.textContent = "✓ 已報名（下一期開訓 " + fmt(workday(30)) + "）";
+    if (btn3) { btn3.disabled = true; btn3.textContent = "已報名"; }
+  } else {
+    b3.textContent = "";
+    if (btn3) { btn3.disabled = false; btn3.textContent = "報名種子講師培訓"; }
+  }
+}
+
+function paintBadges(){
+  var bronze = S.get("bronze",false);
+  var silver = S.get("silver",false) && S.get("checklistPassed",false);
+  var gold = S.get("gold",false);
+  $("badge1").classList.toggle("earned", bronze);
+  $("badge2").classList.toggle("earned", silver);
+  $("badge3").classList.toggle("earned", gold);
+  $("badgeT").textContent = "目前等級：" + (gold?"金牌":(silver?"銀牌":(bronze?"銅牌":"尚未取得")));
+  $("badgeP").innerHTML =
+      gold   ? "已取得金牌。您已列入「青年 AI 資安種子講師」候選名冊，青年發展中心將另行通知授課媒合。"
+    : silver ? "已取得銀牌。再完成一場實體工作坊或種子講師培訓即可升級金牌，次年度補助享優先審查。"
+    : bronze ? "已取得銅牌。完成核銷檢核清單 12 項即可升級銀牌。"
+             : "請先完成階段③的微課程 5 則取得銅牌。";
+}
+
+/* ═══ 懶人包列印 ═══ */
+$("printGuide").addEventListener("click", doPrint);
+
+/* ═══ API 介接說明頁 ═══ */
+var APIDOCS = [
+  {n:"即時市場匯率", tag:"可直連", need:"已接上",
+   e:["GET https://open.er-api.com/v6/latest/TWD", "免金鑰，回應 CORS 標頭，取倒數得每單位外幣臺幣價"],
+   d:"<b>這一組現在就能真的連。</b>外幣購買金額自動換算即用此來源。注意：這是市場參考匯率，<b>核銷正式認定仍以購買日臺灣銀行牌告匯率為準</b>（臺銀 CSV 無 CORS 標頭，需後端代理 /api/bot-rates）。"},
+  {n:"全國行政區清單", tag:"免介接", need:"已內建",
+   e:["原可用 GET https://api.nlsc.gov.tw/other/ListTown1/{縣市代碼}", "→ 已改為本機內建，不發出請求"],
+   d:"<b>這一組已經不需要 API。</b>22 縣市共 368 個鄉鎮市區直接寫進程式：資料多年不變、零延遲、離線可用，比呼叫外部服務可靠，也省掉一層後端代理。"},
+  {n:"財政部電子發票整合服務平台", tag:"需金鑰", need:"務必後端",
+   e:["POST https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp",
+      "version / type=Barcode / invNum / invDate / randomNumber / appID"],
+   d:"查驗購買憑證真偽。appID 須向財政部申請且屬機密，<b>絕不可寫進前端</b>。承辦端後台標紅的退件案例就是這條回傳不符。"},
+  {n:"內政部戶政資料介接", tag:"限機關", need:"務必後端",
+   e:["經 T-Road／政府資料介接平台申請，不對外開放", "→ 代理路徑 /api/household/verify"],
+   d:"核驗設籍新竹市與出生日期。原型改以身分證字號首碼與檢查碼本機推算替代，準確度足以擋掉絕大多數誤填。"},
+  {n:"衛福部社會救助資料", tag:"限機關", need:"務必後端",
+   e:["由新竹市社會處內部介接", "→ 代理路徑 /api/social/low-income"],
+   d:"查驗低收入戶／中低收入戶資格，決定補助比率是 50% 還是 90%。未介接前以檢附證明文件為準。"},
+  {n:"LINE Login v2.1", tag:"需金鑰", need:"務必後端",
+   e:["GET https://access.line.me/oauth2/v2.1/authorize",
+      "?response_type=code&client_id={channel_id}&redirect_uri=...&scope=profile%20openid"],
+   d:"階段②的官方帳號綁定。取得 code 後由後端以 channel_secret 換 access_token，secret 不可落在前端。"}
+];
+
+var apiDocsInit = false;
+function renderApiDocs(){
+  if (apiDocsInit) return;
+  apiDocsInit = true;
+
+  $("apiList").innerHTML = APIDOCS.map(function(a){
+    var tagCls = a.tag === "公開" ? "g" : (a.tag === "需金鑰" ? "r" : "w");
+    return '<div class="apirow"><div class="an">' + a.n
+      + ' <span class="chip '+tagCls+'">'+a.tag+'</span>'
+      + ' <span class="chip">'+a.need+'</span></div>'
+      + '<div class="ae">' + a.e.map(esc).join("<br>") + '</div>'
+      + '<div class="ad">' + a.d + '</div></div>';
+  }).join("");
+
+  $("probeBtn").addEventListener("click", probeAPIs);
+
+  $("ruleTotal").textContent = RULES.length;
+  var how = {local:["本機即時","g"], api:["API 介接","a"], manual:["人工審查","w"]};
+  var basis = {
+    name:"字數檢查", phone:"格式正規表示式", pid:"內政部身分證字號檢查碼演算法",
+    reside:"身分證字號首碼對照戶籍縣市", crosscheck:"首碼推得縣市 vs 填寫戶籍縣市",
+    age:"出生日期與今日差值", mail:"格式正規表示式", dist:"縣市／行政區對照表",
+    pdate:"補助期間區間比對", fx:"臺銀牌告匯率，容許 ±5% 誤差",
+    voucher:"五項全勾方為通過", attach:"副檔名與 10MB 大小限制，依身分類別決定必附項目",
+    einvoice:"財政部電子發票平台回傳", household:"戶政資料介接回傳",
+    dup:"補助案件資料庫跨年度比對", lowinc:"社會救助資料回傳",
+    content:"工具用途與計畫相稱性，無法規則化"
+  };
+  $("ruleRows").innerHTML = RULES.map(function(r,i){
+    var h = how[r.scope];
+    return "<tr><td class='mono'>"+("0"+(i+1)).slice(-2)+"</td><td>"+r.label+"</td>"
+      + '<td><span class="chip '+h[1]+'">'+h[0]+"</span></td>"
+      + "<td>"+(basis[r.id]||"—")+"</td></tr>";
+  }).join("");
+}
+
+function probeAPIs(){
+  var box = $("probeOut"), btn = $("probeBtn");
+  btn.disabled = true; btn.textContent = "連線中…";
+  box.innerHTML = '<div class="auditrow"><span class="chip w">◷</span>'
+    + '<span class="ar-x"><span class="ar-l">正在對 open.er-api.com 發出實際請求</span></span></div>';
+
+  var t0 = Date.now();
+  API.rates().then(function(r){
+    var ms = Date.now() - t0;
+    FX = r.rates;
+    var rows = [
+      ["即時市場匯率 open.er-api.com", r.src === "live",
+       r.src === "live"
+         ? "連線成功，取得 " + (Object.keys(r.rates).length - 1) + " 種幣別，耗時 " + ms + " ms"
+           + (r.at ? "，資料更新於 " + r.at : "")
+         : (API.log.fx ? API.log.fx.note : "連線失敗，已退回內建示意值")],
+      ["全國行政區清單（本機內建）", true,
+       countDistricts() + " 筆 ／ 22 縣市，不發出請求，離線可用"],
+      ["財政部電子發票查驗", false, "appID 屬機密，前端無法呼叫，須由後端代理 /api/einvoice/verify"],
+      ["內政部戶政資料介接", false, "限機關以 T-Road 申請，不對外開放；原型改以檢查碼本機推算替代"],
+      ["衛福部社會救助資料", false, "限機關介接；未介接前以檢附證明文件為準"],
+      ["LINE Login v2.1", false, "channel_secret 屬機密，token 交換必須在後端"]
+    ];
+    box.innerHTML = rows.map(function(x){
+      return '<div class="auditrow"><span class="chip ' + (x[1] ? "g" : "w") + '">'
+        + (x[1] ? "✓ 可用" : "✕ 需後端") + '</span>'
+        + '<span class="ar-x"><span class="ar-l">' + esc(x[0]) + '</span>'
+        + '<span class="ar-m">' + esc(x[2]) + '</span></span></div>';
+    }).join("");
+    btn.disabled = false; btn.textContent = "再試一次";
+    toast(r.src === "live" ? "匯率已連上，換算改用即時匯率" : "匯率連線被擋，維持內建示意值");
+  });
+}
+
+/* ═══ 啟動 ═══ */
+route();
+</script>
