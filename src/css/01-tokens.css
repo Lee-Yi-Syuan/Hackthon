@@ -15,15 +15,15 @@
   --warn:#8A5712; --warn-soft:#F6EBD6; --warn-line:#AE6F1C;
   --alert:#9A2B28; --alert-soft:#F6E4E1; --alert-line:#9A2B28;
   --term-bg:#05070A; --term:#57E08E; --term-dim:#2C6F4B; --term-hit:#FFCE5C; --term-bad:#FF6B58;
-  --shadow:0 1px 2px rgba(26,23,20,.05), 0 8px 24px rgba(26,23,20,.07);
+  --shadow:0 1px 0 rgba(26,23,20,.04);
   --shadow-lg:0 24px 60px rgba(26,23,20,.26);
 
   --serif:"Noto Serif TC",Georgia,"PingFang TC","Microsoft JhengHei",serif;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
 
-  --col:660px;
-  --r:4px;
+  --col:672px;
+  --r:2px;
 }
 
 /* ── 深色：僅覆寫權杖 ── */
@@ -37,7 +37,7 @@
     --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
     --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
     --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --shadow:0 1px 0 rgba(0,0,0,.3);
     --shadow-lg:0 24px 60px rgba(0,0,0,.6);
   }
 }
@@ -50,7 +50,7 @@
   --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
   --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
   --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  --shadow:0 1px 0 rgba(0,0,0,.3);
   --shadow-lg:0 24px 60px rgba(0,0,0,.6);
 }
 

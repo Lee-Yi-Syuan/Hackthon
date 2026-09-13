@@ -1,6 +1,6 @@
 /* ══ 元件 ══ */
 .card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);
-  padding:20px 22px;box-shadow:var(--shadow)}
+  padding:20px 22px}
 @media (max-width:520px){ .card{padding:17px 16px} }
 
 .callout{border:1px solid var(--rule);border-left:3px solid var(--accent-line);
@@ -24,12 +24,13 @@
 .chip.w{border-color:var(--warn-line);color:var(--warn);background:var(--warn-soft)}
 
 /* ── 按鈕 ── */
-.btn{font:inherit;font-size:15px;font-weight:500;padding:12px 20px;border-radius:var(--r);
+.btn{font:inherit;font-size:15px;font-weight:500;padding:12px 22px;border-radius:var(--r);
   border:1px solid transparent;cursor:pointer;text-decoration:none;display:inline-flex;
   align-items:center;justify-content:center;gap:7px;line-height:1.3;text-align:center;
   transition:background .15s,border-color .15s,opacity .15s}
-.btn.pri{background:var(--accent);color:var(--accent-ink);font-weight:700}
-.btn.pri:hover{opacity:.88}
+/* 主要動作用墨色而非藍色，像蓋印；hover 才轉靛藍 */
+.btn.pri{background:var(--ink);color:var(--ground);font-weight:700;letter-spacing:.04em}
+.btn.pri:hover{background:var(--accent);color:#fff}
 .btn.sec{background:var(--surface);color:var(--ink);border-color:var(--rule)}
 .btn.sec:hover{background:var(--surface-2)}
 .btn.sm{padding:8px 14px;font-size:13.5px}
@@ -39,10 +40,12 @@
 
 /* ── 表單 ── */
 .field{display:flex;flex-direction:column;gap:6px}
-.field > label{font-weight:700;font-size:14.5px;line-height:1.5}
+.field > label{font-weight:700;font-size:14.5px;line-height:1.5;letter-spacing:.02em}
 .field .sub{font-size:12.5px;color:var(--ink-3);font-weight:400;line-height:1.6}
+/* 底線加重，像紙本表單的填寫欄 */
 .field input,.field select{width:100%;padding:12px 13px;font:inherit;font-size:16px;
-  background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:var(--r)}
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule);
+  border-bottom-width:2px;border-bottom-color:var(--ink-3);border-radius:var(--r)}
 .field input::placeholder{color:var(--ink-3)}
 .field input:focus,.field select:focus{outline:2px solid var(--accent);outline-offset:-1px;
   border-color:var(--accent)}
@@ -66,7 +69,9 @@
 .assist .tx{font-size:14px;color:var(--ink-2);line-height:1.75}
 
 fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:18px}
-legend{font-family:var(--serif);font-weight:700;font-size:17px;padding:0;margin-bottom:2px}
+/* 「一、申請人基本資料」整段壓一條線，像紙本表單的分段 */
+legend{font-family:var(--serif);font-weight:700;font-size:18px;padding:0 0 8px;margin-bottom:2px;
+  width:100%;border-bottom:1px solid var(--ink);letter-spacing:.03em}
 
 /* ── 時間軸 ── */
 .tl{list-style:none;padding:0;margin:0}
@@ -146,9 +151,10 @@ code{font-family:var(--mono);font-size:.88em;background:var(--surface);border:1p
 /* ── 表格 ── */
 .tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface)}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule-2);vertical-align:top}
-tr:last-child td{border-bottom:0}
-th{background:var(--sunken);font-size:12px;color:var(--ink-2);font-weight:700;white-space:nowrap}
+/* 全框線，像公文附表 */
+th,td{text-align:left;padding:9px 12px;border:1px solid var(--rule-2);vertical-align:top}
+th{background:var(--sunken);font-size:12px;color:var(--ink-2);font-weight:700;white-space:nowrap;
+  border-color:var(--rule)}
 td.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
 tr.hl{background:var(--accent-soft)}
 tr.tot td{font-weight:700;background:var(--sunken)}
