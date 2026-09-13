@@ -259,6 +259,10 @@ function buildDecl(){
   $("dName").textContent = (S.get("name","—") || "—") + "（" + S.get("pidMask","—") + "）";
   $("dTool").textContent = TOOLS[tool] ? TOOLS[tool].n : "—";
   $("dScore").textContent = "12 / 12 項全數達標　｜　檢核日期 " + S.get("checkedAt", fmt(new Date()));
+  var qz = S.get("quizDone", false)
+    ? ("已完成，" + (S.get("quizMisses",0) === 0 ? "全程未失手" : "失手 " + S.get("quizMisses",0) + " 次"))
+    : "未完成";
+  $("dQuiz").textContent = qz;
   $("dBadge").textContent = S.get("bronze",false)
     ? "銀牌（已完成微課程 5 則 ＋ 檢核清單 12 項）"
     : "銅牌（檢核清單 12 項達標；微課程尚未完成）";

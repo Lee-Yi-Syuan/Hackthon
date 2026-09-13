@@ -16,6 +16,7 @@
 #
 # 要啟用就把下面那行前面的 # 拿掉，部署後務必實際點過一輪，
 # 特別是 ⚙ API 頁的「實際試連」與各階段的進度條。
+# 石鍋測驗以同源 iframe 載入，所以需要 frame-src 'self'。
 # 若 DevTools 主控台出現 CSP 違規訊息，把被擋的來源補進對應指示詞。
 #
-#  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src 'self' https://open.er-api.com; img-src 'self' data:; base-uri 'none'; form-action 'none'
+#  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src 'self' https://open.er-api.com; frame-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'

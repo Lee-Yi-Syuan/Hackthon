@@ -417,6 +417,6 @@ function submitCase(d){
   });
 
   toast("申請已送出，案件編號 " + no);
-  location.hash = "#/bind";
+  location.hash = "#/quiz";
 }
 

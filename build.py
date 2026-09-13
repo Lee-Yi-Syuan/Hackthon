@@ -77,6 +77,12 @@ def main():
     os.makedirs(DIST, exist_ok=True)
     io.open(OUT, "w", encoding="utf-8", newline="").write(out)
 
+    # 石鍋測驗是獨立頁（以 iframe 嵌入），原樣複製
+    quiz = os.path.join(SRC, "quiz.html")
+    if os.path.exists(quiz):
+        io.open(os.path.join(DIST, "quiz.html"), "w", encoding="utf-8",
+                newline="").write(read(quiz))
+
     # _headers 要跟著進 dist/，部署時才會生效
     hdr = os.path.join(ROOT, "_headers")
     if os.path.exists(hdr):

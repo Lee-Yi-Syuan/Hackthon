@@ -4,6 +4,7 @@
 var STAGES = [
   {id:"home",     hash:"#/",          n:"·", t:"總覽", flag:null},
   {id:"apply",    hash:"#/apply",     n:"1", t:"申請", flag:"applied"},
+  {id:"quiz",     hash:"#/quiz",      n:"◎", t:"石鍋", flag:"quizDone"},
   {id:"bind",     hash:"#/bind",      n:"2", t:"綁定", flag:"bound"},
   {id:"review",   hash:"#/review",    n:"3", t:"審核", flag:"reviewed"},
   {id:"checklist",hash:"#/checklist", n:"4", t:"核銷", flag:"checklistPassed"},
@@ -23,6 +24,7 @@ function drawRail(cur){
 
 var ENTER = {
   home: renderHome, apply: renderApply, bind: renderBind, review: renderReview,
+  quiz: renderQuiz,
   checklist: renderChecklist, payout: renderPayout, guide: function(){},
   apidocs: renderApiDocs
 };
