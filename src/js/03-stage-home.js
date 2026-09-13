@@ -70,6 +70,7 @@ function hardReset(){
     var inp = $(a.id); if (inp) inp.value = "";
     var n = $("n-"+a.id); if (n) n.innerHTML = "";
   });
+  showErrors = false;
   if (typeof runAudit === "function") runAudit();
   $("banner").style.display = "none";
   $("submitBtn").textContent = "送出申請";

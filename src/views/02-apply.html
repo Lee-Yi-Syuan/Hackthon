@@ -232,17 +232,10 @@
         <div class="err" id="e-attach-err"></div>
       </fieldset>
 
-      <!-- 自動審核結果 -->
-      <div class="card stack m" id="auditCard">
-        <div class="stack s">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
-            <h3 style="margin:0">自動審核結果</h3>
-            <span class="mono" style="font-size:12px;color:var(--ink-3)" id="auditCount">—</span>
-          </div>
-          <p class="small">這些項目在您按送出之前就判定完成，承辦人員只會看到系統標紅的案子。
-            <button class="btn sec sm" type="button" data-go="#/apidocs" style="margin-left:4px">看 API 介接說明</button></p>
-        </div>
-        <div class="stack s" id="auditList"></div>
+      <!-- 送出時若有不符才出現，只列出要修正的項目 -->
+      <div class="callout bad" id="formErrors" style="display:none">
+        <span class="t">還有 <span id="errCount"></span> 項需要修正</span>
+        <ul class="errlist" id="errList"></ul>
       </div>
 
       <div class="btnrow">

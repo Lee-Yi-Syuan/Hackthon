@@ -27,33 +27,37 @@ function formData(){
   };
 }
 
+/* 自動審核全程在跑，但畫面上保持安靜——
+   申請人不需要看見十七條規則的內部狀態，那是承辦端與 ⚙ API 頁的事。
+   等他按下送出、真的有東西擋住了，才把要修的幾項列出來。 */
+var showErrors = false;
+
 function runAudit(){
   var d = formData();
-  var rows = RULES.map(function(r){
-    var res;
-    if (r.async) {
-      res = ASYNC[r.id] || W("待送出後由系統呼叫");
-    } else {
-      try { res = r.run(d); } catch(e){ res = W("待資料填寫完成"); }
-    }
-    var chip = res.s === "ok" ? "g" : (res.s === "no" ? "r" : "w");
-    var mark = res.s === "ok" ? "✓ 通過" : (res.s === "no" ? "✕ 不符" : "◷ 待驗");
-    var scope = r.scope === "local" ? "本機即時" : (r.scope === "api" ? "API 介接" : "人工審查");
-    return '<div class="auditrow">'
-      + '<span class="chip '+chip+'">'+mark+'</span>'
-      + '<span class="ar-x"><span class="ar-l">'+r.label
-      + ' <span class="chip">'+scope+'</span></span>'
-      + '<span class="ar-m">'+esc(res.m)+'</span></span></div>';
-  }).join("");
-  $("auditList").innerHTML = rows;
+  var okN = 0, noN = 0, fails = [];
 
-  var okN = 0, noN = 0;
   RULES.forEach(function(r){
-    var res = r.async ? (ASYNC[r.id] || W("")) : (function(){ try{ return r.run(d); }catch(e){ return W(""); } })();
-    if (res.s === "ok") okN++; else if (res.s === "no") noN++;
+    var res;
+    if (r.async) { res = ASYNC[r.id] || W(""); }
+    else { try { res = r.run(d); } catch(e){ res = W(""); } }
+
+    if (res.s === "ok") okN++;
+    else if (res.s === "no") { noN++; fails.push({ label:r.label, msg:res.m }); }
   });
-  $("auditCount").textContent = "通過 " + okN + " ／ 不符 " + noN + " ／ 共 " + RULES.length + " 項";
-  return { ok:okN, no:noN, data:d };
+
+  paintErrors(fails);
+  return { ok:okN, no:noN, data:d, fails:fails };
+}
+
+function paintErrors(fails){
+  var box = $("formErrors");
+  if (!box) return;
+  if (!showErrors || !fails.length) { box.style.display = "none"; return; }
+  box.style.display = "flex";
+  $("errCount").textContent = fails.length;
+  $("errList").innerHTML = fails.map(function(f){
+    return "<li><b>" + esc(f.label) + "</b>" + esc(f.msg) + "</li>";
+  }).join("");
 }
 
 function fillCounties(sel){
@@ -260,10 +264,11 @@ function guessTool(name){
 
 function onSubmit(){
   if (fired) {
+    showErrors = true;
     var a = runAudit();
     if (a.no > 0) {
-      toast("尚有 " + a.no + " 項自動審核不符，請修正後再送出。");
-      $("auditCard").scrollIntoView({behavior:"smooth", block:"center"});
+      toast("還有 " + a.no + " 項需要修正");
+      $("formErrors").scrollIntoView({behavior:"smooth", block:"center"});
       return;
     }
     submitCase(a.data);
