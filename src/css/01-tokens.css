@@ -6,6 +6,7 @@
 
 /* ── 設計權杖：淺色為基準 ── */
 :root{
+  color-scheme: light;
   --ground:#F1F2F5; --surface:#FFFFFF; --surface-2:#E9EBF0; --sunken:#E4E7ED;
   --ink:#111620; --ink-2:#454D5C; --ink-3:#767E8D;
   --rule:#C7CBD5; --rule-2:#DCDFE6;
@@ -28,6 +29,7 @@
 /* ── 深色：僅覆寫權杖 ── */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
+    color-scheme: dark;
     --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
     --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
     --rule:#2B323D; --rule-2:#222834;
@@ -40,6 +42,7 @@
   }
 }
 :root[data-theme="dark"]{
+  color-scheme: dark;
   --ground:#0B0E13; --surface:#151A21; --surface-2:#1E242D; --sunken:#101419;
   --ink:#E7EAF0; --ink-2:#A6AEBC; --ink-3:#78818F;
   --rule:#2B323D; --rule-2:#222834;
