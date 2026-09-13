@@ -34,17 +34,13 @@ function renderQuiz(){
     frame.setAttribute("src", QUIZ_SRC + "?r=" + Date.now());
   });
 
-  $("quizOpen").addEventListener("click", function(){
-    window.open(QUIZ_SRC, "_blank", "noopener");
-  });
-
   $("quizFull").addEventListener("click", function(){
     var el = $("quizWrap");
     var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
-    if (!req) { toast("這個瀏覽器不支援全螢幕，請改用「在新分頁開啟」"); return; }
+    if (!req) { toast("這個瀏覽器不支援全螢幕，直接在下方畫面玩也可以"); return; }
     var p = req.call(el);
     if (p && p["catch"]) p["catch"](function(){
-      toast("全螢幕被瀏覽器擋下，請改用「在新分頁開啟」");
+      toast("全螢幕被瀏覽器擋下，直接在下方畫面玩也可以");
     });
   });
 

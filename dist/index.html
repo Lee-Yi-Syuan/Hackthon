@@ -621,15 +621,9 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
       <div class="btnrow"><button class="btn pri" id="resumeBtn" type="button">繼續申請</button></div>
     </div>
 
-    <div class="stack m">
-      <div class="card stack s">
-        <span class="t" style="font-weight:700;font-size:15px">怎麼看這個原型</span>
-        <p class="small">建議從 ① 申請開始依序走一遍，約 6 分鐘。全程在瀏覽器本機執行，<b>不連線、不上傳任何資料</b>；進度存在您自己的瀏覽器，可隨時清除。</p>
-        <div class="btnrow" style="margin-top:4px">
-          <button class="btn pri" data-go="#/apply" type="button">從 ① 申請開始</button>
-          <button class="btn sec" data-go="#/guide" type="button">直接看懶人包</button>
-        </div>
-      </div>
+    <div class="btnrow">
+      <button class="btn pri" data-go="#/apply" type="button">開始申請</button>
+      <button class="btn sec" data-go="#/guide" type="button">先看 AI 安全懶人包</button>
     </div>
 
     <div class="stack m">
@@ -637,42 +631,16 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
       <div class="stack s" id="stageCards"></div>
     </div>
 
-    <div class="stack m">
-      <h2>解題方向對照</h2>
-      <div class="tbl">
-        <table>
-          <thead><tr><th>題目所列解題方向</th><th>本原型的回應</th><th>位置</th></tr></thead>
-          <tbody>
-            <tr><td>一、申請流程導入資安宣導</td><td>五階段各埋一個資安節點，不新增關卡</td><td class="mono">全流程</td></tr>
-            <tr><td>二、審核／核銷／撥款進度追蹤</td><td>申請人端時間軸 ＋ 承辦端自動勾稽後台，人工只看例外</td><td class="mono">③ ⑤</td></tr>
-            <tr><td>三、與 LINE 官方帳號串聯</td><td>綁定 @youthhsinchu；以冒用帳號辨識與授權範圍作為教材</td><td class="mono">②</td></tr>
-            <tr><td>四、AI 安全使用懶人包圖卡</td><td>可列印 A4 一頁，含守則與四起真實事件摘要</td><td class="mono">懶人包</td></tr>
-            <tr><td>五、提升 AI 資安素養工作坊</td><td>線上微課程／實體工作坊／種子講師三級，各附案例與擴散估算</td><td class="mono">⑤</td></tr>
-            <tr><td>六、檢核清單的勾稽與檢核</td><td>12 項要求佐證而非打勾，依工具客製路徑，通過後產出聲明書</td><td class="mono">④</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="stack m">
-      <h2>設計上的四個取捨</h2>
-      <div class="card">
-        <dl class="dl-list">
-          <dt>宣導不另開一頁，拆進既有動線</dt>
-          <dd>另開的「資安須知」頁面沒有人看。拆進動線後，申請人不會感覺自己在上課。</dd>
-          <dt>先示範風險，再講規則</dt>
-          <dd>階段①先讓人被自己的身分證字號嚇一次，後面四關的規則才聽得進去。順序反過來就沒有效果。</dd>
-          <dt>檢核清單要佐證，且答錯不退件</dt>
-          <dd>打勾的清單所有人都會全部打勾；退件率高的政策第二年沒人申請。門檻設在 12/12 但可無限重答。</dd>
-          <dt>素養認證要有實質誘因</dt>
-          <dd>徽章對應次年免重填、優先審查與種子講師鐘點費。沒有好處的認證，第二年不會有人來。</dd>
-        </dl>
-      </div>
-    </div>
 
     <hr class="sep">
-    <p class="small">原型展示 ｜ 不連線、不上傳。事件摘要引自各案公開報導，設定路徑請以各服務最新公告為準。
-      <button class="btn sec sm" id="resetHome" type="button" style="margin-left:8px">清除展示進度</button></p>
+
+    <div class="stack s">
+      <p class="small">本服務全程於您的瀏覽器本機執行，<b>不連線、不上傳任何個人資料</b>。填寫進度存在您自己的裝置上。</p>
+      <p class="small" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn sec sm" data-go="#/brief" type="button">給評審與承辦單位</button>
+        <button class="btn sec sm" id="resetHome" type="button">清除填寫進度</button>
+      </p>
+    </div>
   </div>
 </section>
 
@@ -906,7 +874,7 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
       <fieldset>
         <legend>六、附件上傳</legend>
         <p class="small" style="margin-top:-8px">
-          接受 JPG／PNG／PDF，單檔 10MB 以內。<b>本原型不會上傳任何檔案</b>，僅在您的瀏覽器讀取檔名與大小做格式檢查。</p>
+          接受 JPG／PNG／PDF，單檔 10MB 以內。<b>本系統不會上傳任何檔案</b>，僅在您的瀏覽器讀取檔名與大小做格式檢查。</p>
         <div class="stack s" id="attachList"></div>
         <div class="err" id="e-attach-err"></div>
       </fieldset>
@@ -956,7 +924,6 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
 
     <div class="btnrow">
       <button class="btn sec" id="quizFull" type="button">全螢幕</button>
-      <button class="btn sec" id="quizOpen" type="button">在新分頁開啟</button>
       <button class="btn sec" id="quizReload" type="button">重新開始這鍋</button>
     </div>
 
@@ -1301,29 +1268,8 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
       <div class="stack m" id="wsList"></div>
     </div>
 
-    <hr class="sep">
-
-    <div class="stack m">
-      <h2>可被其他縣市複製的部分</h2>
-      <div class="card">
-        <dl class="dl-list">
-          <dt>① 資安宣導不是新增的一關，是塞進既有的每一關</dt>
-          <dd>申請時示範風險、綁定時教授權範圍、等待時推微課程、核銷時驗檢核清單、撥款時發徽章。申請人的動線沒有變長，但每一步都帶走一件事。</dd>
-          <dt>② 檢核清單要求佐證，不要求打勾</dt>
-          <dd>填實際數值、答出設定路徑、附設定截圖。打勾的清單所有人都會全部打勾，要求佐證的清單才有勾稽的意義。</dd>
-          <dt>③ 答錯不退件，答錯就教</dt>
-          <dd>通過門檻是 12／12，但可無限次重答，每次答錯附上正確做法。退件率高的政策，第二年就沒人申請了。</dd>
-          <dt>④ 承辦端自動勾稽，人工只看例外</dt>
-          <dd>設籍、年齡、重複申請、發票真偽四項自動比對，全綠自動放行，紅燈才派件。行政量能省下來的部分，才有餘裕去辦工作坊。</dd>
-          <dt>⑤ 徽章給實質好處，不給榮譽</dt>
-          <dd>次年免重填、優先審查、種子講師鐘點費。沒有誘因的素養認證，第二年不會有人來。</dd>
-        </dl>
-      </div>
-    </div>
-
     <div class="btnrow">
       <button class="btn sec" data-go="#/" type="button">回流程總覽</button>
-      <button class="btn sec" id="resetPay" type="button">重置展示資料</button>
     </div>
   </div>
 </section>
@@ -1522,6 +1468,86 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
   </div>
 </section>
 
+<!-- ══════════ 提案說明（給評審與承辦單位） ══════════ -->
+<section class="view" id="v-brief" tabindex="-1">
+  <div class="col wide stack l">
+
+    <div class="stack s">
+      <span class="eyebrow">給評審與承辦單位</span>
+      <h1>提案說明</h1>
+      <p class="lede">申請人不會看到這一頁。這裡放的是解題方向的覆蓋狀況、設計取捨，以及這套機制要被其他縣市複製時需要知道的事。</p>
+    </div>
+
+    <div class="stack m">
+      <h2>解題方向對照</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>題目所列解題方向</th><th>本原型的回應</th><th>位置</th></tr></thead>
+          <tbody>
+            <tr><td>一、申請流程導入資安宣導</td><td>五階段各埋一個資安節點，不新增關卡</td><td class="mono">全流程</td></tr>
+            <tr><td>二、審核／核銷／撥款進度追蹤</td><td>申請人端時間軸 ＋ 承辦端自動勾稽後台，人工只看例外</td><td class="mono">③ ⑤</td></tr>
+            <tr><td>三、與 LINE 官方帳號串聯</td><td>綁定 @youthhsinchu；以冒用帳號辨識與授權範圍作為教材</td><td class="mono">②</td></tr>
+            <tr><td>四、AI 安全使用懶人包圖卡</td><td>可列印 A4 一頁，含守則與四起真實事件摘要</td><td class="mono">懶人包</td></tr>
+            <tr><td>五、提升 AI 資安素養工作坊</td><td>線上微課程／實體工作坊／種子講師三級，各附案例與擴散估算</td><td class="mono">⑤</td></tr>
+            <tr><td>六、檢核清單的勾稽與檢核</td><td>12 項要求佐證而非打勾，依工具客製路徑，通過後產出聲明書</td><td class="mono">④</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="stack m">
+      <h2>設計上的四個取捨</h2>
+      <div class="card">
+        <dl class="dl-list">
+          <dt>宣導不另開一頁，拆進既有動線</dt>
+          <dd>另開的「資安須知」頁面沒有人看。拆進動線後，申請人不會感覺自己在上課。</dd>
+          <dt>先示範風險，再講規則</dt>
+          <dd>階段①先讓人被自己的身分證字號嚇一次，後面四關的規則才聽得進去。順序反過來就沒有效果。</dd>
+          <dt>檢核清單要佐證，且答錯不退件</dt>
+          <dd>打勾的清單所有人都會全部打勾；退件率高的政策第二年沒人申請。門檻設在 12/12 但可無限重答。</dd>
+          <dt>素養認證要有實質誘因</dt>
+          <dd>徽章對應次年免重填、優先審查與種子講師鐘點費。沒有好處的認證，第二年不會有人來。</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="stack m">
+      <h2>可被其他縣市複製的部分</h2>
+      <div class="card">
+        <dl class="dl-list">
+          <dt>① 資安宣導不是新增的一關，是塞進既有的每一關</dt>
+          <dd>申請時示範風險、綁定時教授權範圍、等待時推微課程、核銷時驗檢核清單、撥款時發徽章。申請人的動線沒有變長，但每一步都帶走一件事。</dd>
+          <dt>② 檢核清單要求佐證，不要求打勾</dt>
+          <dd>填實際數值、答出設定路徑、附設定截圖。打勾的清單所有人都會全部打勾，要求佐證的清單才有勾稽的意義。</dd>
+          <dt>③ 答錯不退件，答錯就教</dt>
+          <dd>通過門檻是 12／12，但可無限次重答，每次答錯附上正確做法。退件率高的政策，第二年就沒人申請了。</dd>
+          <dt>④ 承辦端自動勾稽，人工只看例外</dt>
+          <dd>設籍、年齡、重複申請、發票真偽四項自動比對，全綠自動放行，紅燈才派件。行政量能省下來的部分，才有餘裕去辦工作坊。</dd>
+          <dt>⑤ 徽章給實質好處，不給榮譽</dt>
+          <dd>次年免重填、優先審查、種子講師鐘點費。沒有誘因的素養認證，第二年不會有人來。</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="t">技術細節另有一頁</span>
+      <p>六組外部介接的真實端點、授權方式、哪些必須由後端實作，以及 17 條自動審核規則的完整清單與判定依據，都在 API 介接說明頁。那一頁附有「實際試連」按鈕，會當場發出真實請求並回報結果。</p>
+      <div class="btnrow" style="margin-top:4px">
+        <button class="btn sec" data-go="#/apidocs" type="button">開啟 API 介接與自動審核</button>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn pri" data-go="#/" type="button">回流程總覽</button>
+      <button class="btn sec" data-go="#/apply" type="button">從 ① 申請走一遍</button>
+    </div>
+
+    <hr class="sep">
+    <p class="small">115 年梅竹黑客松 ｜ 競賽主題：AI 領航青年數位工具補助・解決資安無慮<br>
+      事件摘要引自各案公開報導，各服務設定路徑請以最新公告為準。</p>
+  </div>
+</section>
+
 </main>
 
 <div id="veil"></div>
@@ -1633,11 +1659,13 @@ var STAGES = [
   {id:"checklist",hash:"#/checklist", n:"4", t:"核銷", flag:"checklistPassed"},
   {id:"payout",   hash:"#/payout",    n:"5", t:"撥款", flag:"paid"},
   {id:"guide",    hash:"#/guide",     n:"＊", t:"懶人包", flag:null},
-  {id:"apidocs",  hash:"#/apidocs",   n:"⚙", t:"API", flag:null}
+  /* hide:true 的不出現在階段軌，只從「給評審與承辦單位」進入 */
+  {id:"brief",    hash:"#/brief",     n:"§", t:"提案說明", flag:null, hide:true},
+  {id:"apidocs",  hash:"#/apidocs",   n:"⚙", t:"API", flag:null, hide:true}
 ];
 
 function drawRail(cur){
-  $("railIn").innerHTML = STAGES.map(function(s){
+  $("railIn").innerHTML = STAGES.filter(function(s){ return !s.hide; }).map(function(s){
     var done = s.flag && S.get(s.flag,false);
     return '<button type="button" data-go="'+s.hash+'" class="'+(done?"done":"")+'"'
       + (s.id===cur?' aria-current="step"':"") + '>'
@@ -1647,7 +1675,7 @@ function drawRail(cur){
 
 var ENTER = {
   home: renderHome, apply: renderApply, bind: renderBind, review: renderReview,
-  quiz: renderQuiz,
+  quiz: renderQuiz, brief: function(){},
   checklist: renderChecklist, payout: renderPayout, guide: function(){},
   apidocs: renderApiDocs
 };
@@ -2580,17 +2608,13 @@ function renderQuiz(){
     frame.setAttribute("src", QUIZ_SRC + "?r=" + Date.now());
   });
 
-  $("quizOpen").addEventListener("click", function(){
-    window.open(QUIZ_SRC, "_blank", "noopener");
-  });
-
   $("quizFull").addEventListener("click", function(){
     var el = $("quizWrap");
     var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
-    if (!req) { toast("這個瀏覽器不支援全螢幕，請改用「在新分頁開啟」"); return; }
+    if (!req) { toast("這個瀏覽器不支援全螢幕，直接在下方畫面玩也可以"); return; }
     var p = req.call(el);
     if (p && p["catch"]) p["catch"](function(){
-      toast("全螢幕被瀏覽器擋下，請改用「在新分頁開啟」");
+      toast("全螢幕被瀏覽器擋下，直接在下方畫面玩也可以");
     });
   });
 
@@ -3221,7 +3245,6 @@ function renderPayout(){
       paintWs(); paintBadges();
     });
 
-    wireReset("resetPay");
   }
 
   paintWs();

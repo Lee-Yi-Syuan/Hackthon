@@ -82,7 +82,6 @@ function renderPayout(){
       paintWs(); paintBadges();
     });
 
-    wireReset("resetPay");
   }
 
   paintWs();

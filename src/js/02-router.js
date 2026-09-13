@@ -10,11 +10,13 @@ var STAGES = [
   {id:"checklist",hash:"#/checklist", n:"4", t:"核銷", flag:"checklistPassed"},
   {id:"payout",   hash:"#/payout",    n:"5", t:"撥款", flag:"paid"},
   {id:"guide",    hash:"#/guide",     n:"＊", t:"懶人包", flag:null},
-  {id:"apidocs",  hash:"#/apidocs",   n:"⚙", t:"API", flag:null}
+  /* hide:true 的不出現在階段軌，只從「給評審與承辦單位」進入 */
+  {id:"brief",    hash:"#/brief",     n:"§", t:"提案說明", flag:null, hide:true},
+  {id:"apidocs",  hash:"#/apidocs",   n:"⚙", t:"API", flag:null, hide:true}
 ];
 
 function drawRail(cur){
-  $("railIn").innerHTML = STAGES.map(function(s){
+  $("railIn").innerHTML = STAGES.filter(function(s){ return !s.hide; }).map(function(s){
     var done = s.flag && S.get(s.flag,false);
     return '<button type="button" data-go="'+s.hash+'" class="'+(done?"done":"")+'"'
       + (s.id===cur?' aria-current="step"':"") + '>'
@@ -24,7 +26,7 @@ function drawRail(cur){
 
 var ENTER = {
   home: renderHome, apply: renderApply, bind: renderBind, review: renderReview,
-  quiz: renderQuiz,
+  quiz: renderQuiz, brief: function(){},
   checklist: renderChecklist, payout: renderPayout, guide: function(){},
   apidocs: renderApiDocs
 };

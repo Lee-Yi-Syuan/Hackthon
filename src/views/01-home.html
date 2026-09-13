@@ -18,15 +18,9 @@
       <div class="btnrow"><button class="btn pri" id="resumeBtn" type="button">繼續申請</button></div>
     </div>
 
-    <div class="stack m">
-      <div class="card stack s">
-        <span class="t" style="font-weight:700;font-size:15px">怎麼看這個原型</span>
-        <p class="small">建議從 ① 申請開始依序走一遍，約 6 分鐘。全程在瀏覽器本機執行，<b>不連線、不上傳任何資料</b>；進度存在您自己的瀏覽器，可隨時清除。</p>
-        <div class="btnrow" style="margin-top:4px">
-          <button class="btn pri" data-go="#/apply" type="button">從 ① 申請開始</button>
-          <button class="btn sec" data-go="#/guide" type="button">直接看懶人包</button>
-        </div>
-      </div>
+    <div class="btnrow">
+      <button class="btn pri" data-go="#/apply" type="button">開始申請</button>
+      <button class="btn sec" data-go="#/guide" type="button">先看 AI 安全懶人包</button>
     </div>
 
     <div class="stack m">
@@ -34,42 +28,16 @@
       <div class="stack s" id="stageCards"></div>
     </div>
 
-    <div class="stack m">
-      <h2>解題方向對照</h2>
-      <div class="tbl">
-        <table>
-          <thead><tr><th>題目所列解題方向</th><th>本原型的回應</th><th>位置</th></tr></thead>
-          <tbody>
-            <tr><td>一、申請流程導入資安宣導</td><td>五階段各埋一個資安節點，不新增關卡</td><td class="mono">全流程</td></tr>
-            <tr><td>二、審核／核銷／撥款進度追蹤</td><td>申請人端時間軸 ＋ 承辦端自動勾稽後台，人工只看例外</td><td class="mono">③ ⑤</td></tr>
-            <tr><td>三、與 LINE 官方帳號串聯</td><td>綁定 @youthhsinchu；以冒用帳號辨識與授權範圍作為教材</td><td class="mono">②</td></tr>
-            <tr><td>四、AI 安全使用懶人包圖卡</td><td>可列印 A4 一頁，含守則與四起真實事件摘要</td><td class="mono">懶人包</td></tr>
-            <tr><td>五、提升 AI 資安素養工作坊</td><td>線上微課程／實體工作坊／種子講師三級，各附案例與擴散估算</td><td class="mono">⑤</td></tr>
-            <tr><td>六、檢核清單的勾稽與檢核</td><td>12 項要求佐證而非打勾，依工具客製路徑，通過後產出聲明書</td><td class="mono">④</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="stack m">
-      <h2>設計上的四個取捨</h2>
-      <div class="card">
-        <dl class="dl-list">
-          <dt>宣導不另開一頁，拆進既有動線</dt>
-          <dd>另開的「資安須知」頁面沒有人看。拆進動線後，申請人不會感覺自己在上課。</dd>
-          <dt>先示範風險，再講規則</dt>
-          <dd>階段①先讓人被自己的身分證字號嚇一次，後面四關的規則才聽得進去。順序反過來就沒有效果。</dd>
-          <dt>檢核清單要佐證，且答錯不退件</dt>
-          <dd>打勾的清單所有人都會全部打勾；退件率高的政策第二年沒人申請。門檻設在 12/12 但可無限重答。</dd>
-          <dt>素養認證要有實質誘因</dt>
-          <dd>徽章對應次年免重填、優先審查與種子講師鐘點費。沒有好處的認證，第二年不會有人來。</dd>
-        </dl>
-      </div>
-    </div>
 
     <hr class="sep">
-    <p class="small">原型展示 ｜ 不連線、不上傳。事件摘要引自各案公開報導，設定路徑請以各服務最新公告為準。
-      <button class="btn sec sm" id="resetHome" type="button" style="margin-left:8px">清除展示進度</button></p>
+
+    <div class="stack s">
+      <p class="small">本服務全程於您的瀏覽器本機執行，<b>不連線、不上傳任何個人資料</b>。填寫進度存在您自己的裝置上。</p>
+      <p class="small" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn sec sm" data-go="#/brief" type="button">給評審與承辦單位</button>
+        <button class="btn sec sm" id="resetHome" type="button">清除填寫進度</button>
+      </p>
+    </div>
   </div>
 </section>
 
