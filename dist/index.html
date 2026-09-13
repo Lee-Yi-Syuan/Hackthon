@@ -9,91 +9,62 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
 
-<style>/* ══════════════════════════════════════════════════════════════
-   設計權杖
-
-   配色沿用「資安石鍋」那一組——紙、墨、橄欖、緋紅、木。
-   不另外發明一套，因為石鍋是這份作品自己的創作，用它才有身分。
-
-   整套視覺建立在作品的論點上：
-     有憑有據的東西 → 紙。有框線、有編號、有落款。
-     沒人負責的東西 → 黑箱。終端機的綠字，撕開紙面露出來。
-   所以危險內容不是「紅色的卡片」，是另一個世界。
+<style>
+/* ══════════════════════════════════════════════════════════════
+   新竹市青年 AI 工具補助 ｜ 全流程資安宣導
+   單檔原型 · 不連線 · 不上傳
    ══════════════════════════════════════════════════════════════ */
 
+/* ── 設計權杖：淺色為基準 ── */
 :root{
   color-scheme: light;
-
-  /* 紙 */
-  --ground:#EFEBE0;        /* 桌面，比紙再深一階 */
-  --surface:#F7F4EA;       /* 紙 */
-  --surface-2:#E8E2D2;     /* 紙的陰影面 */
-  --sunken:#E3DCC8;        /* 壓凹處、表頭 */
-
-  /* 墨 */
-  --ink:#231F1A;
-  --ink-2:#544C40;
-  --ink-3:#867C6C;
-
-  /* 框線 */
-  --rule:#C6BCA4;
-  --rule-2:#D9D1BC;
-
-  /* 橄欖：可以、通過、官方 */
-  --accent:#5C6B2E; --accent-ink:#F7F4EA; --accent-soft:#E2E5CE; --accent-line:#5C6B2E;
-  --ok:#4A5B26; --ok-soft:#E2E5CE; --ok-line:#5C6B2E;
-
-  /* 木：結構、標頭 */
-  --wood:#6B4527; --wood-soft:#EBE0D0;
-
-  /* 緋紅：不可以、外洩 */
-  --alert:#9A2B28; --alert-soft:#F0DFD8; --alert-line:#9A2B28;
-  --warn:#8A5A12; --warn-soft:#F2E6CE; --warn-line:#A86F1B;
-
-  /* 黑箱：終端機 */
-  --void:#0B0D0A; --void-2:#141813;
-  --term:#8FD96A; --term-dim:#4A7A3C; --term-hit:#E8C35C; --term-bad:#E8705E;
-
-  --shadow:0 1px 0 rgba(35,31,26,.05);
-  --shadow-lg:0 30px 70px rgba(35,31,26,.4);
+  --ground:#F2F0E9; --surface:#FCFBF7; --surface-2:#EAE6DC; --sunken:#E7E3D8;
+  --ink:#1A1714; --ink-2:#4E4841; --ink-3:#7F786E;
+  --rule:#D2CCC0; --rule-2:#E3DED4;
+  --accent:#1A4894; --accent-ink:#FFFFFF; --accent-soft:#E4EAF4; --accent-line:#1A4894;
+  --ok:#3F6134; --ok-soft:#E6EADC; --ok-line:#3F6134;
+  --warn:#8A5712; --warn-soft:#F6EBD6; --warn-line:#AE6F1C;
+  --alert:#9A2B28; --alert-soft:#F6E4E1; --alert-line:#9A2B28;
+  --term-bg:#05070A; --term:#57E08E; --term-dim:#2C6F4B; --term-hit:#FFCE5C; --term-bad:#FF6B58;
+  --shadow:0 1px 0 rgba(26,23,20,.04);
+  --shadow-lg:0 24px 60px rgba(26,23,20,.26);
 
   --serif:"Noto Serif TC",Georgia,"PingFang TC","Microsoft JhengHei",serif;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
 
-  --col:680px;
-  --r:0px;                 /* 公文沒有圓角 */
+  --col:672px;
+  --r:2px;
 }
 
-/* 深色：紙變成夜裡的紙，黑箱仍然是黑箱 */
+/* ── 深色：僅覆寫權杖 ── */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
-    --ground:#14120E; --surface:#1D1A14; --surface-2:#282318; --sunken:#100E0A;
-    --ink:#EFE9DB; --ink-2:#B5AB97; --ink-3:#88806F;
-    --rule:#3B352A; --rule-2:#2B2620;
-    --accent:#A8C46E; --accent-ink:#14120E; --accent-soft:#1F2414; --accent-line:#A8C46E;
-    --ok:#A8C46E; --ok-soft:#1F2414; --ok-line:#A8C46E;
-    --wood:#C08B5C; --wood-soft:#241A12;
-    --alert:#E08276; --alert-soft:#2B1512; --alert-line:#E08276;
-    --warn:#DCA75E; --warn-soft:#251B0E; --warn-line:#DCA75E;
+    --ground:#13110D; --surface:#1C1915; --surface-2:#26221B; --sunken:#100E0A;
+    --ink:#EFEAE0; --ink-2:#B2AA9E; --ink-3:#847C70;
+    --rule:#373027; --rule-2:#2A251E;
+    --accent:#8FB0EE; --accent-ink:#13110D; --accent-soft:#1B2231; --accent-line:#8FB0EE;
+    --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
+    --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
+    --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
     --shadow:0 1px 0 rgba(0,0,0,.3);
-    --shadow-lg:0 30px 70px rgba(0,0,0,.65);
+    --shadow-lg:0 24px 60px rgba(0,0,0,.6);
   }
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --ground:#14120E; --surface:#1D1A14; --surface-2:#282318; --sunken:#100E0A;
-  --ink:#EFE9DB; --ink-2:#B5AB97; --ink-3:#88806F;
-  --rule:#3B352A; --rule-2:#2B2620;
-  --accent:#A8C46E; --accent-ink:#14120E; --accent-soft:#1F2414; --accent-line:#A8C46E;
-  --ok:#A8C46E; --ok-soft:#1F2414; --ok-line:#A8C46E;
-  --wood:#C08B5C; --wood-soft:#241A12;
-  --alert:#E08276; --alert-soft:#2B1512; --alert-line:#E08276;
-  --warn:#DCA75E; --warn-soft:#251B0E; --warn-line:#DCA75E;
+  --ground:#13110D; --surface:#1C1915; --surface-2:#26221B; --sunken:#100E0A;
+  --ink:#EFEAE0; --ink-2:#B2AA9E; --ink-3:#847C70;
+  --rule:#373027; --rule-2:#2A251E;
+  --accent:#8FB0EE; --accent-ink:#13110D; --accent-soft:#1B2231; --accent-line:#8FB0EE;
+  --ok:#9DBF77; --ok-soft:#1A2113; --ok-line:#9DBF77;
+  --warn:#DDA75E; --warn-soft:#251B0E; --warn-line:#DDA75E;
+  --alert:#E08276; --alert-soft:#2A1512; --alert-line:#E08276;
   --shadow:0 1px 0 rgba(0,0,0,.3);
-  --shadow-lg:0 30px 70px rgba(0,0,0,.65);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.6);
 }
+
 /* ══ 基礎 ══ */
 *{box-sizing:border-box}
 body{
@@ -606,135 +577,6 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
     animation-iteration-count:1!important}
 }
 
-/* ══════════════════════════════════════════════════════════════
-   兩個世界
-
-   這份作品的論點是：有憑有據的東西找得到人負責，黑箱找不到。
-   所以不把「危險」畫成紅色的卡片——紅卡片還是紙，還是同一個世界。
-   真實外洩事件直接換成終端機的樣子，像紙被撕開、露出底下的機房。
-
-   使用時機要克制：只有「實際發生過的外洩」用得上。
-   如果每個提醒都變黑的，這個對比就不存在了。
-   ══════════════════════════════════════════════════════════════ */
-
-/* ── 紙的質地：極淡的橫紋，像再生紙 ── */
-body{
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0 3px,
-      rgba(35,31,26,.014) 3px 4px
-    );
-}
-:root[data-theme="dark"] body,
-:root:not([data-theme="light"]) body{ background-image:none }
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]) body{
-    background-image:
-      repeating-linear-gradient(to bottom, transparent 0 3px, rgba(35,31,26,.014) 3px 4px);
-  }
-}
-
-/* ── 標題：重量拉滿，這是這一版最明顯的改變 ── */
-h1{font-weight:900;letter-spacing:.02em}
-h2{font-weight:900;letter-spacing:.03em}
-
-/* 眉標在寬螢幕掛到左側留白，像公文的邊註 */
-@media (min-width:1080px){
-  .col:not(.wide) .eyebrow{
-    position:relative;
-    margin-left:-132px;
-    width:132px;
-    padding-right:20px;
-    justify-content:flex-end;
-    text-align:right;
-  }
-  .col:not(.wide) .eyebrow::before{ display:none }
-  .col:not(.wide) .eyebrow::after{
-    content:"";position:absolute;right:0;top:50%;width:12px;height:1px;background:var(--rule);
-  }
-}
-
-/* ── 黑箱 ──
-   .incident  微課程附的真實事件
-   .evt       懶人包的四起事件
-   .void      要手動指定的區塊 */
-.incident,
-.evt,
-.void{
-  background:var(--void);
-  border:0;
-  border-left:3px solid var(--term-dim);
-  border-radius:0;
-  color:#CFE8C2;
-  font-family:var(--mono);
-  font-size:12.5px;
-  line-height:1.95;
-  padding:16px 18px 17px;
-  position:relative;
-  overflow:hidden;
-}
-.incident::before,
-.evt::before,
-.void::before{
-  content:"◤ 已經發生過的事";
-  display:block;
-  font-size:10px;
-  letter-spacing:.16em;
-  color:var(--term-dim);
-  margin-bottom:9px;
-}
-.void::before{ content:"◤ 黑箱" }
-
-.incident b,.evt b,.void b{ color:var(--term); font-weight:400 }
-.incident .dt,.evt .dt{
-  display:block;color:var(--term-hit);font-size:11px;letter-spacing:.1em;
-  font-weight:400;margin-bottom:4px;
-}
-.evt .t{
-  color:var(--term);font-family:var(--mono);font-size:13.5px;font-weight:700;
-  margin:0 0 6px;line-height:1.55;
-}
-.evt .d{ color:#CFE8C2;font-size:12px;line-height:1.9;opacity:1 }
-.evt .l{
-  display:block;margin-top:9px;padding-top:9px;border-top:1px solid rgba(143,217,106,.22);
-  color:var(--term-hit);font-size:11.5px;font-weight:400;line-height:1.8;
-}
-.evt .l::before{ content:"→ " }
-
-/* 掃描線，很淡，只是讓它看起來是螢幕不是紙 */
-.incident::after,
-.evt::after,
-.void::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,
-    rgba(143,217,106,.035) 0 1px, transparent 1px 3px);
-}
-@media (prefers-reduced-motion:reduce){
-  .incident::after,.evt::after,.void::after{ display:none }
-}
-
-/* ── 階段卡：改成索引卡，編號用大字壓在角落 ── */
-.stagecard{ position:relative; padding-left:22px }
-.stagecard .n{
-  width:auto;height:auto;background:none;border-radius:0;
-  font-family:var(--serif);font-size:34px;font-weight:900;line-height:1;
-  color:var(--rule);align-self:flex-start;min-width:38px;
-}
-.stagecard.done .n{ background:none;color:var(--ok) }
-.stagecard:hover{ border-color:var(--ink);transform:none;background:var(--surface-2) }
-.stagecard .t{ font-size:17.5px;letter-spacing:.02em }
-
-/* ── 表單分段的編號：「一、」放大成襯線大字 ── */
-legend{ position:relative }
-
-/* ── 頁首：字距與木色底線，像機關信箋 ── */
-.appbar .brand .nm b{ letter-spacing:.04em }
-.appbar{ box-shadow:0 2px 0 0 var(--wood) }
-
-/* ── 引文式的主張段落 ── */
-.lede{ font-size:17px;line-height:1.85 }
-.lede b{ box-shadow:inset 0 -.42em 0 var(--accent-soft) }
 /* ══ 列印 ══ */
 @media print{
   @page{size:A4 portrait;margin:9mm}
@@ -786,10 +628,11 @@ legend{ position:relative }
 
     <div class="stack m">
       <span class="eyebrow">115 年梅竹黑客松 ｜ 資安無慮</span>
-      <h1>沒有人讀使用須知。<br>所以這份補助沒有須知。</h1>
+      <h1>把資安宣導拆開，<br>塞進補助流程的每一關</h1>
       <p class="lede">
-        該知道的事被拆開，埋進<b>申請、綁定、等待、核銷、撥款</b>五道關卡。<br>
-        每一件都等在<b>您真的會犯那個錯的前一秒</b>。
+        大部分的「使用須知」，我們都是直接捲到底按同意的。<br>
+        所以這份補助沒有須知要讀。該注意的事被拆成五段，放進<b>申請、綁定、等待、核銷、撥款</b>裡——
+        每一段都剛好出現在<b>您真的會遇到它的那一刻</b>。
       </p>
     </div>
 
@@ -830,7 +673,7 @@ legend{ position:relative }
     <div class="stack s">
       <span class="eyebrow">階段 ① ／ 五</span>
       <h1>補助申請</h1>
-      <p class="lede">十分鐘填完，補助款五成入帳。<br>過程中會有一次意外，那是我們故意的。</p>
+      <p class="lede">請依序填寫，系統會即時協助您確認資料。</p>
     </div>
 
     <div class="callout">
@@ -1080,8 +923,8 @@ legend{ position:relative }
       <span class="eyebrow">申請已送出 ／ 進入下一步之前</span>
       <h1>資安石鍋</h1>
       <p class="lede" id="quizLede">
-        剛才那一整份，您親手把身分證正反面和存摺封面遞了出去。<br>
-        現在換個問法：<b>哪些東西可以下鍋？哪些一下鍋，就再也撈不起來？</b>
+        剛才那一整份表單，您親手把身分證正反面和存摺封面交了出去。<br>
+        現在換個方式問同一件事：<b>哪些東西可以下鍋，哪些一旦下鍋就再也撈不回來？</b>
       </p>
     </div>
 
@@ -1128,7 +971,7 @@ legend{ position:relative }
     <div class="stack s">
       <span class="eyebrow">階段 ② ／ 五</span>
       <h1>綁定進度通知</h1>
-      <p class="lede">綁定之後，進度自己會來找您。<br>但要先確認——您加的是不是真的市府。</p>
+      <p class="lede">綁定官方 LINE 帳號，審核、核銷與撥款進度會主動推播給您，不必回來刷網頁。</p>
     </div>
 
     <div class="callout ok"><span class="t">案件已收件</span><p id="recvLine"></p></div>
@@ -1230,7 +1073,7 @@ legend{ position:relative }
     <div class="stack s">
       <span class="eyebrow">階段 ③ ／ 五</span>
       <h1>審核進度</h1>
-      <p class="lede">案子在審了，您現在沒事做。<br>這段空白我們拿來換一件您用得上的事。</p>
+      <p class="lede">案件審查中。這段等待時間，我們拿來做一件事。</p>
     </div>
 
     <div class="card"><ol class="tl" id="reviewTl"></ol></div>
@@ -1313,7 +1156,7 @@ legend{ position:relative }
     <div class="stack s">
       <span class="eyebrow">階段 ④ ／ 五</span>
       <h1>新竹市青年 AI 工具資安檢核清單</h1>
-      <p class="lede">十二項，全對才能請款。<br>但可以一直重來——我們要的是您會，不是您被刷掉。</p>
+      <p class="lede">核銷必填。12 項，全數達標才能送出請款。</p>
     </div>
 
     <div class="callout">
@@ -1884,19 +1727,19 @@ function paintCase(){
    ═══════════════════════════════════════════════════════════ */
 var STAGE_CARDS = [
   {h:"#/apply", n:"1", flag:"applied", t:"申請 — 讓 AI 小幫手當場示範一次外洩",
-   d:'一個很親切的 AI 小幫手陪您填完整份表單，連身分證正反面和存摺封面都收下了。然後畫面轉黑。<b>您會先嚇一跳，再發現這張表單其實是安全的——不安全的是您等一下要去用的那個對話框。</b>',
+   d:'表單上有個親切的「申辦小幫手」，每填一欄就熱心地覆誦一次，最後從身分證字號推出您的戶籍地與性別。送出的瞬間畫面轉黑，跑出資料被打包送往 <code>unknown-host</code> 的過程。<b>先讓人嚇一跳，再告訴他這張表單其實是安全的——不安全的是他等一下要去用的那個對話框。</b>',
    g:["解題方向 一"]},
   {h:"#/bind", n:"2", flag:"bound", t:"綁定 — 從三個相似帳號中選出真的官方帳號",
-   d:'搜尋「新竹青年」，跳出三個幾乎一樣的帳號，兩個是假的。選完再看它要什麼權限。<b>認假帳號跟認可疑外掛，用的是同一雙眼睛。</b>',
+   d:'LINE 搜尋「新竹青年」跑出三個帳號，兩個是冒用的。選完再看授權範圍：官方帳號只要 2 項權限。<b>這套判斷標準，正是他之後安裝 AI 外掛時要用的同一套。</b>',
    g:["解題方向 三"]},
   {h:"#/review", n:"3", flag:"reviewed", t:"審核 — 把等待期變成教室",
-   d:'等審核的那五到七天，本來是一段空白。現在那裡有五則各三十秒的提醒，每一則後面貼著一件<b>真的發生過、而且沒有人負責</b>的事。',
+   d:'送件到核定約 5 至 7 個工作天，過去這段時間是純粹的空白。放進 5 則各 30 秒的微課程，每則附一起真實事件。讀完得銅牌。另含<b>承辦端後台檢視</b>：四項自動勾稽、人工只看紅燈案件。',
    g:["解題方向 二","解題方向 四"]},
   {h:"#/checklist", n:"4", flag:"checklistPassed", t:"核銷 — 12 項檢核清單，要佐證不要打勾",
-   d:'十二項檢核，但不給您打勾。要答出設定在哪一頁、填入您查到的數字、附上那張截圖。<b>答錯不退件，答錯就教您</b>——可以一直重來，直到十二項都對。',
+   d:'依核銷發票選出購買的工具，清單就長出<b>該工具的實際設定路徑</b>。每一項要求答出正確做法、填入查到的數值或附上設定截圖。全數達標才能送出請款，但可無限次重答——<b>答錯不退件，答錯就教</b>。',
    g:["解題方向 六"]},
   {h:"#/payout", n:"5", flag:"paid", t:"撥款 — 進度追蹤，加上一個值得拿的東西",
-   d:'錢什麼時候到，一步一步看得到。順便發一枚徽章——不是榮譽，是<b>次年免重填、優先審查、當講師領鐘點費</b>。學會的人回頭教下一批。',
+   d:'撥款時間軸與金額試算。銅／銀／金三級徽章給的不是榮譽是實質好處：次年免重填、優先審查、列入<b>種子講師名冊支領鐘點費</b>。受補助青年學會之後回頭教下一批。',
    g:["解題方向 二","解題方向 五"]}
 ];
 
