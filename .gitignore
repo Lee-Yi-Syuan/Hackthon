@@ -11,3 +11,4 @@ desktop.ini
 # 暫存
 _chk.js
 *.tmp
+.env
