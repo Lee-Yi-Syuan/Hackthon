@@ -16,7 +16,9 @@
 
 ## 線上展示
 
-單一 HTML 檔，無需建置。直接用瀏覽器開啟 `index.html` 即可，或部署到任何靜態主機。
+單一 HTML 檔，無需建置。直接用瀏覽器開啟 `dist/index.html` 即可。
+
+已部署於 Cloudflare Workers，每次推送 `main` 自動更新。
 
 > 部署到一般靜態主機或本機開啟時，匯率介接可實際連通。若以沙箱化的環境開啟（部分預覽服務會封鎖對外請求），匯率會自動退回內建備援值。
 
@@ -87,13 +89,11 @@
 原始碼拆在 `src/` 底下，發佈前用 `build.py` 組回單一的 `app.html`。
 
 ```bash
-python build.py           # 組合 src/ → index.html
-python build.py --check   # 只比對，確認 index.html 與 src/ 一致
+python build.py           # 組合 src/ → dist/index.html
+python build.py --check   # 只比對，確認 dist/ 與 src/ 一致
 ```
 
-> **改東西請改 `src/` 底下的檔案，不要直接改 `index.html`** — 它是產物，下次 build 會被整個覆蓋。
-
-檔名用 `index.html` 是因為所有靜態主機都以它為目錄入口，部署時不必再設定。
+> **改東西請改 `src/` 底下的檔案，不要直接改 `dist/index.html`** — 它是產物，下次 build 會被整個覆蓋。
 
 ### 為什麼要拆
 
@@ -104,14 +104,16 @@ CSS 與 JS 都會併進單一標籤，維持原本的全域作用域與函式提
 ### 多人協作
 
 - 各自開 branch，改完發 PR
-- **`index.html` 衝突時不要手動解**，直接 `python build.py` 覆蓋即可（它是產物，不是原始碼）
+- **`dist/index.html` 衝突時不要手動解**，直接 `python build.py` 覆蓋即可（它是產物，不是原始碼）
 - 組合順序由檔名的數字前綴決定，新增區塊照編號插進去
 
 ## 檔案
 
 ```
-index.html                    產物：組合後的單檔（勿直接編輯）
+dist/index.html               產物：組合後的單檔（勿直接編輯）
+dist/_headers                 部署用的回應標頭
 build.py                      組合腳本
+wrangler.jsonc                Cloudflare 部署設定
 src/
   head.html                   標題與字型載入
   css/    01-tokens           設計權杖與深色模式
@@ -135,6 +137,22 @@ src/
           08~13-stage-*       各階段畫面邏輯
           14-boot             啟動
 115年梅竹黑客松競賽題目.pdf    題目原始檔
+```
+
+## 部署
+
+部署於 Cloudflare Workers 靜態資產，推送 `main` 分支自動更新。
+
+**`wrangler.jsonc` 的 `assets.directory` 必須指向 `./dist`。** 少了這個設定，Wrangler 會把整個工作目錄上傳並公開提供下載——包含 `.git/`，等於把私人 repo 的完整歷史放上網。這個專案實際踩過一次，修法是改成只部署 `dist/`：列出要公開的東西（白名單），而不是列出要排除的東西（黑名單）。
+
+部署後可用以下指令自我檢查：
+
+```bash
+U=https://meichu-hackathon-2026.kimichou0526.workers.dev
+curl -s -o /dev/null -w "%{http_code}
+" $U/.git/config   # 應為 404 或回首頁，不可是 200 且內容為設定檔
+curl -s -o /dev/null -w "%{http_code}
+" $U/build.py      # 同上
 ```
 
 ## 隱私

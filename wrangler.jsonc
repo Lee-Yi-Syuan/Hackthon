@@ -1,0 +1,20 @@
+{
+  // Cloudflare Workers 靜態資產設定
+  //
+  // ⚠ directory 一定要指向 dist/，不能是專案根目錄。
+  //   沒有這個設定時，Wrangler 會把整個工作目錄上傳——包含 .git/，
+  //   等於把私人 repo 的完整歷史公開放上網。
+  //   只列出要公開的東西（白名單），不要列出要排除的東西（黑名單）。
+
+  "name": "meichu-hackathon-2026",
+  "compatibility_date": "2026-09-13",
+
+  "assets": {
+    "directory": "./dist",
+    // 本站以 hash 路由（#/apply），伺服器只會收到 /。
+    // 任何其他路徑一律回首頁，不外洩目錄結構。
+    "not_found_handling": "single-page-application"
+  },
+
+  "observability": { "enabled": true }
+}
