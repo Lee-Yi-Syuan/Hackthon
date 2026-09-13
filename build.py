@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-把 src/ 底下的模組組合成單一的 app.html。
+把 src/ 底下的模組組合成單一的 index.html。
 
 用法：
-    python build.py            組合並寫出 app.html
-    python build.py --check    只比對，不寫檔（確認 app.html 與 src/ 一致）
+    python build.py            組合並寫出 index.html
+    python build.py --check    只比對，不寫檔（確認 index.html 與 src/ 一致）
 
 為什麼要這樣做：
     線上展示需要單一 HTML 檔（沒有建置流程、沒有相依套件、雙擊就能開），
     但一個三千行的檔案沒辦法多人同時改——每次合併都會衝突。
     所以原始碼拆在 src/ 裡各自獨立，發佈前跑這支腳本組回去。
 
-    改東西請改 src/ 底下的檔案，不要直接改 app.html，它會被覆蓋。
+    改東西請改 src/ 底下的檔案，不要直接改 index.html，它會被覆蓋。
+
+    檔名是 index.html 而非 app.html，因為所有靜態主機都以它為目錄入口。
 
 組合順序由檔名的數字前綴決定，要新增區塊就照編號插進去。
 """
@@ -21,7 +23,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src")
-OUT = os.path.join(ROOT, "app.html")
+OUT = os.path.join(ROOT, "index.html")
 
 
 def read(path):
@@ -59,17 +61,17 @@ def main():
 
     if check:
         if not os.path.exists(OUT):
-            sys.exit("app.html 不存在，請先執行：python build.py")
+            sys.exit("index.html 不存在，請先執行：python build.py")
         cur = read(OUT)
         if cur == out:
-            print("一致：app.html 與 src/ 相符")
+            print("一致：index.html 與 src/ 相符")
             return 0
-        print("不一致：app.html 與 src/ 有差異（%d vs %d bytes）" % (len(cur), len(out)))
+        print("不一致：index.html 與 src/ 有差異（%d vs %d bytes）" % (len(cur), len(out)))
         print("請執行 python build.py 重新組合。")
         return 1
 
     io.open(OUT, "w", encoding="utf-8", newline="").write(out)
-    print("已寫出 app.html — %.0f KB" % (len(out.encode("utf-8")) / 1024))
+    print("已寫出 index.html — %.0f KB" % (len(out.encode("utf-8")) / 1024))
     print("  css   %2d 個檔案" % len(css_files))
     print("  views %2d 個檔案" % len(view_files))
     print("  js    %2d 個檔案" % len(js_files))
