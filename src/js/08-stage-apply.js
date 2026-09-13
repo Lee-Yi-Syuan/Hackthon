@@ -177,9 +177,6 @@ function renderApply(){
   $("f-sw").addEventListener("blur", function(e){
     var v = e.target.value.trim(); if(!v) return;
     done.sw = v;
-    var k = guessTool(v);
-    echo("sw", k ? "「"+esc(v)+"」我認得，等一下核銷的資安檢核清單會直接帶出它的設定路徑。"
-                 : "「"+esc(v)+"」記下了。");
   });
 
   function recalc(){
@@ -190,9 +187,11 @@ function renderApply(){
     var twd = Math.round(amt * rate);
     if (cur === "TWD") { $("f-twd").value = Math.round(amt); }
     else if (!$("f-twd").dataset.touched) { $("f-twd").value = twd; }
-    echo("twd", cur === "TWD" ? "新臺幣 " + twd.toLocaleString("en-US") + " 元。"
-      : "依 1 " + cur + " ＝ " + rate + " 元（" + FX_SRC + "）換算，約新臺幣 "
-        + twd.toLocaleString("en-US") + " 元。正式核銷以購買日臺灣銀行牌告匯率為準。");
+    /* 匯率來源寫在欄位下方的灰色說明，不走 AI 小幫手的語氣 */
+    $("twdHint").textContent = cur === "TWD"
+      ? "原始幣別為新臺幣，無須換算。"
+      : "依 1 " + cur + " ＝ " + rate + " 元（" + FX_SRC + "）換算。"
+        + "正式核銷以購買日臺灣銀行牌告匯率為準，可手動修正。";
     runAudit();
   }
   $("f-cur").addEventListener("change", recalc);

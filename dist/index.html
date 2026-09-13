@@ -411,10 +411,17 @@ tr.tot td{font-weight:700;background:var(--sunken)}
 .quizload .dot:nth-child(3){animation-delay:.3s}
 @keyframes qpulse{0%,100%{opacity:.25}50%{opacity:1}}
 
-/* 手機直向時 16:9 會縮得太小，改提示改用全螢幕或新分頁 */
-.quiznote{display:none}
+/* 直向時石鍋會自己換成直式畫布（680×1200），
+   所以外框也跟著改成直式比例，並讓它撐滿螢幕寬度，
+   免得被欄寬綁住縮成一小塊。 */
 @media (orientation:portrait) and (max-width:820px){
-  .quiznote{display:block}
+  .quizwrap{
+    aspect-ratio:680 / 1200;
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    border-left:0;border-right:0;border-radius:0;
+  }
 }
 /* ── 黑幕 + 終端機 ── */
 #veil{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:60;
@@ -839,7 +846,6 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
             <option value="Canva Pro"></option><option value="Notion AI"></option>
           </datalist>
           <div class="err" id="e-sw-err"></div>
-          <div class="echo" id="e-sw"></div>
         </div>
 
         <div class="field">
@@ -882,10 +888,9 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
 
         <div class="field">
           <label for="f-twd">換算新臺幣金額
-            <span class="sub">依購買日臺灣銀行牌告匯率自動換算，可手動修正</span></label>
+            <span class="sub" id="twdHint">依購買日臺灣銀行牌告匯率自動換算，可手動修正</span></label>
           <input type="number" id="f-twd" min="0" step="1" inputmode="numeric" placeholder="自動帶入">
           <div class="err" id="e-twd-err"></div>
-          <div class="echo" id="e-twd"></div>
         </div>
       </fieldset>
 
@@ -939,11 +944,6 @@ hr.sep{border:0;border-top:1px solid var(--rule);margin:0}
         剛才那一整份表單，您親手把身分證正反面和存摺封面交了出去。<br>
         現在換個方式問同一件事：<b>哪些東西可以下鍋，哪些一旦下鍋就再也撈不回來？</b>
       </p>
-    </div>
-
-    <div class="callout warn quiznote">
-      <span class="t">手機請橫放，或用全螢幕</span>
-      <p>石鍋是 16:9 的舞台，直向螢幕會縮到看不清楚。把手機橫過來，或按下方的「全螢幕」。</p>
     </div>
 
     <div class="quizwrap" id="quizWrap">
@@ -2302,9 +2302,6 @@ function renderApply(){
   $("f-sw").addEventListener("blur", function(e){
     var v = e.target.value.trim(); if(!v) return;
     done.sw = v;
-    var k = guessTool(v);
-    echo("sw", k ? "「"+esc(v)+"」我認得，等一下核銷的資安檢核清單會直接帶出它的設定路徑。"
-                 : "「"+esc(v)+"」記下了。");
   });
 
   function recalc(){
@@ -2315,9 +2312,11 @@ function renderApply(){
     var twd = Math.round(amt * rate);
     if (cur === "TWD") { $("f-twd").value = Math.round(amt); }
     else if (!$("f-twd").dataset.touched) { $("f-twd").value = twd; }
-    echo("twd", cur === "TWD" ? "新臺幣 " + twd.toLocaleString("en-US") + " 元。"
-      : "依 1 " + cur + " ＝ " + rate + " 元（" + FX_SRC + "）換算，約新臺幣 "
-        + twd.toLocaleString("en-US") + " 元。正式核銷以購買日臺灣銀行牌告匯率為準。");
+    /* 匯率來源寫在欄位下方的灰色說明，不走 AI 小幫手的語氣 */
+    $("twdHint").textContent = cur === "TWD"
+      ? "原始幣別為新臺幣，無須換算。"
+      : "依 1 " + cur + " ＝ " + rate + " 元（" + FX_SRC + "）換算。"
+        + "正式核銷以購買日臺灣銀行牌告匯率為準，可手動修正。";
     runAudit();
   }
   $("f-cur").addEventListener("change", recalc);

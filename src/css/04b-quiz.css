@@ -35,8 +35,15 @@
 .quizload .dot:nth-child(3){animation-delay:.3s}
 @keyframes qpulse{0%,100%{opacity:.25}50%{opacity:1}}
 
-/* 手機直向時 16:9 會縮得太小，改提示改用全螢幕或新分頁 */
-.quiznote{display:none}
+/* 直向時石鍋會自己換成直式畫布（680×1200），
+   所以外框也跟著改成直式比例，並讓它撐滿螢幕寬度，
+   免得被欄寬綁住縮成一小塊。 */
 @media (orientation:portrait) and (max-width:820px){
-  .quiznote{display:block}
+  .quizwrap{
+    aspect-ratio:680 / 1200;
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    border-left:0;border-right:0;border-radius:0;
+  }
 }

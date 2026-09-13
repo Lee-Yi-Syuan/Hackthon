@@ -176,27 +176,69 @@ body{
 }
 
 /* ── 嵌入申請流程時的補強 ── */
-#rotate{
-  position:fixed;inset:0;z-index:99;background:var(--paper);color:var(--ink);
-  display:none;flex-direction:column;align-items:center;justify-content:center;
-  gap:16px;padding:36px;text-align:center;font-family:"Noto Sans TC",sans-serif;
+/* ── 直向：換成直式畫布，而不是把橫式縮小 ──
+   橫式 1280×720 在手機直向只能縮到 0.3 倍，字會小到看不見。
+   改成 680×1200 的直式舞台由上而下堆疊，同一支手機直放約 0.57 倍，
+   橫放時自動切回橫式。兩種持法都能玩，直的只是版面小一點。 */
+@media (orientation:portrait){
+  :root{ --stage-w:680px; --stage-h:1200px; }
+
+  /* 海報 */
+  #scene-poster{ padding:26px 24px 0; display:flex; flex-direction:column; gap:14px; }
+  .title{ position:static; text-align:left }
+  .title .zh{ font-size:44px }
+  .title .sub{ font-size:17px; margin-top:6px }
+  .dots{ display:none }
+  .stage-row{ position:static; gap:14px; align-items:center }
+  .stage-tag{ width:74px; font-size:14px; margin-top:0; padding:5px 0 }
+  .stage-egg{ width:62px; margin-top:0 }
+  .stage-egg img{ max-height:52px }
+  .rules{ padding-top:0 }
+  .rule{ font-size:17px; line-height:1.5; white-space:normal }
+  .rule span{ font-size:15px }
+  .board{ position:static; width:auto; height:auto; max-height:430px;
+          padding:32px 16px 16px; margin-top:2px }
+  .paper{ height:auto; gap:9px; padding:14px 15px }
+  .case h3{ font-size:16px; margin-bottom:2px }
+  .case h3::before{ font-size:13px; margin-right:6px }
+  .case p{ font-size:12.5px; line-height:1.55 }
+  #skip{ right:24px; bottom:14px; font-size:14px; padding:6px 15px }
+
+  /* 遊戲 */
+  .g-head{ position:static; padding:26px 24px 0 }
+  .g-head h2{ font-size:32px }
+  .g-head p{ font-size:15px; margin-top:6px }
+  #score{ right:24px; top:34px; font-size:15px }
+  #tray{ left:24px; right:24px; width:auto; top:600px; gap:8px 14px }
+  .ing{ height:118px }
+  .ing .pic{ height:88px }
+  .ing .pic img{ max-height:88px; max-width:150px }
+  .ing .name{ font-size:17px }
+  .in{ width:64px; height:64px; font-size:13px }
+  .mark{ width:28px; height:28px; font-size:16px; right:8px }
+  #feedback{ left:24px; right:24px; width:auto; top:1012px; font-size:15px; min-height:0 }
+  #feedback b{ font-size:16px }
+  #again{ left:24px; bottom:16px }
+
+  /* 結算 */
+  #final{ padding:24px; gap:12px }
+  #final h3{ font-size:32px }
+  #recap{ flex-wrap:wrap; gap:12px; justify-content:center; max-width:600px }
+  #recap .r{ width:96px }
+  #recap .r .box{ height:62px }
+  #recap .r img{ max-height:58px; max-width:88px }
+  #recap .r .n{ font-size:14px; margin-top:5px }
+  #recap .r .v{ font-size:12px }
+  #final p{ font-size:15px; max-width:560px }
+  #final .tally{ font-size:18px }
+  #final button{ font-size:15px; padding:10px 24px }
 }
-#rotate .ic{font-size:54px;line-height:1}
-#rotate .t{font-family:"Noto Serif TC",serif;font-size:26px;font-weight:900;letter-spacing:.05em}
-#rotate .d{font-size:16px;line-height:1.8;color:var(--ink-soft);max-width:22em}
-@media (orientation:portrait) and (max-width:1000px){ #rotate{display:flex} }
 
 #goon{background:var(--wood)!important}
 #goon:hover{background:var(--wood-dark)!important}
 </style>
 </head>
 <body>
-<div id="rotate">
-  <div class="ic">📱↻</div>
-  <div class="t">請把手機橫過來</div>
-  <div class="d">石鍋是 16:9 的舞台，直向會縮到看不清楚。橫放之後就能開始涮了。</div>
-</div>
-
 <div id="viewport">
 <div id="stage">
 
@@ -311,17 +353,35 @@ const againBtn = document.getElementById("again");
 const finalEl = document.getElementById("final");
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/* 舞台尺寸由 CSS 變數決定（直向會換成直式畫布），
+   這裡一律讀實際值，才不會兩邊寫死的數字對不上。 */
+function stageDims(){
+  const cs = getComputedStyle(document.documentElement);
+  return { w: parseFloat(cs.getPropertyValue("--stage-w")) || 1280,
+           h: parseFloat(cs.getPropertyValue("--stage-h")) || 720 };
+}
 function fit(){
-  const s = Math.min(window.innerWidth/1280, window.innerHeight/720);
+  const d = stageDims();
+  const s = Math.min(window.innerWidth/d.w, window.innerHeight/d.h);
   stage.style.transform = "scale(" + s + ")";
 }
-window.addEventListener("resize", fit); fit();
+window.addEventListener("resize", function(){ fit(); placePot(); });
+fit();
 
-const POSTER_POT = {left:10, top:430, w:560};
-const GAME_POT   = {left:44, top:296, w:610};
-potEl.style.left = POSTER_POT.left+"px";
-potEl.style.top  = POSTER_POT.top+"px";
-potEl.style.width= POSTER_POT.w+"px";
+const POT = {
+  land:{ poster:{left:10,  top:430, w:560}, game:{left:44,  top:296, w:610} },
+  port:{ poster:{left:170, top:880, w:360}, game:{left:140, top:236, w:400} }
+};
+function isPortrait(){ return window.matchMedia("(orientation:portrait)").matches; }
+function potPos(which){ return (isPortrait() ? POT.port : POT.land)[which]; }
+
+function placePot(){
+  const p = potPos(stage.classList.contains("playing") ? "game" : "poster");
+  potEl.style.left = p.left+"px";
+  potEl.style.top  = p.top+"px";
+  potEl.style.width= p.w+"px";
+}
+placePot();
 
 let timerId = null;
 function startCountdown(sec){
@@ -340,9 +400,7 @@ function toGame(){
   if(stage.classList.contains("playing")) return;
   stage.classList.add("playing");
   potEl.style.transition = "left .9s cubic-bezier(.3,.9,.3,1), top .9s cubic-bezier(.3,.9,.3,1), width .9s cubic-bezier(.3,.9,.3,1)";
-  potEl.style.left = GAME_POT.left+"px";
-  potEl.style.top  = GAME_POT.top+"px";
-  potEl.style.width= GAME_POT.w+"px";
+  placePot();
   if(!reduce){
     potEl.animate(
       [{transform:"translateY(0) rotate(0deg)"},
@@ -377,7 +435,7 @@ function build(){
 function potTarget(){
   const r = potEl.getBoundingClientRect();
   const s = stage.getBoundingClientRect();
-  const k = 1280 / s.width;
+  const k = stageDims().w / s.width;
   return {x:(r.left - s.left)*k + (r.width*k)/2, y:(r.top - s.top)*k + (r.height*k)*0.34};
 }
 
@@ -405,7 +463,7 @@ function fly(btn, it){
   const img = btn.querySelector("img");
   const r = img.getBoundingClientRect();
   const s = stage.getBoundingClientRect();
-  const k = 1280 / s.width;
+  const k = stageDims().w / s.width;
   const x0 = (r.left - s.left)*k, y0 = (r.top - s.top)*k;
   const w = r.width*k, h = r.height*k;
   const tgt = potTarget();
@@ -475,9 +533,7 @@ document.addEventListener("keydown", function(e){
   if(e.key === "r" || e.key === "R"){
     stage.classList.remove("playing");
     potEl.style.transition = "left .8s ease, top .8s ease, width .8s ease";
-    potEl.style.left = POSTER_POT.left+"px";
-    potEl.style.top  = POSTER_POT.top+"px";
-    potEl.style.width= POSTER_POT.w+"px";
+    placePot();
     build(); startCountdown(20);
   }
 });

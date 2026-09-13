@@ -167,7 +167,6 @@
             <option value="Canva Pro"></option><option value="Notion AI"></option>
           </datalist>
           <div class="err" id="e-sw-err"></div>
-          <div class="echo" id="e-sw"></div>
         </div>
 
         <div class="field">
@@ -210,10 +209,9 @@
 
         <div class="field">
           <label for="f-twd">換算新臺幣金額
-            <span class="sub">依購買日臺灣銀行牌告匯率自動換算，可手動修正</span></label>
+            <span class="sub" id="twdHint">依購買日臺灣銀行牌告匯率自動換算，可手動修正</span></label>
           <input type="number" id="f-twd" min="0" step="1" inputmode="numeric" placeholder="自動帶入">
           <div class="err" id="e-twd-err"></div>
-          <div class="echo" id="e-twd"></div>
         </div>
       </fieldset>
 
